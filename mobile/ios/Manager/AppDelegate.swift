@@ -51,9 +51,9 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  }
  func webView(_ webView:WKWebView,didFailProvisionalNavigation navigation:WKNavigation!,withError error:Error){if webView === online{showError("Не удалось открыть онлайн. Проверьте интернет и повторите вход. Локальная игра доступна без сети.")}}
  func webView(_ webView:WKWebView,didFinish navigation:WKNavigation!){
-  if webView === online {webView.evaluateJavaScript("(()=>{const b=document.querySelector('#match-settings button');for(const e of document.querySelectorAll('button'))if(e.textContent.trim()==='Онлайн с друзьями')e.click();})()",completionHandler:nil)}
+  if webView === online {webView.evaluateJavaScript("(()=>{const mode=document.getElementById('party-mode');if(mode){mode.value='online';mode.dispatchEvent(new Event('change'));}})()",completionHandler:nil)}
   if ProcessInfo.processInfo.arguments.contains("-manager-smoke") && webView === offline {
-   webView.evaluateJavaScript("(()=>{localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative});})()") { result,error in NSLog("MANAGER_SMOKE %@ %@",String(describing:result),String(describing:error)) }
+   webView.evaluateJavaScript("(()=>{const previous=localStorage.getItem('manager.qa-probe');localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({previous,title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative});})()") { result,error in if let text=result as? String { NSLog("MANAGER_SMOKE %@",text) } else { NSLog("MANAGER_SMOKE_ERROR %@",String(describing:error)) } }
   }
  }
  func userContentController(_ controller:WKUserContentController,didReceive message:WKScriptMessage){

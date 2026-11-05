@@ -24,6 +24,7 @@ for family,d in chosen:
  cmd('xcrun','simctl','launch',udid,'ru.manager.backtothepast','-manager-smoke');time.sleep(8)
  log2=cmd('xcrun','simctl','spawn',udid,'log','show','--last','1m','--style','compact','--predicate','eventMessage CONTAINS "MANAGER_SMOKE"')
  (out/(family+'-relaunch.log')).write_text(log2)
+ if '"previous":"persisted"' not in log2:raise SystemExit(family+' persistence did not survive relaunch')
  report.append({'family':family,'device':d['name'],'installed':True,'launched':True,'webSmoke':True,'physicalDevice':False})
  subprocess.run(['xcrun','simctl','shutdown',udid],check=True)
 (out/'ios-simulator-results.json').write_text(json.dumps(report,indent=2)+'\n')

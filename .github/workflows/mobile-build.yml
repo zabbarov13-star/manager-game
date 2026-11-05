@@ -8,15 +8,17 @@ permissions:
   contents: read
 concurrency:
   group: manager-mobile-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   ios-build-and-simulators:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v6
       - name: Build embedded game
         run: python3 mobile/tools/build-client.py
+      - name: Verify shared game rules and P2P state
+        run: node mobile/tests/engine.cjs
       - name: Compile real simulator application
         run: xcodebuild -project mobile/ios/Manager.xcodeproj -scheme Manager -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath mobile/derived CODE_SIGNING_ALLOWED=NO build
       - name: Compile unsigned device archive
@@ -78,7 +80,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/manager-key.p12" "$RUNNER_TEMP/manager-password.txt"
   ios-signed-ipa:
     if: vars.MANAGER_IOS_SIGNING == 'true'
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
