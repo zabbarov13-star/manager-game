@@ -13,3 +13,6 @@ mobile/build-info.json
 **/*.keystore
 **/*.mobileprovision
 **/password.txt
+mobile/tests/android-runtime/
+mobile/tests/*results.log
+release-files/

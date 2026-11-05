@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Manager Personal Installation, O=Manager Project, C=RU
+Signer #1 certificate SHA-256 digest: 2eafd903f8321a179c9413bfcaf4e9c3bdc7b72cb6f837a6de1ffb9b4408ec36
+Signer #1 certificate SHA-1 digest: 1736c9add8b315230a3a34d51c49cfcd46cd0d09
+Signer #1 certificate MD5 digest: 6b99812b2de83b893cbd0fc2c755befa
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: 212841ed673d9b80e9a8fd38eaae8513266d7ae55a5e8f2aa66848072469aae2
+Signer #1 public key SHA-1 digest: 7c4a2c48a625b428b897f152dced46e2855c5382
+Signer #1 public key MD5 digest: 20d145e7d6d2d0b2c664be19af208ed5

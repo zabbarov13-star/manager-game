@@ -4,16 +4,18 @@ r=Path(__file__).resolve().parents[3];sdk=r/'toolchains/android-sdk';out=r/'mobi
 env=os.environ.copy();env.update(ANDROID_AVD_HOME=str(r/'toolchains/avd'),ANDROID_USER_HOME=str(r/'toolchains/android-user'),ANDROID_EMULATOR_HOME=str(r/'toolchains/android-user'),ANDROID_SDK_ROOT=str(sdk),ANDROID_I_WANT_MY_TCG='yes',ANDROID_ADB_SERVER_PORT='36155',TMPDIR=str(r/'toolchains/emulator-temp'))
 adb=[str(sdk/'platform-tools/adb'),'-P','36155'];serial='127.0.0.1:38617'
 def run(*args,timeout=30,check=True):return subprocess.run(adb+['-s',serial]+list(args),env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=timeout,check=check)
-log=(out/'emulator.log').open('w');emu=subprocess.Popen([str(sdk/'emulator/emulator'),'-avd','Manager35','-ports','5554,38617','-no-window','-no-audio','-no-boot-anim','-no-snapshot','-gpu','swiftshader','-accel','off','-memory','2560','-cores','2','-no-metrics'],env=env,stdout=log,stderr=subprocess.STDOUT)
+log=(out/'emulator.log').open('w');emu=subprocess.Popen([str(sdk/'emulator/emulator'),'-avd','ManagerQA35c','-ports','5554,38617','-no-window','-no-audio','-no-boot-anim','-no-snapshot','-gpu','swiftshader','-accel','off','-memory','2560','-cores','2','-no-metrics'],env=env,stdout=log,stderr=subprocess.STDOUT)
 report={'hardwareAcceleration':False,'physicalDevice':False,'installed':False,'launched':False,'offline':False}
 try:
  subprocess.run(adb+['start-server'],env=env,check=True,timeout=30)
  boot=False
  for step in range(60):
   if emu.poll() is not None:raise RuntimeError('Emulator exited: '+str(emu.returncode))
-  subprocess.run(adb+['connect',serial],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=10)
-  probe=run('shell','getprop','sys.boot_completed',timeout=10,check=False)
-  if probe.stdout.strip()==b'1':boot=True;break
+  try:
+   subprocess.run(adb+['connect',serial],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=10)
+   probe=run('shell','getprop','sys.boot_completed',timeout=10,check=False)
+   if probe.stdout.strip()==b'1':boot=True;break
+  except subprocess.TimeoutExpired:pass
   print('Waiting for Android boot: '+str(step*10)+'s',flush=True);time.sleep(10)
  if not boot:raise RuntimeError('Software-only emulator boot timeout; no installation claim')
  report['androidVersion']=run('shell','getprop','ro.build.version.release').stdout.decode().strip()

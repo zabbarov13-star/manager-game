@@ -3,9 +3,14 @@ import WebKit
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+ func application(_ application: UIApplication, configurationForConnecting session: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+  let config = UISceneConfiguration(name: "Game Scene", sessionRole: session.role); config.delegateClass = SceneDelegate.self; return config
+ }
+}
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
  var window: UIWindow?
- func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-  window = UIWindow(frame: UIScreen.main.bounds); window?.rootViewController = GameController(); window?.makeKeyAndVisible(); return true
+ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
+  guard let scene = scene as? UIWindowScene else { return }; window = UIWindow(windowScene: scene); window?.rootViewController = GameController(); window?.makeKeyAndVisible()
  }
 }
 final class GameController: UIViewController, WKNavigationDelegate, WKScriptMessageHandler, UIDocumentPickerDelegate {
@@ -14,7 +19,7 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  override var prefersStatusBarHidden: Bool { true }
  override var prefersHomeIndicatorAutoHidden: Bool { true }
  override func viewDidLoad() {
-  super.viewDidLoad(); view.backgroundColor = UIColor(red: 0.09, green: 0.22, blue: 0.29, alpha: 1)
+  super.viewDidLoad(); qaRecord("{\"stage\":\"viewDidLoad\"}", name:"manager-start.json"); view.backgroundColor = UIColor(red: 0.09, green: 0.22, blue: 0.29, alpha: 1)
   let config = WKWebViewConfiguration(); config.websiteDataStore = .default(); config.userContentController.add(self, name: "manager")
   let seed = UserDefaults.standard.dictionary(forKey: "manager.offline.storage") as? [String: String] ?? [:]
   let data = (try? JSONSerialization.data(withJSONObject: seed)) ?? Data("{}".utf8)
@@ -53,7 +58,7 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  func webView(_ webView:WKWebView,didFinish navigation:WKNavigation!){
   if webView === online {webView.evaluateJavaScript("(()=>{const mode=document.getElementById('party-mode');if(mode){mode.value='online';mode.dispatchEvent(new Event('change'));}})()",completionHandler:nil)}
   if ProcessInfo.processInfo.arguments.contains("-manager-smoke") && webView === offline {
-   webView.evaluateJavaScript("(()=>{const previous=localStorage.getItem('manager.qa-probe');localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({previous,title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative});})()") { result,error in if let text=result as? String { NSLog("MANAGER_SMOKE %@",text) } else { NSLog("MANAGER_SMOKE_ERROR %@",String(describing:error)) } }
+   webView.evaluateJavaScript("(()=>{const previous=localStorage.getItem('manager.qa-probe');localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({previous,title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative});})()") { result,error in if let text=result as? String { self.qaRecord(text); NSLog("MANAGER_SMOKE %@",text) } else { self.qaRecord("{\"error\":\"JavaScript evaluation failed\"}"); NSLog("MANAGER_SMOKE_ERROR %@",String(describing:error)) } }
   }
  }
  func userContentController(_ controller:WKUserContentController,didReceive message:WKScriptMessage){
@@ -67,5 +72,9 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  func documentPickerWasCancelled(_ controller:UIDocumentPickerViewController){clearExport()}
  func documentPicker(_ controller:UIDocumentPickerViewController,didPickDocumentsAt urls:[URL]){clearExport()}
  private func clearExport(){if let file=exportURL{try? FileManager.default.removeItem(at:file.deletingLastPathComponent())};exportURL=nil}
+ private func qaRecord(_ text:String, name:String = "manager-smoke.json") {
+  guard ProcessInfo.processInfo.arguments.contains("-manager-smoke"), let folder=FileManager.default.urls(for:.cachesDirectory,in:.userDomainMask).first else{return}
+  try? text.write(to:folder.appendingPathComponent(name),atomically:true,encoding:.utf8)
+ }
  private func showError(_ text:String){let alert=UIAlertController(title:"Менеджер",message:text,preferredStyle:.alert);alert.addAction(UIAlertAction(title:"Понятно",style:.default));present(alert,animated:true)}
 }

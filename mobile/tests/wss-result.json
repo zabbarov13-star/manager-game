@@ -1,0 +1,6 @@
+{
+  "endpoint": "wss://manager-peer-server.onrender.com/peerjs/peerjs",
+  "status": 101,
+  "validWebSocketAccept": true,
+  "dataChannelTested": false
+}

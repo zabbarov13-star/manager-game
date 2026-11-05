@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://zabbarov13-star.github.io/manager-game/game-0.18.3.html",
+    "status": 200,
+    "contentType": "text/html; charset=utf-8"
+  },
+  {
+    "url": "https://manager-peer-server.onrender.com/health",
+    "status": 200,
+    "contentType": "application/json; charset=utf-8"
+  },
+  {
+    "url": "https://manager-peer-server.onrender.com/peerjs/peerjs/id",
+    "status": 200,
+    "contentType": "text/html; charset=utf-8"
+  }
+]

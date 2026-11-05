@@ -1,7 +1,7 @@
 name: Manager mobile builds
 on:
   push:
-    branches: ['mobile/release-0.19']
+    branches: ['main', 'mobile/release-0.19']
     paths: ['mobile/**', '.github/workflows/mobile-build.yml']
   workflow_dispatch:
 permissions:
@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   ios-build-and-simulators:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v6
@@ -80,7 +80,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/manager-key.p12" "$RUNNER_TEMP/manager-password.txt"
   ios-signed-ipa:
     if: vars.MANAGER_IOS_SIGNING == 'true'
-    runs-on: macos-15
+    runs-on: macos-15-intel
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6

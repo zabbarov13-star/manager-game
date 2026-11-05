@@ -34,4 +34,3 @@ jobs:
           name: Manager-iOS-build-and-QA
           path: mobile/out/
           retention-days: 30
-

@@ -32,7 +32,7 @@ public final class MainActivity extends Activity {
     if(online&&"https".equals(u.getScheme())&&!HOST.equals(u.getHost()))return null;
     return new WebResourceResponse("text/plain","UTF-8",403,"Forbidden",Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));
    }
-   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'))",null);}
+   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'));console.log('MANAGER_READY '+JSON.stringify({secure:isSecureContext,title:document.title,buttons:document.querySelectorAll('button').length,rtc:typeof RTCPeerConnection,native:!!window.ManagerNative}))",null);}
   });
   web.setWebChromeClient(new WebChromeClient(){
    @Override public void onPermissionRequest(PermissionRequest r){r.deny();} // Data-channel WebRTC needs no camera/microphone permission.
