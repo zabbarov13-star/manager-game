@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: manager-mobile-${{ github.ref }}
+  group: manager-mobile-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
 jobs:
   ios-build-and-simulators:
