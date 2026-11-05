@@ -1,0 +1,37 @@
+name: Manager iOS Intel verification
+on:
+  push:
+    branches: ['mobile/release-0.19']
+    paths: ['.github/workflows/ios-intel-build.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios-build-and-simulators:
+    runs-on: macos-15-intel
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build embedded game
+        run: python3 mobile/tools/build-client.py
+      - name: Verify shared game rules and P2P state
+        run: node mobile/tests/engine.cjs
+      - name: Compile real simulator application
+        run: xcodebuild -project mobile/ios/Manager.xcodeproj -scheme Manager -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath mobile/derived CODE_SIGNING_ALLOWED=NO build
+      - name: Compile unsigned device archive
+        run: xcodebuild -project mobile/ios/Manager.xcodeproj -scheme Manager -configuration Release -destination 'generic/platform=iOS' -archivePath "$PWD/mobile/out/Manager-device-unsigned.xcarchive" CODE_SIGNING_ALLOWED=NO archive
+      - name: Install and launch on iPhone and iPad simulators
+        run: python3 mobile/tools/ios-smoke.py
+      - name: Preserve app executable permissions in tar
+        if: always()
+        run: |
+          if [ -d mobile/derived/Build/Products/Debug-iphonesimulator/Manager.app ]; then
+            tar -czf mobile/out/Manager-Simulator.app.tar.gz -C mobile/derived/Build/Products/Debug-iphonesimulator Manager.app
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Manager-iOS-build-and-QA
+          path: mobile/out/
+          retention-days: 30
+
