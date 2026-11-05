@@ -1,0 +1,11 @@
+{
+  "alias": "manager-release",
+  "certificateSha256": "48bfb1a5e243942ad9e4e9c0c01e0420507f9ec421ff6afca611a8b06c811d4d",
+  "applicationId": "ru.manager.backtothepast",
+  "algorithm": "RSA-3072",
+  "versionCode": 18,
+  "versionName": "0.18.0",
+  "minimumAndroidApi": 26,
+  "targetAndroidApi": 35,
+  "schemaVersion": 1
+}

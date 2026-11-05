@@ -1,0 +1,102 @@
+name: Manager mobile builds
+on:
+  push:
+    branches: ['mobile/release-0.19']
+    paths: ['mobile/**', '.github/workflows/mobile-build.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: manager-mobile-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  ios-build-and-simulators:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build embedded game
+        run: python3 mobile/tools/build-client.py
+      - name: Compile real simulator application
+        run: xcodebuild -project mobile/ios/Manager.xcodeproj -scheme Manager -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath mobile/derived CODE_SIGNING_ALLOWED=NO build
+      - name: Compile unsigned device archive
+        run: xcodebuild -project mobile/ios/Manager.xcodeproj -scheme Manager -configuration Release -destination 'generic/platform=iOS' -archivePath "$PWD/mobile/out/Manager-device-unsigned.xcarchive" CODE_SIGNING_ALLOWED=NO archive
+      - name: Install and launch on iPhone and iPad simulators
+        run: python3 mobile/tools/ios-smoke.py
+      - name: Preserve app executable permissions in tar
+        if: always()
+        run: |
+          if [ -d mobile/derived/Build/Products/Debug-iphonesimulator/Manager.app ]; then
+            tar -czf mobile/out/Manager-Simulator.app.tar.gz -C mobile/derived/Build/Products/Debug-iphonesimulator Manager.app
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Manager-iOS-build-and-QA
+          path: mobile/out/
+          retention-days: 30
+  android-signed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Check protected signing inputs
+        id: signing
+        env:
+          KEY_B64: ${{ secrets.MANAGER_ANDROID_KEY_B64 }}
+          KEY_PASSWORD: ${{ secrets.MANAGER_ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEY_B64" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo 'available=false' >> "$GITHUB_OUTPUT"
+            echo '::notice::Android release signing secrets are not configured. No replacement key is generated. Local signed APK is supplied separately.'
+          else
+            umask 077
+            printf '%s' "$KEY_B64" | base64 --decode > "$RUNNER_TEMP/manager-key.p12"
+            printf '%s' "$KEY_PASSWORD" > "$RUNNER_TEMP/manager-password.txt"
+            echo 'available=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build and verify signed APK
+        if: steps.signing.outputs.available == 'true'
+        run: |
+          python3 mobile/tools/build-client.py
+          python3 mobile/android/setup-sdk.py --directory "$RUNNER_TEMP/android-sdk"
+          python3 mobile/android/build.py --sdk "$RUNNER_TEMP/android-sdk" --html "$PWD/mobile/android/assets/game.html" --output "$PWD/mobile/out/Manager-Android.apk" --keystore "$RUNNER_TEMP/manager-key.p12" --password-file "$RUNNER_TEMP/manager-password.txt"
+      - uses: actions/upload-artifact@v4
+        if: steps.signing.outputs.available == 'true'
+        with:
+          name: Manager-Android-signed
+          path: |
+            mobile/out/Manager-Android.apk
+            mobile/out/Manager-Android.json
+          retention-days: 30
+      - name: Remove signing inputs
+        if: always()
+        run: rm -f "$RUNNER_TEMP/manager-key.p12" "$RUNNER_TEMP/manager-password.txt"
+  ios-signed-ipa:
+    if: vars.MANAGER_IOS_SIGNING == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 mobile/tools/build-client.py
+      - name: Sign and export real IPA using protected inputs
+        env:
+          IOS_CERTIFICATE_B64: ${{ secrets.IOS_CERTIFICATE_B64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          IOS_PROFILE_B64: ${{ secrets.IOS_PROFILE_B64 }}
+          IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
+          IOS_EXPORT_METHOD: ${{ vars.IOS_EXPORT_METHOD }}
+        run: python3 mobile/tools/ios-sign.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Manager-iPhone-iPad-signed-IPA
+          path: mobile/out/ipa/*.ipa
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove temporary Apple keychain and profile
+        if: always()
+        run: python3 mobile/tools/ios-clean.py

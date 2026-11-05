@@ -1,0 +1,15 @@
+mobile/android/assets/game.html
+mobile/android/build/
+mobile/ios/Manager/game.html
+mobile/ios/Manager/compact-room.js
+mobile/derived/
+mobile/out/
+mobile/web/
+mobile/build-info.json
+**/__pycache__/
+**/node_modules/
+**/*.p12
+**/*.jks
+**/*.keystore
+**/*.mobileprovision
+**/password.txt
