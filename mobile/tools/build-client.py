@@ -27,7 +27,7 @@ s=s.replace('</body>','<script>'+(tools/'compact-room.js').read_text()+'</script
 web=root/'mobile/web';web.mkdir(exist_ok=True);(web/'index.html').write_text(s)
 bootstrap='<script>'+(tools/'native-bootstrap.js').read_text()+'</script>'
 csp="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data: blob:; connect-src https: wss: blob: data:; object-src 'none'; base-uri 'none'; frame-src 'none'"
-native=s.replace('<head>','<head><meta http-equiv="Content-Security-Policy" content="'+csp+'">'+bootstrap,1)
+native=s.replace('<head>','<head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="'+csp+'">'+bootstrap,1)
 for path in ['mobile/android/assets/game.html','mobile/ios/Manager/game.html']:
  p=root/path;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(native)
 (root/'mobile/ios/Manager/compact-room.js').write_text((tools/'compact-room.js').read_text())
