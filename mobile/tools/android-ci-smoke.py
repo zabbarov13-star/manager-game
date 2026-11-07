@@ -1,9 +1,13 @@
-"""Build an ephemeral Android QA APK and exercise it in the emulator."""
+"""Reconstruct the delivered APK from its public signature bytes and embedded game, then test it."""
 from pathlib import Path
 import hashlib
 import json
 import os
-import secrets
+import base64
+import struct
+import sys
+import zipfile
+import zlib
 import subprocess
 import tempfile
 import time
@@ -13,21 +17,31 @@ def run(*args, timeout=120):
 
 out = Path('mobile/out')
 out.mkdir(exist_ok=True)
-profile_path = Path('mobile/android/release.json')
-profile = json.loads(profile_path.read_text())
+recipe = json.loads(Path('mobile/tests/android-apk-qa.json').read_text())
+asset = Path('mobile/android/assets/game.html')
+sdk = Path(os.environ['ANDROID_SDK_ROOT'])
 with tempfile.TemporaryDirectory() as directory:
-    key = Path(directory) / 'qa.p12'
-    password = Path(directory) / 'password.txt'
-    password.write_text(secrets.token_urlsafe(32))
-    password.chmod(0o600)
-    signing = ['-keystore', str(key), '-storepass:file', str(password), '-alias', profile['alias']]
-    run('keytool', '-genkeypair', *signing, '-keyalg', 'RSA', '-keysize', '3072',
-        '-validity', '2', '-dname', 'CN=Manager CI QA')
-    profile['certificateSha256'] = hashlib.sha256(run('keytool', '-exportcert', *signing)).hexdigest()
-    profile_path.write_text(json.dumps(profile))
-    subprocess.run(['python3', 'mobile/android/build.py', '--sdk', os.environ['ANDROID_SDK_ROOT'],
-        '--html', 'mobile/android/assets/game.html', '--output', str(Path(directory) / 'qa.apk'),
-        '--keystore', str(key), '--password-file', str(password)], check=True)
+    work = Path(directory)
+    compressor = zlib.compressobj(level=9, wbits=-15)
+    compressed = compressor.compress(asset.read_bytes()) + compressor.flush()
+    if hashlib.sha256(compressed).hexdigest() != recipe['assetDeflateSha256']:
+        aapt = str(sdk / 'build-tools/35.0.0/aapt2')
+        run(aapt, 'compile', '--dir', 'mobile/android/res', '-o', str(work / 'res.zip'))
+        run(aapt, 'link', '-o', str(work / 'assets.apk'), '-I', str(sdk / 'platforms/android-35/android.jar'),
+            '--manifest', 'mobile/android/AndroidManifest.xml', '-A', str(asset.parent), str(work / 'res.zip'))
+        packed = (work / 'assets.apk').read_bytes()
+        with zipfile.ZipFile(work / 'assets.apk') as archive:
+            info = archive.getinfo('assets/game.html')
+            offset = info.header_offset + 30 + sum(struct.unpack_from('<HH', packed, info.header_offset + 26))
+            compressed = packed[offset:offset+info.compress_size]
+    assert hashlib.sha256(compressed).hexdigest() == recipe['assetDeflateSha256'], 'Asset stream differs'
+    apk = work / 'qa.apk'
+    apk.write_bytes(base64.b64decode(recipe['before']) + compressed + base64.b64decode(recipe['after']))
+    assert hashlib.sha256(apk.read_bytes()).hexdigest() == recipe['apkSha256'], 'Signed APK bytes differ'
+    run(str(sdk / 'build-tools/35.0.0/apksigner'), 'verify', str(apk))
+    print('Exact signed APK verified:', recipe['apkSha256'], flush=True)
+    if '--verify-only' in sys.argv:
+        sys.exit(0)
     adb = str(Path(os.environ['ANDROID_SDK_ROOT']) / 'platform-tools/adb')
     run(adb, 'wait-for-device', timeout=600)
     deadline = time.monotonic() + 600
@@ -36,10 +50,10 @@ with tempfile.TemporaryDirectory() as directory:
             raise TimeoutError('Android emulator did not finish booting')
         time.sleep(5)
     run(adb, 'shell', 'cmd', 'connectivity', 'airplane-mode', 'enable')
-    install = run(adb, 'install', str(Path(directory) / 'qa.apk'))
+    install = run(adb, 'install', str(apk))
     assert b'Success' in install, install
     run(adb, 'logcat', '-c')
-    package = profile['applicationId']
+    package = recipe['applicationId']
     launch = run(adb, 'shell', 'am', 'start', '-W', '-n', package + '/ru.manager.backtothepast.MainActivity')
     (out / 'android-launch.txt').write_bytes(launch)
     deadline = time.monotonic() + 90
@@ -51,4 +65,4 @@ with tempfile.TemporaryDirectory() as directory:
     (out / 'android-runtime.txt').write_bytes(logs)
     assert b'MANAGER_READY' in logs and b'FATAL EXCEPTION' not in logs, 'WebView readiness not confirmed'
     (out / 'android-qa.json').write_text(json.dumps({'installed':True,'launchedOffline':True,
-        'applicationId':package,'signature':'ephemeral QA key','physicalDevice':False},indent=2))
+        'applicationId':package,'apkSha256':recipe['apkSha256'],'physicalDevice':False},indent=2))

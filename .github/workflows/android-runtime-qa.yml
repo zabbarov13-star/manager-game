@@ -22,8 +22,20 @@ jobs:
       - name: Prepare Android image and game
         run: |
           python3 mobile/tools/build-client.py
-          sdkmanager 'platform-tools' 'emulator' 'platforms;android-35' 'build-tools;35.0.0' 'system-images;android-35;google_apis;x86_64'
-          echo no | avdmanager create avd --name ManagerQA --package 'system-images;android-35;google_apis;x86_64' --force
+          sdk="$RUNNER_TEMP/manager-android-sdk"
+          mkdir -p "$sdk/cmdline-tools"
+          curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-16111833_latest.zip -o "$RUNNER_TEMP/android-cli.zip"
+          echo "e025545c62a8e64c7559119566a569fb1dec5f60  $RUNNER_TEMP/android-cli.zip" | sha1sum -c -
+          unzip -q "$RUNNER_TEMP/android-cli.zip" -d "$sdk/cmdline-tools"
+          mv "$sdk/cmdline-tools/cmdline-tools" "$sdk/cmdline-tools/latest"
+          cli="$sdk/cmdline-tools/latest/bin"
+          set +o pipefail
+          yes | "$cli/sdkmanager" --sdk_root="$sdk" --licenses > /dev/null
+          set -o pipefail
+          "$cli/sdkmanager" --sdk_root="$sdk" 'platform-tools' 'emulator' 'platforms;android-35' 'build-tools;35.0.0' 'system-images;android-35;google_apis;x86_64'
+          export ANDROID_HOME="$sdk" ANDROID_SDK_ROOT="$sdk"
+          echo no | "$cli/avdmanager" create avd --name ManagerQA --package 'system-images;android-35;google_apis;x86_64' --force
+          printf 'ANDROID_HOME=%s\nANDROID_SDK_ROOT=%s\n' "$sdk" "$sdk" >> "$GITHUB_ENV"
       - name: Install and launch offline
         run: |
           "$ANDROID_SDK_ROOT/emulator/emulator" -avd ManagerQA -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect > /tmp/manager-emulator.log 2>&1 &
