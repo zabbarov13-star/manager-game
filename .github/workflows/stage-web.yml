@@ -16,6 +16,12 @@ jobs:
           python3 mobile/tools/build-client.py
           python3 web/prepare-pages.py
           node --test mobile/tests/engine.cjs mobile/tests/native-gate.cjs
+      - name: Verify installation metadata and an offline reload in Chromium
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/pages-qa" playwright@1.56.1
+          "$RUNNER_TEMP/pages-qa/node_modules/.bin/playwright" install --with-deps chromium
+          python3 -m http.server 8765 --bind 127.0.0.1 &
+          NODE_PATH="$RUNNER_TEMP/pages-qa/node_modules" node web/pages-smoke.cjs
       - name: Save generated release to staging branch
         run: |
           git config user.name 'github-actions[bot]'

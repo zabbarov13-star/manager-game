@@ -21,6 +21,13 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
 assert game.count(b"<head>") == 1
 assert b"manager-peer-server.onrender.com" in game
 index = game.replace(b"<head>", b"<head>" + metadata, 1)
+badge = "Автономная версия <b>18</b>".encode()
+assert index.count(badge) == 1
+index = index.replace(badge, "Автономная версия <b>0.19.0</b>".encode())
+download = '<a href="https://manager-back-to-past-game.nilahim-boxing.chatgpt.site/download">Скачать игру · HTML / ZIP</a>'.encode()
+assert index.count(download) == 1
+index = index.replace(download, '<a href="./index.html" download="Manager-0.19.0.html">Скачать игру · HTML</a>'.encode())
+
 (root / "index.html").write_bytes(index)
 for name in ("manifest.webmanifest", "manager-icon.png"):
     shutil.copyfile(web / name, root / name)
