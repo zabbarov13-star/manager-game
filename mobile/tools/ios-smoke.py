@@ -1,6 +1,3 @@
-fatal: ambiguous argument '97ba4ddba469e964ee2e748b8813990251831cc6^{tree}': unknown revision or path not in the working tree.
-Use '--' to separate paths from revisions, like this:
-'git <command> [<revision>...] -- [<file>...]'
 """Run actual installed iPhone/iPad simulator apps; no claim about physical devices."""
 from pathlib import Path
 import argparse,subprocess,json,time,sys
