@@ -1,0 +1,40 @@
+name: iPhone and iPad runtime QA
+on:
+  push:
+    branches: ['mobile/release-0.19']
+    paths: ['.github/workflows/ios-runtime-qa.yml', 'mobile/tools/ios-smoke.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  simulator:
+    runs-on: macos-15-intel
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [iPhone, iPad]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: Manager-iOS-compiled-apps
+          run-id: 42100632807
+          github-token: ${{ github.token }}
+          path: mobile/out
+      - name: Restore existing Xcode build
+        run: |
+          mkdir -p mobile/derived/Build/Products/Debug-iphonesimulator
+          tar -xzf mobile/out/Manager-Simulator.app.tar.gz -C mobile/derived/Build/Products/Debug-iphonesimulator
+      - name: Install, launch and verify storage after relaunch
+        run: python3 mobile/tools/ios-smoke.py --family '${{ matrix.family }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Manager-QA-${{ matrix.family }}
+          path: |
+            mobile/out/*probe.json
+            mobile/out/*portrait.png
+            mobile/out/*results.json
+            mobile/out/*error.txt
