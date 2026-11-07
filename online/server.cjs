@@ -18,11 +18,12 @@ const allowedAssets = { '/': ['index.html', 'text/html; charset=utf-8'],
   '/manager-icon.png': ['manager-icon.png', 'image/png'] };
 const day = 86400000;
 
-function createRoomServer({ database, allowedOrigins = [] }) {
+function createRoomServer({ database, allowedOrigins = [], journal = 'wal', release }) {
+  if (!['wal', 'delete'].includes(journal)) throw Error('Unsupported SQLite journal mode');
   if (database !== ':memory:') mkdirSync(dirname(resolve(database)), { recursive: true, mode: 0o700 });
   const sqlite = new DatabaseSync(database);
   sqlite.exec(`
-    PRAGMA journal_mode=WAL;
+    PRAGMA journal_mode=${journal.toUpperCase()};
     PRAGMA busy_timeout=3000;
     CREATE TABLE IF NOT EXISTS online_rooms (
       code TEXT PRIMARY KEY, revision INTEGER NOT NULL, data TEXT NOT NULL, updated_at INTEGER NOT NULL
@@ -141,7 +142,7 @@ function createRoomServer({ database, allowedOrigins = [] }) {
       if (req.method !== 'GET') { res.writeHead(405).end(); return; }
       if (pathname === '/health') {
         sqlite.prepare('SELECT 1').get();
-        res.writeHead(200, { 'Content-Type': 'application/json' }).end('{"ok":true}');
+        res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true, ...(release && { release }) }));
         return;
       }
       const asset = Object.hasOwn(allowedAssets, pathname) && allowedAssets[pathname];
@@ -162,6 +163,7 @@ if (require.main === module) {
   process.umask(0o077);
   createRoomServer({
     database: process.env.ROOM_DATABASE ?? 'data/rooms.sqlite',
+    journal: process.env.ROOM_JOURNAL ?? 'wal',
     allowedOrigins: (process.env.ROOM_ALLOWED_ORIGINS ?? '').split(',').filter(Boolean),
   }).listen(Number(process.env.PORT ?? 8080), process.env.ROOM_BIND ?? '127.0.0.1');
 }

@@ -24,7 +24,7 @@ async function stop(server) {
 test('two HTTP entrances share the room, replay lost writes and survive restart', async t => {
   const folder = mkdtempSync(join(tmpdir(), 'manager-rooms-'));
   const database = join(folder, 'rooms.sqlite');
-  let server = createRoomServer({ database, allowedOrigins: ['https://game.example.test'] });
+  let server = createRoomServer({ database, journal: process.env.ROOM_JOURNAL ?? 'wal', allowedOrigins: ['https://game.example.test'] });
   let origin = await listen(server);
   let loseResponse = false;
   const primary = createServer(async (req, res) => {
@@ -82,7 +82,7 @@ test('two HTTP entrances share the room, replay lost writes and survive restart'
   const seen = await call('', room, undefined, guest.token, 200, fallback);
   assert.deepEqual(seen.room.game, confirmed.room.game);
   await stop(server);
-  server = createRoomServer({ database, allowedOrigins: ['https://game.example.test'] });
+  server = createRoomServer({ database, journal: process.env.ROOM_JOURNAL ?? 'wal', allowedOrigins: ['https://game.example.test'] });
   origin = await listen(server);
   const resumed = await call(origin, room, undefined, guest.token);
   assert.equal(resumed.room.gameRevision, confirmed.room.gameRevision);
