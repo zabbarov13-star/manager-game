@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "Менеджер — Назад в прошлое",
+  "short_name": "Менеджер",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#17384d",
+  "theme_color": "#17384d",
+  "icons": [{"src":"./manager-icon.png","sizes":"512x512","type":"image/png","purpose":"any"}]
+}
