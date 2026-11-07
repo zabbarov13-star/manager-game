@@ -1,7 +1,7 @@
 {
   "alias": "manager-personal",
-  "certificateSha256": "2eafd903f8321a179c9413bfcaf4e9c3bdc7b72cb6f837a6de1ffb9b4408ec36",
-  "applicationId": "ru.manager.backtothepast.personal",
+  "certificateSha256": "a86b7983011f10e1d70fc0e91d0c712f8cd7b8013828c10c39c3e6470e837898",
+  "applicationId": "ru.manager.backtothepast.personal.v019",
   "algorithm": "RSA-3072",
   "versionCode": 20,
   "versionName": "0.19.0",
