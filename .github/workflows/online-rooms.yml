@@ -24,7 +24,7 @@ jobs:
           NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
       - name: Package test server and game
         run: |
-          tar -czf manager-online-test.tar.gz online/server.cjs online/alwaysdata-start.cjs online/alwaysdata-install.sh online/dist online/README.md
+          tar -czf manager-online-test.tar.gz online/server.cjs online/alwaysdata-start.cjs online/alwaysdata-install.sh online/home-start.cjs online/Start-Manager-Test.cmd online/dist online/README.md online/FREE-HOST-RU.md
       - uses: actions/upload-artifact@v4
         with:
           name: manager-online-test
