@@ -1,6 +1,6 @@
 const scope = new URL(self.registration.scope);
 const prefix = 'manager-pages:' + scope.pathname + ':';
-const cacheName = prefix + '3d2f33b973cad9f2';
+const cacheName = prefix + 'a790aef9c5bab3d6';
 const entry = new URL('index.html', scope).href;
 const assets = ['index.html', 'manifest.webmanifest', 'manager-icon.png'];
 
