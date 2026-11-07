@@ -1,0 +1,25 @@
+name: Prepare Manager 0.19.0 web release
+on:
+  push:
+    branches: ['web/release-0.19']
+    paths: ['.github/workflows/stage-web.yml', 'web/**']
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the existing web client
+        run: |
+          python3 mobile/tools/build-client.py
+          python3 web/prepare-pages.py
+          node --test mobile/tests/engine.cjs mobile/tests/native-gate.cjs
+      - name: Save generated release to staging branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js manifest.webmanifest manager-icon.png
+          git commit -m 'Generate Manager 0.19.0 for GitHub Pages'
+          git push origin HEAD:refs/heads/web/release-0.19
