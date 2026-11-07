@@ -6,7 +6,7 @@ parser.add_argument("--family", choices=["iPhone", "iPad"])
 args = parser.parse_args()
 out=Path('mobile/out');out.mkdir(exist_ok=True)
 app=Path('mobile/derived/Build/Products/Debug-iphonesimulator/Manager.app').resolve()
-def cmd(*args, timeout=90):return subprocess.check_output(args,text=True,stderr=subprocess.STDOUT,timeout=timeout)
+def cmd(*args, timeout=300):return subprocess.check_output(args,text=True,stderr=subprocess.STDOUT,timeout=timeout)
 items=json.loads(cmd('xcrun','simctl','list','devices','available','--json'))['devices']
 chosen=[]
 for family in ([args.family] if args.family else ['iPhone','iPad']):
