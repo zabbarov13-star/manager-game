@@ -40,6 +40,10 @@ replace("ensureWeb();remember(await api('join',{name:name.value,...appearance,in
   "ensureWeb();const credentials={code:enteredCode()},invite=invitation.value.trim();const preview=await api('lobby',{invite},credentials);releaseChoices(preview.seats);remember(await api('join',{name:name.value,...appearance,invite},credentials));");
 
 replace('1800*2**Math.min(failures,4)', '(1800+Math.random()*500)*2**Math.min(failures,4)');
+if (process.env.ROOM_SHARED_HOST === '1') {
+  replace('setInterval(poll,1800);', 'setInterval(poll,3000);');
+}
+
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, 'engine.cjs'), engine);
