@@ -1,3 +1,6 @@
+fatal: ambiguous argument '97ba4ddba469e964ee2e748b8813990251831cc6^{tree}': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
 """Run actual installed iPhone/iPad simulator apps; no claim about physical devices."""
 from pathlib import Path
 import argparse,subprocess,json,time,sys
@@ -6,7 +9,7 @@ parser.add_argument("--family", choices=["iPhone", "iPad"])
 args = parser.parse_args()
 out=Path('mobile/out');out.mkdir(exist_ok=True)
 app=Path('mobile/derived/Build/Products/Debug-iphonesimulator/Manager.app').resolve()
-def cmd(*args):return subprocess.check_output(args,text=True,stderr=subprocess.STDOUT,timeout=90)
+def cmd(*args, timeout=90):return subprocess.check_output(args,text=True,stderr=subprocess.STDOUT,timeout=timeout)
 items=json.loads(cmd('xcrun','simctl','list','devices','available','--json'))['devices']
 chosen=[]
 for family in ([args.family] if args.family else ['iPhone','iPad']):
@@ -17,7 +20,7 @@ report=[]
 for family,d in chosen:
  udid=d['udid'];subprocess.run(['xcrun','simctl','boot',udid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=60)
  subprocess.run(['xcrun','simctl','bootstatus',udid,'-b'],check=True,timeout=600)
- cmd('xcrun','simctl','install',udid,str(app));cmd('xcrun','simctl','launch',udid,'ru.manager.backtothepast','-manager-smoke')
+ cmd('xcrun','simctl','install',udid,str(app),timeout=300);cmd('xcrun','simctl','launch',udid,'ru.manager.backtothepast','-manager-smoke')
  container=Path(cmd('xcrun','simctl','get_app_container',udid,'ru.manager.backtothepast','data').strip());probe=container/'Library/Caches/manager-smoke.json'
  deadline=time.monotonic()+120
  while not probe.exists() and time.monotonic()<deadline:time.sleep(2)
