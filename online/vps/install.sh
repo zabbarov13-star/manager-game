@@ -90,6 +90,7 @@ cat > /etc/systemd/system/manager-firewall.service <<'UNIT'
 [Unit]
 Description=Manager VPS inbound firewall
 Before=network-pre.target
+After=nftables.service
 Wants=network-pre.target
 [Service]
 Type=oneshot

@@ -1,7 +1,7 @@
 const { createServer } = require('node:http');
 const { DatabaseSync } = require('node:sqlite');
 const { createCipheriv, createDecipheriv, createHash, randomBytes } = require('node:crypto');
-const { readFileSync, mkdirSync, statfsSync } = require('node:fs');
+const { createReadStream, mkdirSync, statfsSync } = require('node:fs');
 const { resolve, dirname } = require('node:path');
 const { isIP } = require('node:net');
 const { handleRooms } = require('./dist/engine.cjs');
@@ -185,7 +185,16 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
       }
       const asset = Object.hasOwn(allowedAssets, pathname) && allowedAssets[pathname];
       if (!asset) { res.writeHead(404).end(); return; }
-      res.writeHead(200, { 'Content-Type': asset[1] }).end(readFileSync(resolve(__dirname, 'dist', asset[0])));
+      const stream = createReadStream(resolve(__dirname, 'dist', asset[0]));
+      stream.once('open', () => {
+        res.writeHead(200, { 'Content-Type': asset[1] });
+        stream.pipe(res);
+      });
+      stream.once('error', () => {
+        if (!res.headersSent) res.writeHead(503).end();
+        else res.destroy();
+      });
+      res.once('close', () => stream.destroy());
     } catch (error) {
       // Leave request bodies, invitation codes and credentials out of logs.
       console.error('ROOM_HTTP_FAILED', error.code ?? 'internal');
@@ -193,6 +202,7 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
       res.end('{"error":"Игровой сервер временно недоступен."}');
     }
   });
+  server.maxConnections = 256;
   server.on('close', () => sqlite.close());
   return server;
 }
