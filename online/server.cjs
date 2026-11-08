@@ -1,8 +1,9 @@
 const { createServer } = require('node:http');
 const { DatabaseSync } = require('node:sqlite');
 const { createCipheriv, createDecipheriv, createHash, randomBytes } = require('node:crypto');
-const { readFileSync, mkdirSync } = require('node:fs');
+const { readFileSync, mkdirSync, statfsSync } = require('node:fs');
 const { resolve, dirname } = require('node:path');
+const { isIP } = require('node:net');
 const { handleRooms } = require('./dist/engine.cjs');
 
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -10,7 +11,7 @@ const keyFor = id => Buffer.from(hash('manager-response-v1:' + id), 'hex');
 const json = (error, status) => new Response(JSON.stringify({ error }), {
   status, headers: { 'Content-Type': 'application/json; charset=utf-8' },
 });
-const route = /^\/api\/rooms(?:\/[A-Z2-9]{6}(?:\/(?:join|lobby|invite|appearance|ready|start|action|chat))?)?$/;
+const route = /^\/api\/rooms(?:\/[A-Z2-9]{6}(?:\/(?:join|lobby|invite|appearance|ready|start|action|chat|leave))?)?$/;
 const allowedAssets = { '/': ['index.html', 'text/html; charset=utf-8'],
   '/index.html': ['index.html', 'text/html; charset=utf-8'],
   '/sw.js': ['sw.js', 'text/javascript; charset=utf-8'],
@@ -18,13 +19,14 @@ const allowedAssets = { '/': ['index.html', 'text/html; charset=utf-8'],
   '/manager-icon.png': ['manager-icon.png', 'image/png'] };
 const day = 86400000;
 
-function createRoomServer({ database, allowedOrigins = [], journal = 'wal', release }) {
+function createRoomServer({ database, allowedOrigins = [], journal = 'wal', release, trustProxy = false, publicEnabled = true }) {
   if (!['wal', 'delete'].includes(journal)) throw Error('Unsupported SQLite journal mode');
   if (database !== ':memory:') mkdirSync(dirname(resolve(database)), { recursive: true, mode: 0o700 });
   const sqlite = new DatabaseSync(database);
   sqlite.exec(`
     PRAGMA journal_mode=${journal.toUpperCase()};
     PRAGMA busy_timeout=3000;
+    PRAGMA max_page_count=98304;
     CREATE TABLE IF NOT EXISTS online_rooms (
       code TEXT PRIMARY KEY, revision INTEGER NOT NULL, data TEXT NOT NULL, updated_at INTEGER NOT NULL
     );
@@ -32,6 +34,7 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
       id TEXT PRIMARY KEY, signature TEXT NOT NULL, status INTEGER NOT NULL, sealed TEXT NOT NULL, expires INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS replay_expiry ON replay(expires);
+    CREATE INDEX IF NOT EXISTS room_updated ON online_rooms(updated_at);
   `);
   const DB = { prepare(sql) {
     const statement = sqlite.prepare(sql);
@@ -46,6 +49,24 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
   const replay = sqlite.prepare('SELECT * FROM replay WHERE id = ?');
   const save = sqlite.prepare('INSERT INTO replay VALUES (?, ?, ?, ?, ?)');
   const purge = sqlite.prepare('DELETE FROM replay WHERE expires <= ?');
+  const count = sqlite.prepare('SELECT count(*) AS n FROM online_rooms');
+  const purgeRooms = sqlite.prepare(`DELETE FROM online_rooms WHERE
+    (updated_at < ? AND json_extract(data,'$.game') IS NULL) OR
+    (updated_at < ? AND json_extract(data,'$.game.phase') = 'over') OR updated_at < ?`);
+  const limiters = new Map();
+  function throttle(key, max, interval) {
+    const now = Date.now();
+    let bucket = limiters.get(key);
+    if (!bucket || bucket.until <= now) {
+      if (limiters.size >= 4096) {
+        for (const [id, value] of limiters) if (value.until <= now) limiters.delete(id);
+        if (limiters.size >= 4096) return false;
+      }
+      bucket = { count: 0, until: now + interval };
+      limiters.set(key, bucket);
+    }
+    return ++bucket.count <= max;
+  }
   let cleanupAt = 0;
   let queue = Promise.resolve();
   let queued = 0;
@@ -54,7 +75,10 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
     const now = Date.now();
     sqlite.exec('BEGIN IMMEDIATE');
     try {
-      if (now >= cleanupAt) purge.run(now);
+      if (now >= cleanupAt) {
+        purge.run(now);
+        purgeRooms.run(now - day, now - 7 * day, now - 30 * day);
+      }
       const lookup = id && hash(id);
       const signature = id && hash(JSON.stringify([request.url, request.headers.get('Authorization'), body]));
       const cached = lookup && replay.get(lookup);
@@ -69,7 +93,13 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
           result = new Response(data, { status: cached.status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
         }
       } else {
-        result = await handleRooms(request, { DB });
+        const creating = request.method === 'POST' && new URL(request.url).pathname === '/api/rooms';
+        if (creating && count.get().n >= 1000) result = json('Сервер достиг лимита комнат.', 503);
+        else if (creating && database !== ':memory:') {
+          const disk = statfsSync(dirname(resolve(database)));
+          if (disk.bavail * disk.bsize < 128 * 1024 * 1024) result = json('Сервер временно не создаёт комнаты.', 503);
+        }
+        result ??= await handleRooms(request, { DB, publicEnabled });
         if (result.status >= 500) {
           sqlite.exec('ROLLBACK');
           return result;
@@ -92,8 +122,16 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
   }
 
   async function api(req, pathname) {
-    if (!route.test(pathname)) return json('Комната или действие не найдены.', 404);
+    if (!route.test(pathname) && pathname !== '/api/rooms/PUBLIC') return json('Комната или действие не найдены.', 404);
     if (!['GET', 'POST'].includes(req.method)) return json('Метод не поддерживается.', 405);
+    const peer = req.socket.remoteAddress;
+    const forwarded = req.headers['x-real-ip'];
+    const client = trustProxy && ['127.0.0.1','::1','::ffff:127.0.0.1'].includes(peer) &&
+      typeof forwarded === 'string' && isIP(forwarded) ? forwarded : peer;
+    if (!throttle('api:' + client, 120, 1000) ||
+        (req.method === 'POST' && pathname === '/api/rooms' && !throttle('create:' + client, 8, 60000))) {
+      return json('Слишком много запросов. Повторите позже.', 429);
+    }
     let id, body;
     if (req.method === 'POST') {
       id = req.headers['idempotency-key'];
@@ -164,6 +202,7 @@ if (require.main === module) {
   createRoomServer({
     database: process.env.ROOM_DATABASE ?? 'data/rooms.sqlite',
     journal: process.env.ROOM_JOURNAL ?? 'wal',
+    trustProxy: process.env.ROOM_TRUST_PROXY === '1',
     allowedOrigins: (process.env.ROOM_ALLOWED_ORIGINS ?? '').split(',').filter(Boolean),
   }).listen(Number(process.env.PORT ?? 8080), process.env.ROOM_BIND ?? '127.0.0.1');
 }
