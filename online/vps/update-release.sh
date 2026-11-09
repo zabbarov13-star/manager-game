@@ -46,7 +46,7 @@ if [[ "$old" == "$release" ]]; then
 fi
 systemctl start manager-backup.service
 switch_to() {
-  ln -s -- "$1" "$work/next"
+  ln -sfn -- "$1" "$work/next"
   mv -Tf -- "$work/next" "$root/current"
 }
 rollback() {

@@ -28,6 +28,8 @@ module.exports = function boardControls(replace) {
   replace('busy=false;displayPositions=null;hand.hidden=true;setSelected(current().position);render();',
     'busy=false;displayPositions=null;hand.hidden=true;if(first)setSelected(current().position);render();');
   replace("for(const id of moveSteps(state.position,sum)){", "camera.resume();for(const id of moveSteps(state.position,sum)){");
+  replace('Нажмите клетку для просмотра · тяните поле или прокручивайте колёсиком',
+    'Нажмите клетку для просмотра · масштаб колёсиком или двумя пальцами');
   replace('</head>', `<style>
 #board-viewport,#board-viewport :is(button,svg,img){touch-action:pan-x pan-y}
 #board .tile.selected .tile-bg{stroke:#0b4165;stroke-width:5}

@@ -67,14 +67,6 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       beforeLanding(state, 2);
       await desktop.evaluate(state => {
         localStorage.setItem('manager.match.v2', JSON.stringify(state));
-        const key = Object.keys(localStorage).find(name => {
-          try { return JSON.parse(localStorage.getItem(name))?.mode === 'field-module'; } catch { return false; }
-        });
-        if (key) {
-          const settings = JSON.parse(localStorage.getItem(key));
-          settings.settings.reducedMotion = true;
-          localStorage.setItem(key, JSON.stringify(settings));
-        }
       }, state);
       await desktop.reload();
       const follow = level !== 2;
@@ -100,7 +92,19 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       });
       await desktop.locator('#roll-button').click();
       const build = desktop.locator('#property-card').getByRole('button', { name: level === 4 ? /Построить предприятие/ : /Построить филиал/ });
-      await build.waitFor();
+      try {
+        await build.waitFor({ timeout: 6000 });
+      } catch (error) {
+        const info = await desktop.evaluate(() => {
+          const saved = JSON.parse(localStorage.getItem('manager.match.v2'));
+          return { phase: saved?.phase, position: saved?.players[0].position, dice: saved?.lastDice,
+            selected: document.querySelector('.tile.selected')?.dataset.id,
+            current: document.querySelector('.turn-panel h2')?.textContent,
+            card: document.querySelector('#property-card')?.textContent?.slice(-500),
+            alert: document.querySelector('#match-error')?.textContent };
+        });
+        throw new Error('Construction stage ' + level + ': ' + JSON.stringify({ info, errors }), { cause: error });
+      }
       assert.equal(await desktop.locator('.tile.selected').getAttribute('data-id'), '2');
       const boardScroll = await view.evaluate(node => node.scrollTop);
       assert.equal(boardScroll > 0, follow);
