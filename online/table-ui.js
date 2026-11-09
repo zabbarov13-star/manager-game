@@ -50,6 +50,12 @@ function mountChatView({ tab, panel, messages }) {
     messages.scrollTop = messages.scrollHeight;
   });
   document.addEventListener('visibilitychange', markRead);
+  document.addEventListener('click', event => {
+    if (event.isTrusted && !tab.hidden && preference.checked &&
+        document.getElementById('sfx-on').checked && sound.ctx?.state !== 'running') {
+      unlock().catch(() => {});
+    }
+  });
 
   function notify() {
     if (!preference.checked || document.hidden || sound.ctx?.state !== 'running' ||
