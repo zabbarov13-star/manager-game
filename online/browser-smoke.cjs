@@ -7,6 +7,16 @@ const { createRoomServer } = require('./server.cjs');
 
 (async () => {
   const server = createRoomServer({ database: ':memory:' });
+  let roomUnavailable = false;
+  const [handleRequest] = server.listeners('request');
+  server.removeListener('request', handleRequest);
+  server.on('request', (request, response) => {
+    if (roomUnavailable && request.url.startsWith('/api/rooms/')) {
+      response.writeHead(503, { 'Content-Type': 'application/json' }).end('{"error":"QA outage"}');
+      return;
+    }
+    return handleRequest.call(server, request, response);
+  });
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const url = 'http://127.0.0.1:' + server.address().port;
@@ -154,10 +164,9 @@ const { createRoomServer } = require('./server.cjs');
     await b.waitForFunction(() => !!navigator.serviceWorker.controller);
     if (mobileBrowser) {
       // Exercise a room outage independently of WebKit's offline navigation emulation.
-      const roomAPI = '**/api/rooms/**';
-      await guest.route(roomAPI, route => route.abort());
+      roomUnavailable = true;
       await b.locator('.connection-status[data-state="reconnecting"]').waitFor({ state: 'attached' });
-      await guest.unroute(roomAPI);
+      roomUnavailable = false;
       await b.locator('.connection-status[data-state="connected"]').waitFor({ state: 'attached' });
       await b.reload({ waitUntil: 'load' });
     } else {
