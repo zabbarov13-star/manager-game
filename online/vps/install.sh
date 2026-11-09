@@ -2,6 +2,8 @@
 # Run as an authorized administrator from a trusted release bundle.
 set -euo pipefail
 test "$(id -u)" = 0
+# Public runtime files must remain readable when the deployment shell uses umask 077.
+umask 022
 domain=${1:?Pass the hostname already pointed at this VPS}
 ssh_port=${2:-22}
 [[ "$domain" =~ ^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$ && "$ssh_port" =~ ^[0-9]{1,5}$ ]]
@@ -30,6 +32,7 @@ tar -xJf "$node_file" --strip-components=1 -C node
 node_dir="/opt/manager-node-releases/${node_file%.tar.xz}"
 install -d /opt/manager-node-releases
 if [[ ! -d "$node_dir" ]]; then mv node "$node_dir"; fi
+chmod 0755 "$node_dir"
 ln -sfn "$node_dir" /opt/manager-node
 if [[ ! -s "$root/online/dist/index.html" || ! -s "$root/online/dist/engine.cjs" ]]; then
   /opt/manager-node/bin/node "$root/online/generate.cjs"
@@ -47,6 +50,9 @@ if [[ ! -d "$destination" ]]; then
   install -m 0644 "$root/online/server.cjs" "$destination/online/"
   install "$root/online/vps/backup.sh" "$destination/online/vps/"
 fi
+chmod -R a+rX "$destination/online/dist"
+runuser -u manager-online -- /opt/manager-node/bin/node --version
+runuser -u manager-online -- test -r "$destination/online/dist/engine.cjs"
 old=$(readlink /opt/manager-online/current || true)
 ln -sfn "$destination" /opt/manager-online/current
 for file in manager-online.service manager-backup.service manager-backup.timer; do
@@ -56,6 +62,7 @@ systemctl daemon-reload
 systemctl enable manager-online.service manager-backup.timer
 systemctl restart manager-online.service
 if ! curl --retry 8 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8080/health; then
+  journalctl -u manager-online.service -n 25 --no-pager >&2 || true
   if [[ -n "$old" ]]; then
     ln -sfn "$old" /opt/manager-online/current
     systemctl restart manager-online.service
