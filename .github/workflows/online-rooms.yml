@@ -27,6 +27,15 @@ jobs:
         with:
           name: manager-ui-screenshots
           path: ${{ runner.temp }}/manager-ui/*.png
+      - name: Test iPhone WebKit emulation against desktop Chromium
+        run: |
+          "$RUNNER_TEMP/online-qa/node_modules/.bin/playwright" install --with-deps webkit
+          UI_WEBKIT=1 UI_SCREENSHOTS="$RUNNER_TEMP/manager-ios" NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: manager-iphone-emulation
+          path: ${{ runner.temp }}/manager-ios/*.png
       - name: Check backup and restore
         run: |
           sudo apt-get update -qq

@@ -1,4 +1,4 @@
-const { chromium } = require('playwright');
+const { chromium, webkit, devices } = require('playwright');
 const assert = require('node:assert/strict');
 const { mkdirSync } = require('node:fs');
 const { join } = require('node:path');
@@ -10,13 +10,16 @@ const { createRoomServer } = require('./server.cjs');
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const url = 'http://127.0.0.1:' + server.address().port;
-  let browser;
+  let browser, mobileBrowser;
   const renderRequests = [];
   try {
     browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE || undefined });
     const errors = [];
     const host = await browser.newContext();
-    const guest = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    if (process.env.UI_WEBKIT === '1') mobileBrowser = await webkit.launch();
+    const guest = await (mobileBrowser ?? browser).newContext(mobileBrowser ? devices['iPhone 13'] : {
+      viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true,
+    });
     for (const context of [host, guest]) {
       await context.route('**/*onrender.com/**', route => {
         renderRequests.push(route.request().url());
@@ -176,6 +179,7 @@ const { createRoomServer } = require('./server.cjs');
     assert.deepEqual(errors, []);
     console.log('PASS independent browser contexts, invitation, shared roll, host tab closed, offline reload and reconnect');
   } finally {
+    await mobileBrowser?.close();
     await browser?.close();
     const closed = once(server, 'close');
     server.close();
