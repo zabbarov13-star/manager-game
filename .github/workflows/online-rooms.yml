@@ -1,0 +1,53 @@
+name: Authoritative online rooms
+on:
+  pull_request:
+    paths: ['online/**', 'index.html', '.github/workflows/online-rooms.yml']
+permissions:
+  contents: read
+jobs:
+  rooms:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node online/generate.cjs
+      - run: node --test online/server.test.cjs online/public.test.cjs tests/p2p-routing-baseline.cjs
+      - run: ROOM_JOURNAL=delete node --test online/server.test.cjs
+      - run: node --test online/alwaysdata-smoke.cjs
+      - name: Test two browser sessions and reconnection
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/online-qa" playwright@1.56.1
+          "$RUNNER_TEMP/online-qa/node_modules/.bin/playwright" install --with-deps chromium
+          NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
+      - name: Check backup and restore
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sqlite3
+          bash -n online/vps/install.sh
+          sh online/vps/backup-smoke.sh
+      - name: Exercise independent rooms
+        run: LOAD_SECONDS=10 node online/load.cjs
+      - name: Package test server and game
+        run: |
+          tar -czf manager-online-test.tar.gz online/server.cjs online/alwaysdata-start.cjs online/alwaysdata-install.sh online/home-start.cjs online/Start-Manager-Test.cmd online/dist online/README.md online/FREE-HOST-RU.md online/vps online/load.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manager-online-test
+          path: manager-online-test.tar.gz
+  johnny:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - run: sh online/package-johnny.sh manager-johnny.zip
+      - run: node --test online/johnny-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manager-johnny
+          path: manager-johnny.zip

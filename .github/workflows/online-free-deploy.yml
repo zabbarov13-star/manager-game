@@ -1,0 +1,53 @@
+name: Deploy isolated free online test
+on:
+  push:
+    branches: ['online/issue-1-baseline']
+    paths: ['online/**', '.github/workflows/online-free-deploy.yml']
+permissions:
+  contents: read
+concurrency:
+  group: manager-alwaysdata-test
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: vars.MANAGER_FREE_HOST_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ACCOUNT: ${{ vars.MANAGER_FREE_ACCOUNT }}
+      SSH_USER: ${{ vars.MANAGER_FREE_SSH_USER }}
+      SITE_ID: ${{ vars.MANAGER_FREE_SITE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build and verify rooms
+        run: |
+          node online/generate.cjs
+          ROOM_JOURNAL=delete node --test online/server.test.cjs
+          tar -czf "$RUNNER_TEMP/manager-online.tar.gz" online/server.cjs online/alwaysdata-start.cjs online/dist
+      - name: Install isolated test release
+        env:
+          SSH_KEY: ${{ secrets.MANAGER_FREE_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.MANAGER_FREE_KNOWN_HOSTS }}
+        run: |
+          set -eu
+          [[ "$ACCOUNT" =~ ^[a-z0-9][a-z0-9-]*$ && "$SSH_USER" =~ ^[a-z0-9][a-z0-9_-]*$ && "$SITE_ID" =~ ^[0-9]+$ ]]
+          [[ "$GITHUB_SHA" =~ ^[a-f0-9]{40}$ && -n "$SSH_KEY" && -n "$KNOWN_HOSTS" ]]
+          umask 077
+          key="$RUNNER_TEMP/manager-ssh"
+          hosts="$RUNNER_TEMP/manager-known-hosts"
+          trap 'rm -f -- "$key" "$hosts"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$hosts"
+          remote="$SSH_USER@ssh-$ACCOUNT.alwaysdata.net"
+          options=(-o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$hosts" -i "$key")
+          ssh "${options[@]}" "$remote" 'umask 077; mkdir -p manager-online/incoming'
+          scp "${options[@]}" online/alwaysdata-install.sh "$remote:manager-online/incoming/install-$GITHUB_SHA.sh"
+          ssh "${options[@]}" "$remote" "sh manager-online/incoming/install-$GITHUB_SHA.sh $GITHUB_SHA" \
+            < "$RUNNER_TEMP/manager-online.tar.gz"
+      - name: Restart test site and verify HTTPS release
+        env:
+          API_KEY: ${{ secrets.MANAGER_FREE_API_KEY }}
+        run: python3 online/alwaysdata-restart.py

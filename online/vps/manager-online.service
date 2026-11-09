@@ -1,0 +1,32 @@
+[Unit]
+Description=Manager authoritative room server
+After=network.target
+
+[Service]
+User=manager-online
+Group=manager-online
+WorkingDirectory=/opt/manager-online/current
+ExecStart=/opt/manager-node/bin/node online/server.cjs
+Environment=ROOM_DATABASE=/var/lib/manager-online/rooms.sqlite
+Environment=ROOM_TRUST_PROXY=1
+Restart=on-failure
+RestartSec=3
+StateDirectory=manager-online
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+CapabilityBoundingSet=
+MemoryMax=450M
+TasksMax=40
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=25
+
+[Install]
+WantedBy=multi-user.target

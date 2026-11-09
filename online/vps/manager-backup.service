@@ -1,0 +1,14 @@
+[Unit]
+Description=Backup and validate Manager SQLite
+After=manager-online.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/manager-online/current/online/vps/backup.sh
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/backups/manager-online
+ReadWritePaths=/var/lib/manager-online

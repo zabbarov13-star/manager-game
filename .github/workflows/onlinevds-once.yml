@@ -1,0 +1,55 @@
+name: One-time OnlineVDS test deploy
+on:
+  push:
+    branches: ['online/issue-1-baseline']
+    paths: ['.github/workflows/onlinevds-once.yml']
+permissions:
+  contents: read
+concurrency:
+  group: onlinevds-20491-one-time
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Generate temporary SSH identity
+        run: |
+          umask 077
+          mkdir "$RUNNER_TEMP/onlinevds"
+          cd "$RUNNER_TEMP/onlinevds"
+          ssh-keygen -q -t ed25519 -N '' -C "manager-vps-$GITHUB_RUN_ID" -f deploy
+          printf '%s\n' "$GITHUB_RUN_ID" > run
+          date -u -d '+34 minutes' +%Y%m%d%H%M%SZ > expiry
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-ssh-key-only
+          path: |
+            ${{ runner.temp }}/onlinevds/deploy.pub
+            ${{ runner.temp }}/onlinevds/run
+            ${{ runner.temp }}/onlinevds/expiry
+          retention-days: 1
+      - name: Verify host and wait for the authorized one-time key
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/onlinevds"
+          trap 'rm -f -- deploy' EXIT
+          host=95.181.169.84
+          expected='SHA256:SioODsmXmZkohbAhscXnRxVzwTHrw/eHHAUiMEOLT+U'
+          ssh-keyscan -T 8 -t ed25519 "$host" > known_hosts 2>/dev/null
+          actual=$(ssh-keygen -l -E sha256 -f known_hosts | awk 'NR==1 {print $2}')
+          [[ "$expected" == "$actual" ]]
+          url=https://raw.githubusercontent.com/zabbarov13-star/manager-game/online/issue-1-baseline/online/vps/host-20491.txt
+          for ((i=0; i<195; i++)); do
+            record=$(curl -fsS --max-time 6 "$url?run=$GITHUB_RUN_ID&attempt=$i" 2>/dev/null || true)
+            if [[ "$record" == "$GITHUB_RUN_ID $expected" ]]; then
+              ssh -T -o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+                -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$PWD/known_hosts" \
+                -i deploy manager-deploy@"$host"
+              curl -fsS --max-time 15 https://95-181-169-84.sslip.io/health
+              exit 0
+            fi
+            sleep 10
+          done
+          echo 'The one-time key was not authorized before expiry.' >&2
+          exit 1
