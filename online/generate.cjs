@@ -48,6 +48,8 @@ const end = script?.indexOf('\nconst $=id=>document.getElementById(id),money=');
 if (!(end > 0)) throw Error('Game engine boundary changed');
 const engine = script.slice(0, end) + '\nmodule.exports={handleRooms,CHARACTERS,COLORS};})();\n';
 
+require('./ui-polish.cjs')(replace);
+
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, 'engine.cjs'), engine);
@@ -55,7 +57,7 @@ fs.writeFileSync(path.join(out, 'index.html'), html);
 for (const name of ['manifest.webmanifest','manager-icon.png']) {
   fs.copyFileSync(path.join(root, name), path.join(out, name));
 }
-fs.copyFileSync(path.join(__dirname, 'rounded-icon.png'), path.join(out, 'manager-icon.png'));
+fs.copyFileSync(path.join(__dirname, 'ui-icons', 'app.png'), path.join(out, 'manager-icon.png'));
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
 const version = require('node:crypto').createHash('sha256').update(html).update(sw).update(fs.readFileSync(path.join(out, 'manager-icon.png'))).digest('hex').slice(0,16);
 fs.writeFileSync(path.join(out, 'sw.js'), sw.replace(/const cacheName = prefix \+ '[^']+';/,

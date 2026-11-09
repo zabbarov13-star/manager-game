@@ -21,7 +21,12 @@ jobs:
         run: |
           npm install --no-save --prefix "$RUNNER_TEMP/online-qa" playwright@1.56.1
           "$RUNNER_TEMP/online-qa/node_modules/.bin/playwright" install --with-deps chromium
-          NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
+          UI_SCREENSHOTS="$RUNNER_TEMP/manager-ui" NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: manager-ui-screenshots
+          path: ${{ runner.temp }}/manager-ui/*.png
       - name: Check backup and restore
         run: |
           sudo apt-get update -qq
