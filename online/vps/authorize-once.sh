@@ -21,7 +21,7 @@ cat > /usr/local/sbin/manager-deploy-20491 <<'RUN'
 set -euo pipefail
 test "$#" -eq 0
 umask 077
-release=b8d42ae062df18ae4254cbf751f3219a580ea5bc
+release=25ae33ffbb59a6da0afa008eb6f2176ae6466934
 dir=$(mktemp -d)
 trap 'rm -rf -- "$dir"' EXIT
 git init -q "$dir"
@@ -30,7 +30,19 @@ test "$(git -C "$dir" rev-parse FETCH_HEAD)" = "$release"
 git -C "$dir" -c advice.detachedHead=false checkout -q --detach "$release"
 bash "$dir/online/vps/install.sh" 95-181-169-84.sslip.io 22
 systemctl is-active manager-online caddy manager-backup.timer
-sh "$dir/online/vps/backup-smoke.sh"
+systemctl is-enabled manager-online manager-backup.timer manager-firewall caddy
+nft list table inet manager_online >/dev/null
+stat -c 'SQLite mode=%a owner=%U' /var/lib/manager-online/rooms.sqlite
+MANAGER_TEST_RESTART=1 /opt/manager-node/bin/node "$dir/online/vps/live-smoke.cjs"
+systemctl start manager-backup.service
+backup=$(find /var/backups/manager-online -maxdepth 1 -name 'rooms-*.sqlite' -type f | sort | tail -1)
+test -n "$backup"
+sqlite3 "$dir/restored.sqlite" ".restore '$backup'"
+test "$(sqlite3 "$dir/restored.sqlite" 'PRAGMA quick_check;')" = ok
+restored=$(sqlite3 "$dir/restored.sqlite" 'SELECT count(*) FROM online_rooms;')
+test "$restored" -ge 3
+printf 'Verified restoration of SQLite snapshot with %s rooms\n' "$restored"
+(cd "$dir"; LOAD_SECONDS=12 /opt/manager-node/bin/node online/load.cjs)
 rm -f -- /var/lib/manager-deploy/.ssh/authorized_keys /etc/sudoers.d/manager-deploy-20491
 RUN
 chmod 0755 /usr/local/sbin/manager-deploy-20491
