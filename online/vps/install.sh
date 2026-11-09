@@ -8,8 +8,10 @@ ssh_port=${2:-22}
 (( 10#$ssh_port >= 1 && 10#$ssh_port <= 65535 ))
 if [[ "$domain" =~ ^[0-9.]+$ ]]; then echo 'A DNS hostname is required by this installer.' >&2; exit 2; fi
 root=$(cd "$(dirname "$0")/../.." && pwd)
-test -s "$root/online/dist/index.html"
-test -s "$root/online/dist/engine.cjs"
+if [[ ! -s "$root/online/dist/index.html" || ! -s "$root/online/dist/engine.cjs" ]]; then
+  test -s "$root/online/generate.cjs"
+  test -s "$root/index.html"
+fi
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl xz-utils caddy sqlite3 nftables unattended-upgrades
@@ -29,6 +31,11 @@ node_dir="/opt/manager-node-releases/${node_file%.tar.xz}"
 install -d /opt/manager-node-releases
 if [[ ! -d "$node_dir" ]]; then mv node "$node_dir"; fi
 ln -sfn "$node_dir" /opt/manager-node
+if [[ ! -s "$root/online/dist/index.html" || ! -s "$root/online/dist/engine.cjs" ]]; then
+  /opt/manager-node/bin/node "$root/online/generate.cjs"
+fi
+test -s "$root/online/dist/index.html"
+test -s "$root/online/dist/engine.cjs"
 getent passwd manager-online >/dev/null || useradd --system --no-create-home --shell /usr/sbin/nologin manager-online
 install -d -m 0700 /var/backups/manager-online
 install -d /opt/manager-online/releases
