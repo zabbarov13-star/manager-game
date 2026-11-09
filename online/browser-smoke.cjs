@@ -152,10 +152,20 @@ const { createRoomServer } = require('./server.cjs');
 
     await a.close();
     await b.waitForFunction(() => !!navigator.serviceWorker.controller);
-    await guest.setOffline(true);
-    await b.reload({ waitUntil: 'load' });
-    assert.match(await b.title(), /тест онлайн/);
-    await guest.setOffline(false);
+    if (mobileBrowser) {
+      // Exercise a room outage independently of WebKit's offline navigation emulation.
+      const roomAPI = '**/api/rooms/**';
+      await guest.route(roomAPI, route => route.abort());
+      await b.locator('.connection-status[data-state="reconnecting"]').waitFor({ state: 'attached' });
+      await guest.unroute(roomAPI);
+      await b.locator('.connection-status[data-state="connected"]').waitFor({ state: 'attached' });
+      await b.reload({ waitUntil: 'load' });
+    } else {
+      await guest.setOffline(true);
+      await b.reload({ waitUntil: 'load' });
+      assert.match(await b.title(), /тест онлайн/);
+      await guest.setOffline(false);
+    }
     await b.waitForFunction(() => document.querySelector('.live-badge')?.textContent === 'ОНЛАЙН');
     assert.equal(await b.locator('#last-roll').textContent(), result);
     const creator = await browser.newContext();
@@ -177,7 +187,8 @@ const { createRoomServer } = require('./server.cjs');
     await button(d, 'Создать стол').waitFor();
     assert.deepEqual(renderRequests, []);
     assert.deepEqual(errors, []);
-    console.log('PASS independent browser contexts, invitation, shared roll, host tab closed, offline reload and reconnect');
+    console.log('PASS independent browser contexts, invitation, shared roll, chat, themes, host tab closed, ' +
+      (mobileBrowser ? 'room API outage, reconnect and normal reload' : 'offline reload and reconnect'));
   } finally {
     await mobileBrowser?.close();
     await browser?.close();
