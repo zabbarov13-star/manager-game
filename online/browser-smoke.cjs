@@ -23,6 +23,14 @@ const { createRoomServer } = require('./server.cjs');
         return route.abort();
       });
     }
+    for (const context of [host, guest]) await context.addInitScript(() => {
+      window.chatTones = 0;
+      const start = OscillatorNode.prototype.start;
+      OscillatorNode.prototype.start = function (...args) {
+        if (Math.abs(this.frequency.value - 587.33) < .01) window.chatTones++;
+        return start.apply(this, args);
+      };
+    });
     const a = await host.newPage(), b = await guest.newPage();
     for (const page of [a, b]) page.on('pageerror', error => errors.push(error.message));
     const button = (page, name) => page.getByRole('button', { name, exact: true });
@@ -87,14 +95,20 @@ const { createRoomServer } = require('./server.cjs');
     await sendMessage(a, long);
     await a.locator('.chat-own').getByText(long).waitFor();
     assert.equal(await a.locator('.chat-unread').isVisible(), false);
+    assert.equal(await a.evaluate(() => window.chatTones), 0);
     await b.locator('#tab-chat').getByText('1', { exact: true }).waitFor();
+    assert.equal(await b.evaluate(() => window.chatTones), 1);
+    await a.waitForTimeout(850);
+    await sendMessage(a, 'Привет! Проверяю чат.');
+    await b.locator('#tab-chat').getByText('2', { exact: true }).waitFor();
+    assert.equal(await b.evaluate(() => window.chatTones), 1);
     await b.locator('#tab-chat').click();
     await b.locator('.chat-message').getByText(long).waitFor();
     assert.equal(await b.locator('.chat-unread').isVisible(), false);
     await sendMessage(b, 'Вижу общий результат броска.');
     await a.locator('.chat-message:not(.chat-own)').getByText('Гость QA').waitFor();
-    assert.equal(await b.locator('.chat-message time').count(), 2);
-    assert.equal(await b.locator('.chat-avatar svg').count(), 2);
+    assert.equal(await b.locator('.chat-message time').count(), 3);
+    assert.equal(await b.locator('.chat-avatar svg').count(), 3);
     assert.equal(await b.locator('.chat-message').evaluateAll(rows => rows.every(row => row.scrollWidth <= row.clientWidth)), true);
     if (screenshotDir) await b.locator('.sidebar').screenshot({ path: join(screenshotDir, 'mobile-chat.png') });
 
@@ -129,6 +143,9 @@ const { createRoomServer } = require('./server.cjs');
     }
     if (screenshotDir) await settings.screenshot({ path: join(screenshotDir, 'mobile-settings.png') });
     await button(b, 'Закрыть настройки').click();
+    await sendMessage(a, 'Проверяю отключённый звук.');
+    await b.locator('.chat-message').getByText('Проверяю отключённый звук.').waitFor();
+    assert.equal(await b.evaluate(() => window.chatTones), 1);
 
     await a.close();
     await b.waitForFunction(() => !!navigator.serviceWorker.controller);

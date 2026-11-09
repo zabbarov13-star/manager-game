@@ -13,6 +13,8 @@ module.exports = function polish(replace) {
   replace("function renderChat(){tab.hidden=!active;const key=JSON.stringify(room?.chat??[]);if(key===chatKey)return;chatKey=key;messages.replaceChildren();for(const m of room?.chat??[]){const p=el('p'),who=el('strong',m.name+': ');p.append(who,document.createTextNode(m.text));messages.append(p);}}",
     "const chatView=mountChatView({tab,panel,messages});\n function renderChat(){tab.hidden=!active;chatView.render(room,session?.seatId);}");
   replace('<label class="range-row">Громкость эффектов', '<label class="toggle-row"><span>Звук уведомлений чата</span><input type="checkbox" id="chat-sound" checked></label><label class="range-row">Громкость эффектов');
+  replace('<p>Два кубика. Сорок клеток.', '<p id="turn-description">Два кубика. Сорок клеток.');
+  replace("document.querySelector('.turn-panel>p:not(.audio-hint)').textContent", "$('turn-description').textContent");
   replace('<div class="roll-summary"><span', '<div class="roll-summary"><div class="panel-dice" aria-hidden="true"><div class="die"></div><div class="die"></div></div><span');
   replace("<span class=\"roll-action-caption\" aria-hidden=\"true\">Бросить</span>", '');
   replace("$('roll-button').after($('roll-button-label'));", '');

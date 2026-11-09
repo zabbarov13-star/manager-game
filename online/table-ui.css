@@ -80,7 +80,8 @@ body[data-theme] .sidebar .tabs {
   background: var(--table-tint);
 }
 body[data-theme] .sidebar .tabs button {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  width: auto;
   min-height: 42px;
   border: 0;
   border-radius: 9px;
@@ -94,6 +95,7 @@ body[data-theme] .sidebar :is(.asset-group, .asset-city, .finance-entry, .proper
 }
 body[data-theme] .sidebar :is(.price-row, .build-prices, .asset-city, .finance-entry) { background: var(--table-tint); }
 body[data-theme] .sidebar :is(.price-row strong, .build-prices strong, .asset-heading) { font-weight: 800; }
+body[data-theme] .sidebar :is(#last-roll, .online-clock, .turn-panel h3) { color: var(--ui-ink); }
 
 .chat-status {
   position: absolute;
@@ -145,7 +147,15 @@ body[data-theme] .sidebar :is(.price-row strong, .build-prices strong, .asset-he
 .chat-message strong { font-weight: 800; }
 .chat-message time { margin-inline-start: auto; white-space: nowrap; }
 .chat-message :is(time, header span) { font-size: 11px; color: var(--ui-ink); opacity: .82; }
-body[data-theme] .chat-message p { grid-column: 2; margin: 0; color: var(--ui-ink); white-space: pre-wrap; }
+body[data-theme] #panel-chat .chat-message p {
+  grid-column: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ui-ink);
+  white-space: pre-wrap;
+}
 #panel-chat form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; margin-top: 10px; }
 #panel-chat form :is(input,button) { min-height: 44px; min-width: 0; padding: 8px; font-size: 13px; }
 #panel-chat form input { border: 1px solid var(--ui-border); background: var(--ui-paper); color: var(--ui-ink); border-radius: 9px; font-size: 16px; }
