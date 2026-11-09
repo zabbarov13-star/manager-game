@@ -1,0 +1,78 @@
+name: Prepare and deploy OnlineVDS candidate
+on:
+  pull_request:
+    paths: ['online/**', '.github/workflows/onlinevds-release.yml']
+  push:
+    branches: ['deploy/onlinevds-20491']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    outputs:
+      digest: ${{ steps.bundle.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: |
+          node online/generate.cjs
+          node --test online/construction.test.cjs online/server.test.cjs online/public.test.cjs
+          bash -n online/vps/update-release.sh online/vps/package-runtime.sh
+      - name: Verify browser behavior of the exact deployment commit
+        if: github.event_name == 'push'
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/online-qa" playwright@1.56.1
+          "$RUNNER_TEMP/online-qa/node_modules/.bin/playwright" install --with-deps chromium
+          export NODE_PATH="$RUNNER_TEMP/online-qa/node_modules"
+          node online/board-smoke.cjs
+          node online/browser-smoke.cjs
+      - id: bundle
+        run: |
+          bash online/vps/package-runtime.sh manager-runtime.tgz
+          bash online/vps/package-runtime.sh repeated.tgz
+          cmp manager-runtime.tgz repeated.tgz
+          python3 online/vps/unpack-release.py manager-runtime.tgz "$RUNNER_TEMP/manager-release"
+          diff -qr online/dist "$RUNNER_TEMP/manager-release/online/dist"
+          printf 'digest=%s\n' "$(sha256sum manager-runtime.tgz | cut -d ' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: onlinevds-runtime
+          path: manager-runtime.tgz
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/deploy/onlinevds-20491'
+    needs: package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    environment: onlinevds-20491
+    concurrency:
+      group: onlinevds-20491
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: onlinevds-runtime
+      - name: Verify host and install tested runtime
+        env:
+          DEPLOY_KEY: ${{ secrets.MANAGER_VPS_SSH_KEY }}
+          DIGEST: ${{ needs.package.outputs.digest }}
+        run: |
+          set -euo pipefail
+          umask 077
+          dir=$(mktemp -d)
+          trap 'rm -rf -- "$dir"' EXIT
+          test -n "$DEPLOY_KEY"
+          [[ "$DIGEST" =~ ^[0-9a-f]{64}$ && "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]]
+          printf '%s  manager-runtime.tgz\n' "$DIGEST" | sha256sum -c -
+          printf '%s\n' "$DEPLOY_KEY" > "$dir/key"
+          unset DEPLOY_KEY
+          host=95.181.169.84
+          ssh-keyscan -T 8 -t ed25519 "$host" > "$dir/known_hosts" 2>/dev/null
+          actual=$(ssh-keygen -l -E sha256 -f "$dir/known_hosts" | awk 'NR==1 {print $2}')
+          [[ "$actual" == 'SHA256:SioODsmXmZkohbAhscXnRxVzwTHrw/eHHAUiMEOLT+U' ]]
+          ssh -T -o BatchMode=yes -o ConnectTimeout=12 -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$dir/known_hosts" \
+            -i "$dir/key" "manager-release@$host" "deploy $GITHUB_SHA $DIGEST" < manager-runtime.tgz
+          curl -fsS --max-time 15 https://95-181-169-84.sslip.io/health

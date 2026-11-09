@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: '24'
       - run: node online/generate.cjs
-      - run: node --test online/server.test.cjs online/public.test.cjs tests/p2p-routing-baseline.cjs
+      - run: node --test online/server.test.cjs online/public.test.cjs online/construction.test.cjs tests/p2p-routing-baseline.cjs
       - run: ROOM_JOURNAL=delete node --test online/server.test.cjs
       - run: node --test online/alwaysdata-smoke.cjs
       - name: Test two browser sessions and reconnection
@@ -22,6 +22,7 @@ jobs:
           npm install --no-save --prefix "$RUNNER_TEMP/online-qa" playwright@1.56.1
           "$RUNNER_TEMP/online-qa/node_modules/.bin/playwright" install --with-deps chromium
           UI_SCREENSHOTS="$RUNNER_TEMP/manager-ui" NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/browser-smoke.cjs
+          NODE_PATH="$RUNNER_TEMP/online-qa/node_modules" node online/board-smoke.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

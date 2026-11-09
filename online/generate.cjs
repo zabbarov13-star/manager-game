@@ -11,6 +11,8 @@ function replace(from, to) {
 }
 const {engineAndClient, interfaceOnly} = require('./public-build.cjs');
 engineAndClient(replace);
+replace("if(owned.some(x=>s.properties[x.id].level<p.level))return no('Сначала застройте города с меньшим числом филиалов.');",
+  "const behind=owned.filter(x=>s.properties[x.id].level<p.level);if(behind.length)return no('Сначала уравняйте число филиалов в своих городах: '+behind.map(x=>x.name+' ('+s.properties[x.id].level+' из '+p.level+')').join(', ')+'.');");
 const entrances = (process.env.ROOM_ENTRANCES ?? '').split(',').map(value => value.trim()).filter(Boolean).map(value => {
   const url = new URL(value);
   if (url.protocol !== 'https:' || url.origin !== value) throw Error('Use HTTPS origins for ROOM_ENTRANCES');
@@ -49,6 +51,7 @@ if (!(end > 0)) throw Error('Game engine boundary changed');
 const engine = script.slice(0, end) + '\nmodule.exports={handleRooms,CHARACTERS,COLORS};})();\n';
 
 require('./ui-polish.cjs')(replace);
+require('./board-build.cjs')(replace);
 
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });
