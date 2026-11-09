@@ -20,7 +20,10 @@ jobs:
       - run: |
           node online/generate.cjs
           node --test online/construction.test.cjs online/server.test.cjs online/public.test.cjs
-          bash -n online/vps/update-release.sh online/vps/package-runtime.sh
+          python3 online/vps/unpack-release.test.py
+          for script in online/vps/{authorize-release,update-release,package-runtime}.sh; do
+            bash -n "$script"
+          done
       - name: Verify browser behavior of the exact deployment commit
         if: github.event_name == 'push'
         run: |

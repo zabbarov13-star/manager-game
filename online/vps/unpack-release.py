@@ -11,7 +11,6 @@ FILES = {
     "online/dist/sw.js",
     "online/dist/manifest.webmanifest",
     "online/dist/manager-icon.png",
-    "online/vps/backup.sh",
 }
 
 def unpack(archive, destination):
@@ -29,7 +28,6 @@ def unpack(archive, destination):
                 shutil.copyfileobj(source, output)
         if seen != FILES:
             raise ValueError("Incomplete runtime archive")
-    (root / "online/vps/backup.sh").chmod(0o755)
 
 if __name__ == "__main__":
     unpack(*sys.argv[1:])

@@ -24,7 +24,8 @@ python3 /usr/local/lib/manager-online/unpack-release.py "$work/bundle.tgz" "$wor
 for script in online/server.cjs online/dist/engine.cjs online/dist/sw.js; do
   "$node" --check "$work/release/$script"
 done
-bash -n "$work/release/online/vps/backup.sh"
+# The timer executes this script as root. Keep the existing trusted copy outside CI's input.
+install -D -o root -g root -m 0755 "$old/online/vps/backup.sh" "$work/release/online/vps/backup.sh"
 release="$root/releases/$commit-$checksum"
 if [[ -e "$release" ]]; then
   diff -qr "$work/release" "$release"
