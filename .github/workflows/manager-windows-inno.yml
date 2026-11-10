@@ -1,0 +1,80 @@
+name: Rebuild and verify Windows installer
+on:
+  push:
+    branches: ['test/manager-preview-installed-windows']
+    paths: ['.github/workflows/manager-windows-inno.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $repo = 'zabbarov13-star/manager-game'
+          $tag = 'v0.19.1-preview.3'
+          $base = Resolve-Path 'packaging/windows'
+          $scratch = Join-Path $env:RUNNER_TEMP 'windows-payload'
+          New-Item -ItemType Directory $scratch | Out-Null
+          gh release download $tag -R $repo --dir $scratch --pattern 'Manager-win-x64.zip' --pattern 'SHA256SUMS.txt'
+          if ($LASTEXITCODE -ne 0) { throw 'Download failed' }
+          $zip = Join-Path $scratch 'Manager-win-x64.zip'
+          $line = Get-Content (Join-Path $scratch 'SHA256SUMS.txt') | Where-Object { $_.EndsWith('  Manager-win-x64.zip') }
+          if ((Get-FileHash $zip).Hash.ToLower() -ne $line.Split(' ')[0]) { throw 'Wrong payload checksum' }
+          Expand-Archive -LiteralPath $zip -DestinationPath $scratch/expanded
+          $app = Get-ChildItem "$scratch/expanded" -Filter 'Manager.exe' -Recurse | Select-Object -First 1
+          if (!$app) { throw 'Missing Manager.exe' }
+          Copy-Item -Recurse -LiteralPath $app.Directory.FullName -Destination "$base/payload"
+          $tool = Get-Command 'ISCC.exe' -ErrorAction SilentlyContinue
+          if ($tool) { $compiler = $tool.Source } else { $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          & $compiler "$base/Manager.iss"
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup compilation failed' }
+          $exe = "$base/out/Manager-win-x64.exe"
+          $target = Join-Path $env:RUNNER_TEMP 'manager-installed'
+          $env:MANAGER_SMOKE_PROFILE = Join-Path $env:RUNNER_TEMP 'manager-installed-profile'
+          for ($i = 0; $i -lt 2; $i++) {
+            $p = Start-Process -FilePath $exe -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$target") -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw "Installer exited with $($p.ExitCode)" }
+            $env:MANAGER_SMOKE_REOPEN = "$i"
+            $p = Start-Process -FilePath "$target/Manager.exe" -ArgumentList '--manager-smoke' -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw "Installed app exited with $($p.ExitCode)" }
+          }
+          $p = Start-Process -FilePath $app.FullName -ArgumentList '--manager-smoke' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Portable app exited with $($p.ExitCode)" }
+          Write-Host ('Authenticode: ' + (Get-AuthenticodeSignature $exe).Status)
+          Write-Host 'Installer, repeat installation with saved state, and portable ZIP verified.'
+          Compress-Archive "$base/Manager.iss" "$base/out/Manager-Windows-Installer-Source.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manager-windows-verified-installer
+          path: packaging/windows/out/
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: manager-windows-verified-installer
+          path: out
+      - run: |
+          set -euo pipefail
+          repo=zabbarov13-star/manager-game
+          tag=v0.19.1-preview.3
+          test "$(git ls-remote "https://github.com/$repo.git" "refs/tags/$tag" | cut -f1)" = '8a11befa612da2fdfa90ceceb4b6ddd97d8827e9'
+          cd out
+          gh release download "$tag" -R "$repo" -p SHA256SUMS.txt
+          sed -i '/  Manager-win-x64\.exe$/d' SHA256SUMS.txt
+          sha256sum Manager-win-x64.exe Manager-Windows-Installer-Source.zip >> SHA256SUMS.txt
+          gh release upload "$tag" -R "$repo" Manager-win-x64.exe Manager-Windows-Installer-Source.zip SHA256SUMS.txt --clobber
+          gh release view "$tag" -R "$repo" --json body -q .body > notes.md
+          printf '\nWindows EXE пересобран через Inno Setup из проверенного портативного ZIP. Установка, повторная установка с сохранением данных и запуск из ZIP прошли на Windows. Подпись Authenticode отсутствует. Исходник установщика входит в Manager-Windows-Installer-Source.zip.\n' >> notes.md
+          gh release edit "$tag" -R "$repo" --notes-file notes.md
