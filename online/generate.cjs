@@ -52,6 +52,7 @@ const engine = script.slice(0, end) + '\nmodule.exports={handleRooms,CHARACTERS,
 
 require('./ui-polish.cjs')(replace);
 require('./board-build.cjs')(replace);
+require('./dice-presentation.cjs')(replace);
 
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });

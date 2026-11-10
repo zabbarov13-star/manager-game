@@ -1,0 +1,10 @@
+/online/dist/
+/packaging/android/.gradle/
+/packaging/android/app/build/
+/packaging/android/app/assets/
+/packaging/android/app/src/main/res/mipmap-xxxhdpi/manager_icon.png
+/packaging/desktop/node_modules/
+/packaging/desktop/game/
+/packaging/desktop/out/
+/packaging/ios/Manager/game.html
+/release-output/

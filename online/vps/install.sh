@@ -21,12 +21,22 @@ case "$(dpkg --print-architecture)" in amd64) arch=x64;; arm64) arch=arm64;; *) 
 tmp=$(mktemp -d)
 trap 'rm -rf -- "$tmp"' EXIT
 cd "$tmp"
-base=https://nodejs.org/dist/latest-v24.x
-curl -fSsL "$base/SHASUMS256.txt" -o sums
-node_file=$(awk -v suffix="-linux-$arch.tar.xz" '$2 ~ /^node-v24\.[0-9]+\.[0-9]+-linux-(x64|arm64)\.tar\.xz$/ && index($2,suffix) {print $2}' sums)
-[[ "$node_file" =~ ^node-v24\.[0-9]+\.[0-9]+-linux-(x64|arm64)\.tar\.xz$ ]]
-curl -fSsL "$base/$node_file" -o "$node_file"
-awk -v name="$node_file" '$2==name' sums | sha256sum -c -
+if [[ -f "$root/packaging/node-sha256.txt" ]]; then
+  node_file="node-v24.22.1-linux-$arch.tar.xz"
+  if [[ -f "$root/runtime/$node_file" ]]; then
+    cp -- "$root/runtime/$node_file" "$node_file"
+  else
+    curl -fSsL "https://nodejs.org/dist/v24.22.1/$node_file" -o "$node_file"
+  fi
+  awk -v name="$node_file" '$2==name' "$root/packaging/node-sha256.txt" | sha256sum -c -
+else
+  base=https://nodejs.org/dist/latest-v24.x
+  curl -fSsL "$base/SHASUMS256.txt" -o sums
+  node_file=$(awk -v suffix="-linux-$arch.tar.xz" '$2 ~ /^node-v24\.[0-9]+\.[0-9]+-linux-(x64|arm64)\.tar\.xz$/ && index($2,suffix) {print $2}' sums)
+  [[ "$node_file" =~ ^node-v24\.[0-9]+\.[0-9]+-linux-(x64|arm64)\.tar\.xz$ ]]
+  curl -fSsL "$base/$node_file" -o "$node_file"
+  awk -v name="$node_file" '$2==name' sums | sha256sum -c -
+fi
 mkdir node
 tar -xJf "$node_file" --strip-components=1 -C node
 node_dir="/opt/manager-node-releases/${node_file%.tar.xz}"
