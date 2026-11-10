@@ -1,0 +1,77 @@
+name: One-time PR 3 update on OnlineVDS
+on:
+  push:
+    branches: ['deploy/onlinevds-pr3-once']
+    paths: ['.github/workflows/onlinevds-pr3-once.yml']
+permissions:
+  contents: read
+concurrency:
+  group: onlinevds-20491
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 44
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: a62f93437fcde83abc6cc3236a13f905b43cd3d0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Build and validate the pinned package
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = a62f93437fcde83abc6cc3236a13f905b43cd3d0
+          node online/generate.cjs
+          bash online/vps/package-runtime.sh "$RUNNER_TEMP/manager-runtime.tgz"
+          python3 online/vps/unpack-release.py "$RUNNER_TEMP/manager-runtime.tgz" "$RUNNER_TEMP/verified-runtime"
+          diff -qr online/dist "$RUNNER_TEMP/verified-runtime/online/dist"
+      - name: Verify the host and generate temporary authorization
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir "$RUNNER_TEMP/pr3-key"
+          cd "$RUNNER_TEMP/pr3-key"
+          ssh-keyscan -T 8 -t ed25519 95.181.169.84 > known_hosts 2>/dev/null
+          test "$(ssh-keygen -l -E sha256 -f known_hosts | awk 'NR==1 {print $2}')" = 'SHA256:SioODsmXmZkohbAhscXnRxVzwTHrw/eHHAUiMEOLT+U'
+          ssh-keygen -q -t ed25519 -N '' -C "manager-pr3-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" -f deploy
+          date -u -d '+34 minutes' +%Y%m%d%H%M%SZ > expiry
+          sha256sum "$RUNNER_TEMP/manager-runtime.tgz" | cut -d ' ' -f1 > package-sha256
+          sha256sum "$GITHUB_WORKSPACE/online/dist/index.html" | cut -d ' ' -f1 > html-sha256
+          for file in deploy.pub expiry package-sha256 html-sha256; do
+            printf '%s: %s\n' "$file" "$(cat "$file")"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-pr3-authorization
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/pr3-key/deploy.pub
+            ${{ runner.temp }}/pr3-key/expiry
+            ${{ runner.temp }}/pr3-key/package-sha256
+            ${{ runner.temp }}/pr3-key/html-sha256
+      - name: Wait for authorization and install once
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/pr3-key"
+          trap 'rm -f -- deploy' EXIT
+          for ((i=0; i<195; i++)); do
+            status=0
+            ssh -T -o BatchMode=yes -o ConnectTimeout=8 -o ServerAliveInterval=15 -o ServerAliveCountMax=4 \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$PWD/known_hosts" \
+              -i deploy manager-pr3-deploy@95.181.169.84 < "$RUNNER_TEMP/manager-runtime.tgz" || status=$?
+            if ((status == 0)); then
+              curl -fsS --max-time 15 https://95-181-169-84.sslip.io/health
+              served=$(curl -fsS --max-time 20 https://95-181-169-84.sslip.io/index.html | sha256sum | cut -d ' ' -f1)
+              test "$served" = "$(cat html-sha256)"
+              printf 'Public HTTPS HTML SHA-256: %s\n' "$served"
+              exit 0
+            fi
+            ((status == 255)) || exit "$status"
+            sleep 10
+          done
+          echo 'Temporary authorization timed out.' >&2
+          exit 1
