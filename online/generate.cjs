@@ -55,13 +55,22 @@ require('./board-build.cjs')(replace);
 
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });
+const hash = value => require('node:crypto').createHash('sha256').update(value);
+const icon = fs.readFileSync(path.join(__dirname, 'ui-icons', 'app.png'));
+const iconUrl = 'manager-icon.png?v=' + hash(icon).digest('hex').slice(0, 16);
+const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.webmanifest'), 'utf8'));
+manifest.icons[0].src = './' + iconUrl;
+const manifestText = JSON.stringify(manifest, null, 2) + '\n';
+replace('href="./manager-icon.png"', 'href="./' + iconUrl + '"');
+replace('navigator.serviceWorker.register("./sw.js")',
+  'navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" })');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8')
+  .replace("'manager-icon.png'", JSON.stringify(iconUrl))
+  .replaceAll('fetch(request)', "fetch(request, { cache: 'no-store' })");
+const version = hash(html).update(sw).update(manifestText).digest('hex').slice(0, 16);
 fs.writeFileSync(path.join(out, 'engine.cjs'), engine);
 fs.writeFileSync(path.join(out, 'index.html'), html);
-for (const name of ['manifest.webmanifest','manager-icon.png']) {
-  fs.copyFileSync(path.join(root, name), path.join(out, name));
-}
-fs.copyFileSync(path.join(__dirname, 'ui-icons', 'app.png'), path.join(out, 'manager-icon.png'));
-const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
-const version = require('node:crypto').createHash('sha256').update(html).update(sw).update(fs.readFileSync(path.join(out, 'manager-icon.png'))).digest('hex').slice(0,16);
+fs.writeFileSync(path.join(out, 'manifest.webmanifest'), manifestText);
+fs.writeFileSync(path.join(out, 'manager-icon.png'), icon);
 fs.writeFileSync(path.join(out, 'sw.js'), sw.replace(/const cacheName = prefix \+ '[^']+';/,
   "const cacheName = prefix + '" + version + "';"));
