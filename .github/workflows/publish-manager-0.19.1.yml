@@ -21,20 +21,24 @@ jobs:
           expected=ffa7f151874648ddf159c8a321827a4abe75ae00
           run=42774203045
           repo="$GITHUB_REPOSITORY"
-          for ((i=0;i<45;i++)); do
-            state=$(gh api "repos/$repo/actions/runs/$run")
-            jq -e --arg sha "$expected" '.head_sha == $sha' <<< "$state" >/dev/null
-            if [[ "$(jq -r .status <<< "$state")" == completed ]]; then break; fi
-            sleep 15
+          gh api "repos/$repo/actions/runs/$run" | jq -e --arg sha "$expected" '.head_sha == $sha' >/dev/null
+          jobs=$(gh api "repos/$repo/actions/runs/$run/jobs")
+          for job in core browser android mac ios; do
+            jq -e --arg job "$job" 'any(.jobs[]; .name == $job and .conclusion == "success")' <<< "$jobs" >/dev/null
           done
-          jq -e '.conclusion == "success"' <<< "$state" >/dev/null
           gh api "repos/$repo/actions/runs/42774709763" | jq -e '.head_sha == "8c49cf4911e804a563a1ea00b532e75474b34700" and .conclusion == "success"' >/dev/null
+          gh api "repos/$repo/actions/runs/42775470342" | jq -e '.head_sha == "a75ef6b18622921999c54d483073a1e94c382616" and .conclusion == "success"' >/dev/null
           test "$(git ls-remote "https://github.com/$repo.git" refs/heads/release/manager-0.19.1 | cut -f1)" = "$expected"
           test -z "$(git ls-remote "https://github.com/$repo.git" refs/tags/v0.19.1)"
-          gh run download "$run" -R "$repo" -n verified-manager-0.19.1 -D release
+          for artifact in manager-core manager-android manager-mac manager-ios-simulator; do
+            gh run download "$run" -R "$repo" -n "$artifact" -D release
+          done
+          gh run download 42775470342 -R "$repo" -n verified-windows-0.19.1 -D release
           cd release
           jq -e --arg sha "$expected" '.commit == $sha and .tag == "v0.19.1"' VERSION.json
           test "$(find . -maxdepth 1 -type f | wc -l)" -eq 15
+          sha256sum --strict -c SHA256SUMS.txt
+          find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -printf '%f\n' | sort | xargs -d '\n' sha256sum > SHA256SUMS.txt
           test "$(wc -l < SHA256SUMS.txt)" -eq 14
           sha256sum --strict -c SHA256SUMS.txt
           cat > "$RUNNER_TEMP/notes.md" <<'NOTES'
