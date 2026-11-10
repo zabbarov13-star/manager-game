@@ -56,3 +56,44 @@ test('public directory, private invitation, concurrent joins and stable seat IDs
   for (let i = 0; i < 5; i++) await call('', player(0), null, 201);
   await call('', player(0), null, 429);
 });
+
+test('four- and six-player rooms keep independent dice and chat', async t => {
+  const server = createRoomServer({ database: ':memory:' }).listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(() => new Promise(done => server.close(done)));
+  const base = 'http://127.0.0.1:' + server.address().port + '/api/rooms';
+  async function request(path, body, token, status = 200) {
+    const response = await fetch(base + path, {
+      method: body ? 'POST' : 'GET',
+      headers: { 'Idempotency-Key': crypto.randomUUID(), ...(token && { Authorization: 'Bearer ' + token }) },
+      ...(body && { body: JSON.stringify(body) }),
+    });
+    const result = await response.json();
+    assert.equal(response.status, status, result.error);
+    return result;
+  }
+
+  const rooms = await Promise.all([4, 6].map(async count => {
+    const host = await request('', { ...player(0), capacity: count }, null, 201);
+    const path = '/' + host.room.code;
+    const seats = [host];
+    for (let i = 1; i < count; i++) seats.push(await request(path + '/join', player(i)));
+    await Promise.all(seats.slice(1).map(seat => request(path + '/ready', { ready: true }, seat.token)));
+    const { room } = await request(path + '/start', {}, host.token);
+    assert.equal(room.game.players.length, count);
+    const actor = seats.find(seat => seat.seatId === room.game.players[room.game.current].id);
+    const command = { method: 'roll', args: [], requestId: crypto.randomUUID(), gameRevision: room.gameRevision };
+    const rolled = (await request(path + '/action', command, actor.token)).room;
+    await request(path + '/chat', { text: 'Стол на ' + count }, host.token);
+    return { path, seats, rolled, count };
+  }));
+  assert.notEqual(rooms[0].path, rooms[1].path);
+  for (const { path, seats, rolled, count } of rooms) {
+    const views = await Promise.all(seats.map(seat => request(path, undefined, seat.token)));
+    for (const { room } of views) {
+      assert.deepEqual(room.game.lastDice, rolled.game.lastDice);
+      assert.equal(room.game.rolls, 1);
+      assert.deepEqual(room.chat.map(message => message.text), ['Стол на ' + count]);
+    }
+  }
+});
