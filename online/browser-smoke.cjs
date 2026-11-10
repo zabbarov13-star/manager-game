@@ -56,7 +56,7 @@ const { createRoomServer } = require('./server.cjs');
     assert.equal(iconBytes.readUInt32BE(16), 512);
     assert.equal(iconBytes.readUInt32BE(20), 512);
     assert.match(await a.locator('link[rel=icon]').getAttribute('href'), /^data:image\/png;base64,/);
-    assert.equal(await a.locator('link[rel=apple-touch-icon]').getAttribute('href'), './manager-icon.png');
+    assert.equal(await a.locator('link[rel=apple-touch-icon]').getAttribute('href'), manifest.icons[0].src);
     await button(a, 'Настройки').click();
     await button(a, 'Начать партию · 2–6 игроков').click();
     await a.locator('#player-setup-rows .player-setup-row button').first().click();
