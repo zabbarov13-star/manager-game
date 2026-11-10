@@ -229,3 +229,46 @@ body[data-theme] .character-choice[aria-pressed=true] {
   body[data-theme] .dice-tray.rolling .die { animation: none; }
   #settings-dialog .toggle-row input[type=checkbox]::before { transition: none; }
 }
+
+body[data-theme] #settings-dialog .settings-card {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--table-tint);
+}
+#settings-dialog .settings-card h3 {
+  margin: 0 0 6px;
+  color: var(--ui-ink);
+  font-size: 15px;
+}
+#settings-dialog .settings-card h3::before {
+  display: inline-block;
+  width: 1.35em;
+  color: var(--table-gold);
+}
+#settings-dialog .settings-audio h3::before { content: '♫'; }
+#settings-dialog .settings-motion h3::before { content: '◎'; }
+body[data-theme] #settings-dialog .playlist-controls { border: 0; }
+body[data-theme=heritage][data-dark=true] :is(#settings-dialog, .appearance-dialog) {
+  background: linear-gradient(150deg, #172d44, #101c2d);
+  color: #f5eddd;
+  border: 0;
+}
+body[data-theme] .sidebar .rent-table {
+  width: 100%;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0 5px;
+  font-variant-numeric: tabular-nums;
+}
+body[data-theme] .sidebar .rent-table td {
+  border: 0;
+  padding: 7px 8px;
+  background: var(--table-tint);
+}
+body[data-theme] .sidebar .rent-table td:first-child { border-radius: 8px 0 0 8px; }
+body[data-theme] .sidebar .rent-table td:last-child {
+  border-radius: 0 8px 8px 0;
+  text-align: end;
+  font-weight: 800;
+  white-space: nowrap;
+}
