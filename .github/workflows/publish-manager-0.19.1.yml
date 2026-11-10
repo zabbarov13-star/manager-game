@@ -1,0 +1,52 @@
+name: Publish verified Manager 0.19.1
+on:
+  push:
+    branches: ['release/publish-manager-0.19.1']
+    paths: ['.github/workflows/publish-manager-0.19.1.yml']
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Require both verified runs and exact candidate assets
+        run: |
+          set -euo pipefail
+          expected=ffa7f151874648ddf159c8a321827a4abe75ae00
+          run=42774203045
+          repo="$GITHUB_REPOSITORY"
+          for ((i=0;i<45;i++)); do
+            state=$(gh api "repos/$repo/actions/runs/$run")
+            jq -e --arg sha "$expected" '.head_sha == $sha' <<< "$state" >/dev/null
+            if [[ "$(jq -r .status <<< "$state")" == completed ]]; then break; fi
+            sleep 15
+          done
+          jq -e '.conclusion == "success"' <<< "$state" >/dev/null
+          gh api "repos/$repo/actions/runs/42774709763" | jq -e '.head_sha == "8c49cf4911e804a563a1ea00b532e75474b34700" and .conclusion == "success"' >/dev/null
+          test "$(git ls-remote "https://github.com/$repo.git" refs/heads/release/manager-0.19.1 | cut -f1)" = "$expected"
+          test -z "$(git ls-remote "https://github.com/$repo.git" refs/tags/v0.19.1)"
+          gh run download "$run" -R "$repo" -n verified-manager-0.19.1 -D release
+          cd release
+          jq -e --arg sha "$expected" '.commit == $sha and .tag == "v0.19.1"' VERSION.json
+          test "$(find . -maxdepth 1 -type f | wc -l)" -eq 15
+          test "$(wc -l < SHA256SUMS.txt)" -eq 14
+          sha256sum --strict -c SHA256SUMS.txt
+          cat > "$RUNNER_TEMP/notes.md" <<'NOTES'
+          Кубики на доске уменьшены на 20%. Сохранены анимация и синхронизация звука, серверный движок и правила игры. Веб-сборку, установщики, исходники и резервные архивы можно скачать в Assets.
+
+          Проверки: Chromium и WebKit, узкий и широкий экраны, отдельная проверка на 320 px с фишками, Android 35 Emulator, iOS Simulator, macOS arm64 и Windows. Оба DMG проверены на целостность.
+
+          Android APK подписан тестовым ключом; AAB без подписи. iOS ZIP предназначен для симулятора, IPA для физических устройств не выпущен. DMG без Developer ID и нотарификации, EXE без Authenticode. Физические устройства и запуск на Intel Mac отдельно не проверялись.
+
+          Для установки PWA распакуйте Manager-Web.zip и разместите на HTTPS. Существующий GitHub Pages и OnlineVDS обслуживают прежние версии; обновление этих сайтов проводится отдельно.
+          NOTES
+          gh release create v0.19.1 ./* -R "$repo" --target "$expected" --latest \
+            --title "Менеджер — Назад в прошлое 0.19.1" --notes-file "$RUNNER_TEMP/notes.md"
+          gh release view v0.19.1 -R "$repo" --json isDraft,isPrerelease,tagName,assets |
+            jq -e '.tagName == "v0.19.1" and (.isDraft|not) and (.isPrerelease|not) and (.assets|length)==15'
