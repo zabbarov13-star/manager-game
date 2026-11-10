@@ -7,8 +7,8 @@ android {
         applicationId 'ru.manager.backtothepast.preview'
         minSdk 26
         targetSdk 35
-        versionCode 1901
-        versionName '0.19.1-preview.1'
+        versionCode 1902
+        versionName '0.19.1-preview.2'
     }
     sourceSets.main.assets.srcDirs = ['assets']
 }

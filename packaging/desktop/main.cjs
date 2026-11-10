@@ -40,7 +40,8 @@ function open() {
           throw Error(JSON.stringify(state));
         }
         clearTimeout(timer);
-        app.exit(0);
+        window.webContents.session.flushStorageData();
+        app.quit();
       } catch (error) { console.error(error); app.exit(1); }
     });
   }

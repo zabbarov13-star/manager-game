@@ -69,6 +69,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -89,6 +90,14 @@ jobs:
         with:
           name: manager-android
           path: release-output/
+      - name: Launch APK on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: bash packaging/android/emulator-smoke.sh
   windows:
     runs-on: windows-2025
     timeout-minutes: 30
@@ -168,6 +177,7 @@ jobs:
           app="$RUNNER_TEMP/manager-ios/Build/Products/Release-iphonesimulator/Manager.app"
           test -x "$app/Manager"
           cmp "$app/game.html" packaging/ios/Manager/game.html
+          bash packaging/ios/simulator-smoke.sh "$app"
           ditto -c -k --keepParent "$app" "$RUNNER_TEMP/Manager-iOS-Simulator.zip"
           unzip -tq "$RUNNER_TEMP/Manager-iOS-Simulator.zip"
       - uses: actions/upload-artifact@v4
@@ -197,7 +207,8 @@ jobs:
           IOS: ${{ needs.ios.result }}
         run: |
           set -euo pipefail
-          tag=v0.19.1-preview.1
+          tag=v0.19.1-preview.2
+          test "$(git ls-remote origin "refs/heads/$GITHUB_REF_NAME" | cut -f1)" = "$GITHUB_SHA"
           cd release-output
           sha256sum -c SHA256SUMS.txt
           find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -printf '%f\n' | sort | xargs -d '\n' sha256sum > SHA256SUMS.txt
@@ -214,5 +225,5 @@ jobs:
             gh release edit "$tag" --notes-file "$RUNNER_TEMP/release-notes.md"
           else
             gh release create "$tag" ./* --target "$GITHUB_SHA" --prerelease --latest=false \
-              --title "Менеджер 0.19.1 · предварительная сборка 1" --notes-file "$RUNNER_TEMP/release-notes.md"
+              --title "Менеджер 0.19.1 · предварительная сборка 2" --notes-file "$RUNNER_TEMP/release-notes.md"
           fi
