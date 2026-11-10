@@ -1,0 +1,50 @@
+name: Check published Windows installer
+on:
+  push:
+    branches: ['test/manager-preview-installed-windows']
+    paths: ['.github/workflows/manager-windows-install-check.yml']
+permissions:
+  contents: read
+jobs:
+  install:
+    runs-on: windows-2025
+    timeout-minutes: 22
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $repo = 'zabbarov13-star/manager-game'
+          $tag = 'v0.19.1-preview.3'
+          $files = Join-Path $env:RUNNER_TEMP 'manager-published'
+          New-Item -ItemType Directory $files | Out-Null
+          for ($i = 0; $i -lt 56; $i++) {
+            gh release download $tag -R $repo --dir $files --clobber --pattern 'Manager-win-x64.*' --pattern 'SHA256SUMS.txt'
+            if ($LASTEXITCODE -eq 0) { break }
+            Start-Sleep 15
+          }
+          $exe = Join-Path $files 'Manager-win-x64.exe'
+          $zip = Join-Path $files 'Manager-win-x64.zip'
+          $checksums = Get-Content (Join-Path $files 'SHA256SUMS.txt')
+          foreach ($file in @($exe, $zip)) {
+            $line = $checksums | Where-Object { $_.EndsWith('  ' + (Split-Path $file -Leaf)) }
+            $expected = $line.Split(' ')[0]
+            if ((Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLower() -ne $expected) { throw 'Wrong SHA-256' }
+          }
+          Write-Host ('Authenticode: ' + (Get-AuthenticodeSignature $exe).Status)
+          $target = Join-Path $env:RUNNER_TEMP 'manager-installed'
+          $env:MANAGER_SMOKE_PROFILE = Join-Path $env:RUNNER_TEMP 'manager-installed-profile'
+          for ($i = 0; $i -lt 2; $i++) {
+            $p = Start-Process -FilePath $exe -ArgumentList @('/S', "/D=$target") -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw "Installer exited with $($p.ExitCode)" }
+            $env:MANAGER_SMOKE_REOPEN = "$i"
+            $p = Start-Process -FilePath (Join-Path $target 'Manager.exe') -ArgumentList '--manager-smoke' -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw "Installed app exited with $($p.ExitCode)" }
+          }
+          $portable = Join-Path $env:RUNNER_TEMP 'manager-portable'
+          Expand-Archive -LiteralPath $zip -DestinationPath $portable
+          $portableExe = (Get-ChildItem $portable -Recurse -Filter 'Manager.exe' | Select-Object -First 1).FullName
+          $p = Start-Process -FilePath $portableExe -ArgumentList '--manager-smoke' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Portable app exited with $($p.ExitCode)" }
+          Write-Host 'Published installer, repeat install with saved state, and published portable ZIP verified'
