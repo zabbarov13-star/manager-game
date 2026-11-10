@@ -1,0 +1,77 @@
+name: Retry preview macOS packages
+on:
+  push:
+    branches: ['test/manager-preview-mac-retry']
+    paths: ['.github/workflows/manager-mac-retry.yml']
+permissions:
+  contents: read
+jobs:
+  mac:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 8a11befa612da2fdfa90ceceb4b6ddd97d8827e9
+      - uses: actions/setup-node@v4
+        continue-on-error: true
+        with:
+          node-version: '24.22.1'
+      - run: |
+          node --version
+          node online/generate.cjs
+          printf '%s  %s\n' 06da3360a9bd52b3ce948e262f5a1b1dfdc3e6a3b7df5e85013f192ab43b4e3b online/dist/index.html | shasum -a 256 -c -
+          python3 packaging/stage-native.py desktop
+      - working-directory: packaging/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          CSC_IDENTITY_AUTO_DISCOVERY=false npx --no-install electron-builder --mac dmg --arm64 --x64 --publish never
+          for image in out/*.dmg; do hdiutil verify "$image"; done
+          arch=$(uname -m)
+          echo "Native launch on $arch"
+          if [[ "$arch" == arm64 ]]; then dir=mac-arm64; else dir=mac; fi
+          export MANAGER_SMOKE_PROFILE="$RUNNER_TEMP/manager-mac-smoke"
+          "out/$dir/Manager.app/Contents/MacOS/Manager" --manager-smoke
+          MANAGER_SMOKE_REOPEN=1 "out/$dir/Manager.app/Contents/MacOS/Manager" --manager-smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manager-mac-preview3
+          path: packaging/desktop/out/Manager-mac-*.dmg
+          if-no-files-found: error
+  publish:
+    needs: mac
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: manager-mac-preview3
+          path: out
+      - run: |
+          set -euo pipefail
+          repo=zabbarov13-star/manager-game
+          tag=v0.19.1-preview.3
+          cd out
+          for ((n=0;n<45;n++)); do
+            if gh release download "$tag" -R "$repo" -p SHA256SUMS.txt --clobber; then break; fi
+            sleep 20
+          done
+          test -s SHA256SUMS.txt
+          actual=$(git ls-remote "https://github.com/$repo.git" "refs/tags/$tag" | cut -f1)
+          test "$actual" = '8a11befa612da2fdfa90ceceb4b6ddd97d8827e9'
+          if grep -q '  Manager-mac-.*\.dmg$' SHA256SUMS.txt; then
+            echo 'Both Mac assets are expected to be supplied by the primary run.'
+            grep -q '  Manager-mac-arm64.dmg$' SHA256SUMS.txt
+            grep -q '  Manager-mac-x64.dmg$' SHA256SUMS.txt
+            exit 0
+          fi
+          sha256sum Manager-mac-arm64.dmg Manager-mac-x64.dmg >> SHA256SUMS.txt
+          gh release upload "$tag" -R "$repo" Manager-mac-arm64.dmg Manager-mac-x64.dmg
+          gh release upload "$tag" -R "$repo" SHA256SUMS.txt --clobber
+          gh release view "$tag" -R "$repo" --json body -q .body > notes.md
+          printf '\nПовторная сборка macOS прошла: проверены оба DMG и запуск приложения на macOS-раннере. Developer ID и нотарификация отсутствуют.\n' >> notes.md
+          gh release edit "$tag" -R "$repo" --notes-file notes.md
