@@ -7,13 +7,15 @@ permissions:
   contents: read
 jobs:
   build:
-    runs-on: windows-2025
-    timeout-minutes: 15
+    runs-on: windows-2022
+    timeout-minutes: 12
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-      - shell: pwsh
+      - name: Download and compile installer
+        shell: pwsh
+        timeout-minutes: 5
         run: |
           $ErrorActionPreference = 'Stop'
           $repo = 'zabbarov13-star/manager-game'
@@ -34,18 +36,30 @@ jobs:
           if ($tool) { $compiler = $tool.Source } else { $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
           & $compiler "$base/Manager.iss"
           if ($LASTEXITCODE -ne 0) { throw 'Inno Setup compilation failed' }
+      - name: Run downloaded application and perform two installs
+        shell: pwsh
+        timeout-minutes: 5
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $base = Resolve-Path 'packaging/windows'
+          $app = Get-Item "$base/payload/Manager.exe"
+          function Invoke-Checked($path, $arguments) {
+            $process = Start-Process -FilePath $path -ArgumentList $arguments -PassThru
+            if (!$process.WaitForExit(65000)) {
+              Stop-Process -Id $process.Id -Force
+              throw "Timed out: $path"
+            }
+            if ($process.ExitCode -ne 0) { throw "$path exited with $($process.ExitCode)" }
+          }
           $exe = "$base/out/Manager-win-x64.exe"
           $target = Join-Path $env:RUNNER_TEMP 'manager-installed'
           $env:MANAGER_SMOKE_PROFILE = Join-Path $env:RUNNER_TEMP 'manager-installed-profile'
           for ($i = 0; $i -lt 2; $i++) {
-            $p = Start-Process -FilePath $exe -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$target") -Wait -PassThru
-            if ($p.ExitCode -ne 0) { throw "Installer exited with $($p.ExitCode)" }
+            Invoke-Checked $exe @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',"/DIR=$target","/LOG=$env:RUNNER_TEMP\inno-$i.log")
             $env:MANAGER_SMOKE_REOPEN = "$i"
-            $p = Start-Process -FilePath "$target/Manager.exe" -ArgumentList '--manager-smoke' -Wait -PassThru
-            if ($p.ExitCode -ne 0) { throw "Installed app exited with $($p.ExitCode)" }
+            Invoke-Checked "$target/Manager.exe" @('--manager-smoke')
           }
-          $p = Start-Process -FilePath $app.FullName -ArgumentList '--manager-smoke' -Wait -PassThru
-          if ($p.ExitCode -ne 0) { throw "Portable app exited with $($p.ExitCode)" }
+          Invoke-Checked $app.FullName @('--manager-smoke')
           Write-Host ('Authenticode: ' + (Get-AuthenticodeSignature $exe).Status)
           Write-Host 'Installer, repeat installation with saved state, and portable ZIP verified.'
           Compress-Archive "$base/Manager.iss" "$base/out/Manager-Windows-Installer-Source.zip"
@@ -72,6 +86,13 @@ jobs:
           test "$(git ls-remote "https://github.com/$repo.git" "refs/tags/$tag" | cut -f1)" = '8a11befa612da2fdfa90ceceb4b6ddd97d8827e9'
           cd out
           gh release download "$tag" -R "$repo" -p SHA256SUMS.txt
+          grep -q '^5d13fdb4ef734abeb29ea7801c6a7d0d832cec2b96cb243ff2c6f2b8e94ed01b  Manager-win-x64.exe'/  Manager-win-x64\.exe$/d' SHA256SUMS.txt
+          sha256sum Manager-win-x64.exe Manager-Windows-Installer-Source.zip >> SHA256SUMS.txt
+          gh release upload "$tag" -R "$repo" Manager-win-x64.exe Manager-Windows-Installer-Source.zip SHA256SUMS.txt --clobber
+          gh release view "$tag" -R "$repo" --json body -q .body > notes.md
+          printf '\nWindows EXE пересобран через Inno Setup из проверенного портативного ZIP. Установка, повторная установка с сохранением данных и запуск из ZIP прошли на Windows. Подпись Authenticode отсутствует. Исходник установщика входит в Manager-Windows-Installer-Source.zip.\n' >> notes.md
+          gh release edit "$tag" -R "$repo" --notes-file notes.md
+ SHA256SUMS.txt || exit 0
           sed -i '/  Manager-win-x64\.exe$/d' SHA256SUMS.txt
           sha256sum Manager-win-x64.exe Manager-Windows-Installer-Source.zip >> SHA256SUMS.txt
           gh release upload "$tag" -R "$repo" Manager-win-x64.exe Manager-Windows-Installer-Source.zip SHA256SUMS.txt --clobber

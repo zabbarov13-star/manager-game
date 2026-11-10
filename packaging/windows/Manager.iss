@@ -9,8 +9,8 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=out
 OutputBaseFilename=Manager-win-x64
-Compression=lzma2
-SolidCompression=yes
+Compression=zip
+SolidCompression=no
 CloseApplications=yes
 
 [Files]
