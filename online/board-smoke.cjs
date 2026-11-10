@@ -16,9 +16,14 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
     desktop.on('pageerror', error => errors.push(error.message));
     const snapshot = game();
     await desktop.addInitScript(({ snapshot }) => {
-      if (sessionStorage.getItem('qa-seeded')) return;
-      sessionStorage.setItem('qa-seeded', 'yes');
-      localStorage.setItem('manager.match.v2', JSON.stringify(snapshot));
+      const pending = sessionStorage.getItem('qa-next-match');
+      if (pending) {
+        sessionStorage.removeItem('qa-next-match');
+        localStorage.setItem('manager.match.v2', pending);
+      } else if (!sessionStorage.getItem('qa-seeded')) {
+        sessionStorage.setItem('qa-seeded', 'yes');
+        localStorage.setItem('manager.match.v2', JSON.stringify(snapshot));
+      }
     }, { snapshot });
     await desktop.goto(url);
     const view = desktop.locator('#board-viewport');
@@ -66,7 +71,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       for (const id of [1, 2, 4]) Object.assign(state.properties[id], { owner: 'p0', level: level - 1 });
       beforeLanding(state, 2);
       await desktop.evaluate(state => {
-        localStorage.setItem('manager.match.v2', JSON.stringify(state));
+        sessionStorage.setItem('qa-next-match', JSON.stringify(state));
       }, state);
       await desktop.reload();
       const follow = level !== 2;
@@ -101,7 +106,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
             selected: document.querySelector('.tile.selected')?.dataset.id,
             current: document.querySelector('.turn-panel h2')?.textContent,
             card: document.querySelector('#property-card')?.textContent?.slice(-500),
-            alert: document.querySelector('#match-error')?.textContent };
+            alert: document.querySelector('#party-toast')?.textContent };
         });
         throw new Error('Construction stage ' + level + ': ' + JSON.stringify({ info, errors }), { cause: error });
       }
