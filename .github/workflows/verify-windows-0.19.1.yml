@@ -1,0 +1,53 @@
+name: Verify 0.19.1 Windows installer independently
+on:
+  push:
+    branches: ['test/manager-0.19.1-windows-retry']
+    paths: ['.github/workflows/verify-windows-0.19.1.yml']
+permissions:
+  contents: read
+jobs:
+  portable:
+    runs-on: windows-2025
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ffa7f151874648ddf159c8a321827a4abe75ae00
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: |
+          node online/generate.cjs
+          python packaging/stage-native.py desktop
+      - working-directory: packaging/desktop
+        shell: bash
+        run: |
+          npm ci --no-audit --no-fund
+          npx --no-install electron-builder --win zip --x64 --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate-portable-0.19.1
+          path: packaging/desktop/out/Manager-win-x64.zip
+          if-no-files-found: error
+          compression-level: 0
+  installer:
+    needs: portable
+    runs-on: windows-2022
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ffa7f151874648ddf159c8a321827a4abe75ae00
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-portable-0.19.1
+          path: packaging/desktop/out
+      - shell: pwsh
+        timeout-minutes: 7
+        run: ./packaging/windows/build-and-check.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-windows-0.19.1
+          path: packaging/windows/out/
+          if-no-files-found: error
+          compression-level: 0
