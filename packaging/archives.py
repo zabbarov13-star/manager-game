@@ -11,7 +11,7 @@ import tempfile
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile, ZipInfo
 
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = "0.19.1-preview.3"
+VERSION = "0.19.1"
 TAG = "v" + VERSION
 PUBLIC = ("index.html", "sw.js", "manifest.webmanifest", "manager-icon.png")
 RUNTIME = PUBLIC + ("engine.cjs",)

@@ -1,6 +1,6 @@
 {
   "name": "manager-back-to-the-past-preview",
-  "version": "0.19.1-preview.3",
+  "version": "0.19.1",
   "description": "Менеджер — Назад в прошлое",
   "author": "Manager project",
   "main": "main.cjs",

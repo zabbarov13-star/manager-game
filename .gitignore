@@ -8,3 +8,5 @@
 /packaging/desktop/out/
 /packaging/ios/Manager/game.html
 /release-output/
+/packaging/windows/payload/
+/packaging/windows/out/

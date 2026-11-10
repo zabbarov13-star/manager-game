@@ -54,6 +54,8 @@ body[data-theme] :is(.panel-dice, .dice-tray) .die {
   box-shadow: inset 0 2px 3px #fff, inset -2px -4px 6px #2a1b1829, 0 4px 0 var(--dice-edge), 0 8px 14px #0b111a4d;
 }
 body[data-theme] .panel-dice .die { width: 39px; height: 39px; }
+/* Scale only the board faces. Keep the tray layout, result and tumble transform. */
+body[data-theme] .dice-tray .die { scale: .8; }
 body[data-theme] :is(.panel-dice, .dice-tray) .die .pip {
   width: 17%;
   height: 17%;
