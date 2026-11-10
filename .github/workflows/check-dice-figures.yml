@@ -1,0 +1,38 @@
+name: Check dice clear actual player figures
+on:
+  push:
+    branches: ['test/manager-0.19.1-dice-figures']
+    paths: ['.github/workflows/check-dice-figures.yml']
+permissions:
+  contents: read
+jobs:
+  figures:
+    runs-on: ubuntu-24.04
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ffa7f151874648ddf159c8a321827a4abe75ae00
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: |
+          set -euo pipefail
+          node online/generate.cjs
+          npm install --prefix "$RUNNER_TEMP/browser" --no-audit --no-fund playwright@1.56.1
+          export NODE_PATH="$RUNNER_TEMP/browser/node_modules"
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('packaging/browser-dice.cjs')
+          s=p.read_text()
+          s=s.replace("async function checkBoardDice", "const { game } = require('../online/construction-fixture.cjs');\n\nasync function checkBoardDice")
+          s=s.replace('.tile-hit, .token,', '.tile-hit, .player-token,')
+          s=s.replace('width: 390, height: 844', 'width: 320, height: 720')
+          seed = """await page.addInitScript(snapshot => localStorage.setItem('manager.match.v2', JSON.stringify(snapshot)), game());
+              await page.goto(url);
+              assert.equal(await page.locator('.player-token').count(), 2);"""
+          s=s.replace('await page.goto(url);',seed)
+          p.write_text(s)
+          PY
+          node packaging/browser-dice.cjs
