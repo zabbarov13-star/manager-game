@@ -1,0 +1,23 @@
+name: Stop superseded Windows packaging retry
+on:
+  push:
+    branches: ['test/manager-preview-installed-windows']
+    paths: ['.github/workflows/manager-stop-obsolete-windows.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - run: |
+          set -euo pipefail
+          api="repos/$GITHUB_REPOSITORY/actions/runs/42765624055"
+          run=$(gh api "$api")
+          test "$(jq -r .head_sha <<< "$run")" = 07297f30630ae8cf5751f6fb120bf8391c75f00e
+          if [[ "$(jq -r .status <<< "$run")" != completed ]]; then
+            gh api --method POST "$api/cancel"
+          fi
