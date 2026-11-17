@@ -1,0 +1,24 @@
+name: Telegram Mini App checks
+on:
+  push:
+    branches: [feature/telegram-mini-app]
+    paths: [telegram/**, .github/workflows/telegram-mini-app.yml]
+  pull_request:
+    paths: [telegram/**, .github/workflows/telegram-mini-app.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: node telegram/build.cjs
+      - run: node --test telegram/tests/*.test.cjs tests/p2p-routing-baseline.cjs
+      - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs
+      - run: npm install --no-save --prefix telegram playwright@1.62.1
+      - run: cd telegram && npx playwright install --with-deps chromium
+      - run: node telegram/tests/browser-smoke.cjs

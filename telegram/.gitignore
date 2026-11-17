@@ -1,0 +1,9 @@
+/dist/
+/data/
+/.env
+/.env.*
+!/.env.example
+/*.local.cjs
+/qa-*.png
+/art-review.png
+/node_modules/

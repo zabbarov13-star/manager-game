@@ -1,0 +1,12 @@
+**/.env
+**/.env.*
+**/node_modules
+**/data
+**/dist
+**/*.sqlite*
+**/*.local.cjs
+**/qa-*.png
+**/art-review.png
+.git
+packaging
+game-*.html

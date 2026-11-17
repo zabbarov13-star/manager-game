@@ -1,0 +1,79 @@
+{
+  "tool": "image_gen (built-in)",
+  "transparent_background": true,
+  "promptTemplate": "Use case: stylized-concept. Production character asset for Russian board game Manager. ONE original character {name}: {subject}. {style}, exceptional professional illustration quality, expressive face, coherent warm friendly collection aesthetic, strong readable silhouette. Full body head to shoes centered, three-quarter view facing viewer, relaxed friendly idle pose. Transparent background with real alpha, no text, no labels, no frame, no floor, no watermark. Entire body inside image with generous clear margin. Original design; do not reproduce existing film characters.",
+  "characters": [
+    {
+      "id": "mira",
+      "name": "Мира",
+      "subject": "young female inventive architect, round copper glasses, teal overalls, tiny architectural model, auburn bob",
+      "style": "premium polished 3D family animation"
+    },
+    {
+      "id": "timur",
+      "name": "Тимур",
+      "subject": "cheerful broad shouldered male airship mechanic, ochre jacket, blue scarf, curly dark hair, brass goggles",
+      "style": "premium polished 3D family animation"
+    },
+    {
+      "id": "luna",
+      "name": "Луна",
+      "subject": "confident female botanist with dark skin, lavender field coat, silver natural curly hair, small botanical satchel",
+      "style": "premium polished 3D family animation"
+    },
+    {
+      "id": "felix",
+      "name": "Феликс",
+      "subject": "slim male city postmaster, burgundy tailcoat, mint waistcoat, expressive swept brown hair",
+      "style": "premium polished 3D family animation"
+    },
+    {
+      "id": "asya",
+      "name": "Ася",
+      "subject": "female adventurous cartographer, coral red jacket, cream trousers, brown curls, rolled map",
+      "style": "classic hand drawn theatrical cartoon animation"
+    },
+    {
+      "id": "oscar",
+      "name": "Оскар",
+      "subject": "gentle stocky male clockmaker, indigo waistcoat, cream shirt, silver moustache, pocket watch",
+      "style": "classic hand drawn theatrical cartoon animation"
+    },
+    {
+      "id": "bella",
+      "name": "Белла",
+      "subject": "vivacious female jazz conductor, emerald trouser suit, black wavy bob, gold baton",
+      "style": "classic hand drawn theatrical cartoon animation"
+    },
+    {
+      "id": "marcel",
+      "name": "Марсель",
+      "subject": "elegant male pastry inventor, violet apron, white shirt, orange quiff, tiny pastry box",
+      "style": "classic hand drawn theatrical cartoon animation"
+    },
+    {
+      "id": "akira",
+      "name": "Акира",
+      "subject": "male night city courier, cobalt tech jacket, silver black layered hair, compact crossbody bag",
+      "style": "high quality detailed anime illustration"
+    },
+    {
+      "id": "hana",
+      "name": "Хана",
+      "subject": "female urban gardener, peach kimono inspired modern jacket, forest green skirt, dark braided hair, leaf hairclip",
+      "style": "high quality detailed anime illustration"
+    },
+    {
+      "id": "ren",
+      "name": "Рэн",
+      "subject": "male observatory apprentice, midnight blue coat with gold piping, tousled indigo hair, round star brooch",
+      "style": "high quality detailed anime illustration"
+    },
+    {
+      "id": "yuki",
+      "name": "Юки",
+      "subject": "female robotics designer, white lilac utility jacket, short platinum hair, violet eyes, small tool pouch",
+      "style": "high quality detailed anime illustration"
+    }
+  ]
+}

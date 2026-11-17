@@ -1,0 +1,11 @@
+{
+  "name": "manager-telegram-mini-app",
+  "version": "0.19.1-telegram.1",
+  "private": true,
+  "engines": { "node": ">=24.22.1 <25" },
+  "scripts": {
+    "build": "node build.cjs",
+    "start": "node --env-file-if-exists=.env server.cjs",
+    "test": "node --test tests/*.test.cjs"
+  }
+}
