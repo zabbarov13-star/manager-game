@@ -68,7 +68,7 @@ async function watch(item){if(!account.features.ads)throw Error('Рекламн�
   throw Error('Подтверждение ещё не получено. Награда появится после проверки сервером.');
  }catch(e){if(!watched)await api('ads/cancel',{id:intent.id}).catch(()=>{});throw e;}
 }
-function open(value='characters'){tab=value;render();dialog.showModal();tg.BackButton?.show();}
+function open(value='characters'){tab=value;render();dialog.showModal();tg.BackButton?.show();refresh();}
 function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.style;
  dialog=node('dialog',null,'tg-dialog');dialog.setAttribute('aria-label','Персонажи, награды и магазин');const head=node('header'),title=node('h2','Коллекция «Менеджера»');head.append(title,button('Закрыть',()=>dialog.close()));
  const tabs=node('nav');tabs.setAttribute('aria-label','Разделы коллекции');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']]){const b=button(label,()=>{tab=id;render();});b.dataset.tab=id;tabs.append(b);}
@@ -78,7 +78,7 @@ function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.styl
  bridge.apply();render();
  document.addEventListener('visibilitychange',()=>{if(document.hidden){bridge.save();bridge.suspend();}else refresh();});
  tg.onEvent?.('activated',refresh);tg.onEvent?.('deactivated',()=>{bridge.save();bridge.suspend();});
- setInterval(()=>{const theme='style:'+bridge.settings.uiTheme;if(!canUse(theme)){bridge.settings.uiTheme='heritage';bridge.apply();}cosmetics();},15000);
+ setInterval(()=>{if(now()>=account.ads.resetAt)refresh();const theme='style:'+bridge.settings.uiTheme;if(!canUse(theme)){bridge.settings.uiTheme='heritage';bridge.apply();}cosmetics();},15000);
 }
 async function refresh(){try{sync(await api('profile'));if(dialog?.open)render();}catch(e){status(e.message,true);}}
 function safeArea(){const a=tg.contentSafeAreaInset??{},b=tg.safeAreaInset??{};for(const edge of ['top','bottom','left','right'])document.documentElement.style.setProperty('--tg-inset-'+edge,Math.max(a[edge]??0,b[edge]??0)+'px');}
