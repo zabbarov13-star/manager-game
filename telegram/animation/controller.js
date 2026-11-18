@@ -7,8 +7,11 @@
       this.catalog=catalog;this.storage=storage;this.getSelected=getSelected;this.renderers=new Map();this.bindings={};this.engineBindings=new Map();this.idleTimers=new Map();this.spawnedContexts=new Set();this.meta=null;this.network=false;this.view=null;
       try{this.meta=JSON.parse(storage.getItem('animation-local.v1'));}catch{}
       this.dispatcher=new Core.AnimationEventDispatcher({registry:catalog.characters.map(c=>({...c,theme:c.theme??'classic'})),context:{gameId:'unbound',players:{}},render:(event,signal)=>this.render(event,signal)});
-      document.addEventListener('visibilitychange',()=>{if(document.hidden){this.dispatcher.cancelAll();this.stopIdle();}else this.startIdle();});
+      this.active=true;this.lastEvents=new Map();this.onVisibility=()=>this.setActive(!document.hidden&&document.body.dataset.tgActive!=='false');
+      this.onActivity=event=>this.setActive(event.detail===true&&!document.hidden);
+      document.addEventListener('visibilitychange',this.onVisibility);document.addEventListener('manager:activity',this.onActivity);
     }
+    setActive(active){this.active=active;if(!active){this.dispatcher.cancelAll();this.stopIdle();}else{this.startIdle();for(const [id,event]of this.lastEvents)if(this.dispatcher.terminal.has(id)){const record=this.renderers.get(id);record?.renderer.load().then(()=>{if(this.active&&this.renderers.get(id)===record)record.renderer.renderFrame(event,1);}).catch(()=>{});}}}
     definition(id){return this.catalog.characters.find(c=>c.id===id);}
     characterForEngineId(id){return this.definition(this.engineBindings.get(id));}
     ensureView(){
@@ -17,6 +20,7 @@
       (document.querySelector('.sidebar')??document.body).append(this.view);
     }
     context(gameId,state,bindings){
+      if(gameId!==this.dispatcher.context.gameId)this.lastEvents.clear();
       this.bindings=bindings;this.engineBindings.clear();
       for(const player of state.players){const id=bindings[player.id]??player.character;this.engineBindings.set(player.character,id);}
       this.dispatcher.setContext({gameId,players:bindings,propertyIds:Object.keys(state.properties).map(Number)});
@@ -42,9 +46,9 @@
     spawn(playerId){const key=this.dispatcher.context.gameId+'|'+playerId+'|'+this.bindings[playerId];if(this.spawnedContexts.has(key))return;this.spawnedContexts.add(key);if(this.spawnedContexts.size>256)this.spawnedContexts.delete(this.spawnedContexts.values().next().value);this.dispatcher.dispatchLocal(this.localEvent('character.spawn',playerId));}
     stopIdle(){for(const timer of this.idleTimers.values())clearTimeout(timer);this.idleTimers.clear();}
     startIdle(){
-      if(document.hidden)return;
-      for(const [playerId,record]of this.renderers)if(!this.idleTimers.has(playerId)){
-        const tick=()=>{this.idleTimers.delete(playerId);if(document.hidden||!record.element.isConnected||this.dispatcher.terminal.has(playerId))return;
+      if(document.hidden||!this.active)return;
+      for(const [playerId,record]of this.renderers)if(!this.idleTimers.has(playerId)&&!this.dispatcher.terminal.has(playerId)){
+        const tick=()=>{this.idleTimers.delete(playerId);if(document.hidden||!this.active||!record.element.isConnected||this.dispatcher.terminal.has(playerId))return;
           if(!this.dispatcher.active.has(playerId))this.dispatcher.dispatchLocal(this.localEvent('character.idle',playerId));
           this.scheduleIdle(playerId,tick);
         };this.scheduleIdle(playerId,tick);
@@ -52,11 +56,14 @@
     }
     scheduleIdle(playerId,tick){this.idleTimers.set(playerId,setTimeout(tick,3000+Math.random()*3000));}
     async render(event,signal){
+      this.lastEvents.set(event.playerId,event);
+      if(document.hidden||!this.active)return;
       const record=this.renderers.get(event.playerId);if(!record)return;
       record.caption.textContent=window.ManagerCharacterAnimation.labels[event.type];
       const character=this.definition(event.characterId),pose=window.ManagerCharacterAnimation.poseFor(event.type);
       if(character)document.querySelectorAll(`svg[data-tg-premium="${character.id}"] image[data-tg-body]`).forEach(image=>image.setAttribute('href',character.poses[pose]));
       await record.renderer.play(event,signal);
+      if(this.renderers.get(event.playerId)===record){clearTimeout(this.idleTimers.get(event.playerId));this.idleTimers.delete(event.playerId);this.startIdle();}
     }
     ownBindings(state){const selected=this.getSelected();return Object.fromEntries(state.players.map((player,index)=>[player.id,index===0&&selected?selected.id:player.character]));}
     saveMeta(){try{this.storage.setItem('animation-local.v1',JSON.stringify(this.meta));}catch{}}
@@ -99,7 +106,7 @@
         for(const event of payload.events??[])this.dispatcher.dispatchGame(event);
       }
     }
-    destroy(){this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values())record.renderer.cancel();this.view?.remove();}
+    destroy(){document.removeEventListener('visibilitychange',this.onVisibility);document.removeEventListener('manager:activity',this.onActivity);this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values())record.renderer.cancel();this.renderers.clear();this.view?.remove();}
   }
   window.CharacterAnimationController=CharacterAnimationController;
 })();

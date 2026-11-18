@@ -19,8 +19,10 @@ function cosmetics(html){
  const source='character:body.character,color,ready';
  const count=html.split(source).length-1;if(count!==2)throw Error('Cosmetic seat anchors changed: '+count);
  const binding='body.telegramCharacterVerified===true&&globalThis.ManagerAnimationRegistry.some(c=>c.id===body.telegramCharacterId)?body.telegramCharacterId:undefined';
- html=html.replaceAll(source,`character:body.character,cosmeticCharacter:${binding},color,ready`);
+ html=html.replaceAll(source,`character:body.character,cosmeticCharacter:${binding},cosmeticTicket:body.telegramCharacterVerified===true?body.telegramCosmeticTicket:undefined,color,ready`);
+ const start='room.game=createMatch(room.seats.map';if(!html.includes(start))throw Error('Start cosmetic revalidation anchor changed.');
+ html=html.replace(start,"await Promise.all(room.seats.map(async cosmeticSeat=>{if(cosmeticSeat.cosmeticCharacter&&(!env.verifyCosmetic||!await env.verifyCosmetic(cosmeticSeat.cosmeticTicket,cosmeticSeat.cosmeticCharacter))){cosmeticSeat.cosmeticCharacter=undefined;cosmeticSeat.cosmeticTicket=undefined;}}));"+start);
  const anchor='seat.character=body.character;seat.color=body.color;';if(!html.includes(anchor))throw Error('Appearance anchor changed');
- return html.replace(anchor,`seat.character=body.character;seat.cosmeticCharacter=${binding};seat.color=body.color;`);
+ return html.replace(anchor,`seat.character=body.character;seat.cosmeticCharacter=${binding};seat.cosmeticTicket=body.telegramCharacterVerified===true?body.telegramCosmeticTicket:undefined;seat.color=body.color;`);
 }
 module.exports={bundle,authority,cosmetics};

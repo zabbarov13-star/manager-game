@@ -19,12 +19,15 @@ jobs:
       - run: npm install --prefix telegram
       - run: cd telegram && npx tsc -p tsconfig.json
       - run: node telegram/build.cjs
+      - run: node telegram/staging/init-local.cjs
       - run: node --test telegram/tests/*.test.cjs tests/p2p-routing-baseline.cjs
-      - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs
+      - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs online/server.test.cjs
       - run: cd telegram && npx playwright install --with-deps chromium
       - run: node telegram/animation/build-demo.cjs
       - run: node telegram/tests/animation-visual.cjs
+      - run: node telegram/tests/animation-playback.cjs
       - run: node telegram/tests/browser-smoke.cjs
+      - run: node telegram/tests/character-field.cjs
       - run: node telegram/tests/animation-multiplayer.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -33,3 +36,4 @@ jobs:
           path: |
             telegram/animation-demo/
             telegram/qa-*.png
+            telegram/qa-results/

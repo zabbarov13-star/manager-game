@@ -30,6 +30,7 @@ replace('state.settings.uiTheme=theme.id;settingsUI();persist();','state.setting
 replace('function render(){if(!s)return;', 'function render(){if(!s)return;window.ManagerTelegram.react(s);');
 replace("async request(op='',body,credentials){const controller", "async request(op='',body,credentials){if(body?.character)body=await window.ManagerTelegram.decorateRoomBody(body);const controller");
 replace("const creating=!this.db.row&&m.body&&m.op==='';", "if(m?.body?.character){const verified=await window.ManagerTelegram.verifyCosmetic(m.body.telegramCosmeticTicket,m.body.telegramCharacterId);m={...m,body:{...m.body,telegramCharacterVerified:verified}};}const creating=!this.db.row&&m.body&&m.op==='';");
+replace('}),{DB:this.db});','}),{DB:this.db,verifyCosmetic:(ticket,id)=>window.ManagerTelegram.verifyCosmetic(ticket,id,true)});');
 replace('s=draft;save();busy=true;', 's=draft;window.ManagerTelegram.commitLocal(s);save();busy=true;');
 replace('async function acceptOnline(next,effects,room){onlineQueue.push', 'async function acceptOnline(next,effects,room){window.ManagerTelegram.acceptNetwork(next,room);onlineQueue.push');
 replace('const a=appearanceState(settings);body.dataset.theme=a.theme;', "const a=appearanceState(settings);if(!window.ManagerTelegram.canUse('style:'+a.theme)){a.theme='heritage';settings.uiTheme='heritage';}body.dataset.theme=a.theme;");

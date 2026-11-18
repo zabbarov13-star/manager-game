@@ -17,6 +17,7 @@ class Store{
  CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,user TEXT NOT NULL,product TEXT NOT NULL,amount INTEGER NOT NULL,items TEXT NOT NULL,created INTEGER NOT NULL,status TEXT NOT NULL,charge TEXT UNIQUE,checkout_query TEXT);
  CREATE TABLE IF NOT EXISTS updates(id INTEGER PRIMARY KEY,created INTEGER NOT NULL);
  CREATE TABLE IF NOT EXISTS cosmetic_tickets(id TEXT PRIMARY KEY,user TEXT NOT NULL,character TEXT NOT NULL,expires INTEGER NOT NULL);
+ CREATE INDEX IF NOT EXISTS cosmetic_tickets_expiry ON cosmetic_tickets(expires);
  CREATE INDEX IF NOT EXISTS grants_user ON grants(user);
  CREATE INDEX IF NOT EXISTS ads_user_day ON ads(user,day,status);
  CREATE INDEX IF NOT EXISTS orders_user ON orders(user,status);
@@ -26,9 +27,9 @@ class Store{
  role(user){return this.ownerTelegramId!==null&&String(user)===this.ownerTelegramId?'owner':'player';}
  cosmeticTicket(user){const profile=this.db.prepare('SELECT character FROM profiles WHERE user=?').get(user);if(!profile||!this.access(user,'character:'+profile.character).available)return null;
   const now=this.now(),id=randomBytes(32).toString('hex'),access=this.access(user,'character:'+profile.character),expires=Math.min(now+300000,access.expires??Infinity);
-  this.db.prepare('DELETE FROM cosmetic_tickets WHERE expires<=?').run(now);this.db.prepare('INSERT INTO cosmetic_tickets VALUES(?,?,?,?)').run(id,user,profile.character,expires);return {ticket:id,characterId:profile.character,expires};
+  this.db.prepare('DELETE FROM cosmetic_tickets WHERE expires<=?').run(now-7*DAY);this.db.prepare('INSERT INTO cosmetic_tickets VALUES(?,?,?,?)').run(id,user,profile.character,expires);return {ticket:id,characterId:profile.character,expires};
  }
- verifyCosmetic(ticket,characterId){if(typeof ticket!=='string'||!/^[a-f0-9]{64}$/.test(ticket)||typeof characterId!=='string')return false;const row=this.db.prepare('SELECT * FROM cosmetic_tickets WHERE id=? AND character=?').get(ticket,characterId);return !!row&&row.expires>this.now()&&this.access(row.user,'character:'+row.character).available;}
+ verifyCosmetic(ticket,characterId,{existingSeat=false}={}){if(typeof ticket!=='string'||!/^[a-f0-9]{64}$/.test(ticket)||typeof characterId!=='string')return false;const row=this.db.prepare('SELECT * FROM cosmetic_tickets WHERE id=? AND character=?').get(ticket,characterId);return !!row&&row.expires+(existingSeat?7*DAY:0)>this.now()&&this.access(row.user,'character:'+row.character).available;}
  access(user,item,now=this.now()){
   item=canonicalItem(item);
   const known=catalog.items.find(i=>i.id===item);

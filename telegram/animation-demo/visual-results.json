@@ -6,13 +6,13 @@
     "390": {
       "p50Ms": 0.19999998807907104,
       "p95Ms": 0.30000001192092896,
-      "maxMs": 1.300000011920929,
+      "maxMs": 1.4000000357627869,
       "renderer": "Canvas 2D, 360×480, desktop Chrome, no device CPU emulation"
     },
     "1440": {
       "p50Ms": 0.19999998807907104,
       "p95Ms": 0.30000001192092896,
-      "maxMs": 0.40000003576278687,
+      "maxMs": 0.30000001192092896,
       "renderer": "Canvas 2D, 360×480, desktop Chrome, no device CPU emulation"
     }
   },

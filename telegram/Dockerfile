@@ -3,7 +3,7 @@ WORKDIR /app
 COPY index.html manifest.webmanifest manager-icon.png sw.js ./
 COPY online ./online
 COPY telegram ./telegram
-RUN node telegram/build.cjs && mkdir -p /data && chown node:node /data
+RUN node telegram/build.cjs && mkdir -p /data /backups && chown node:node /data /backups
 USER node
 WORKDIR /app/telegram
 ENV TELEGRAM_DATABASE=/data/telegram.sqlite BIND=0.0.0.0 PORT=8090

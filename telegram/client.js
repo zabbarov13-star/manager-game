@@ -2,11 +2,12 @@
 (()=>{
 'use strict';
 const tg=window.Telegram?.WebApp,loading=document.getElementById('telegram-loading');
-let account,bridge,dialog,tab='characters',busy=false,offset=0,matchSkin=null,controller,characterAnimations,renderingFree=false,detailId=null;
+let account,bridge,dialog,tab='characters',busy=false,offset=0,matchSkin=null,controller,characterAnimations,renderingFree=false,detailId=null,profileEpoch=0,profileWriting=0;
 const $=id=>document.getElementById(id);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(label,action)=>{const b=node('button',label);b.type='button';b.onclick=()=>run(action);return b;};
-async function api(path,data){const r=await fetch('/api/'+path,{method:data===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(account?{Authorization:'Bearer '+account.token}:{})},...(data===undefined?{}:{body:JSON.stringify(data)}),cache:'no-store'});const value=await r.json();if(!r.ok)throw Error(value.error??'Ошибка связи с сервером.');return value;}
+async function api(path,data,timeout=12000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch('/api/'+path,{method:data===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(account?{Authorization:'Bearer '+account.token}:{})},...(data===undefined?{}:{body:JSON.stringify(data)}),cache:'no-store',signal:controller.signal});const value=await r.json();if(!r.ok)throw Error(value.error??'Ошибка связи с сервером.');return value;}catch(e){if(e.name==='AbortError')throw Error('Сервер не ответил вовремя. Повторите попытку.');throw e;}finally{clearTimeout(timer);}}
+
 function sync(value){Object.assign(account,value);offset=account.serverTime-Date.now();if(bridge){bridge.settings.uiTheme=account.profile.style;bridge.apply();}cosmetics();}
 const now=()=>Date.now()+offset;
 const access=id=>account?.access[id]??{available:false,permanent:false,expires:0};
@@ -19,21 +20,22 @@ function remaining(id){const a=access(id);return a.reason==='owner'?'Досту�
 function cosmetics(){document.body.dataset.tgDice=canUse('dice:jade')&&account.profile.dice==='jade'?'jade':'';document.body.dataset.tgEffect=canUse('effect:sparkle')&&account.profile.effect==='sparkle'?'sparkle':'';}
 function status(message,error=false){const host=$('tg-message');if(host){host.textContent=message;host.dataset.error=String(error);}}
 async function run(fn){if(busy)return;busy=true;dialog?.setAttribute('aria-busy','true');try{await fn();}catch(e){status(e.message,true);}finally{busy=false;dialog?.removeAttribute('aria-busy');}}
-async function select(field,id){sync(await api('profile',{[field]:id}));render();status('Выбор сохранён.');}
+async function updateProfile(values){profileEpoch++;profileWriting++;try{sync(await api('profile',values));}finally{profileWriting--;}}
+async function select(field,id){await updateProfile({[field]:id});render();status('Выбор сохранён.');}
 function picture(c,details=false){const box=node('div',null,'tg-portrait');if(c.free){renderingFree=true;try{box.innerHTML=bridge.avatarSVG(c.id);}finally{renderingFree=false;}}else{const img=node('img');img.src=details?c.portraitLarge:c.portrait;img.alt=c.name;img.loading='lazy';box.append(img);}return box;}
 function actions(item,host){const owned=canUse(item.id),a=access(item.id);host.append(node('p',remaining(item.id),'tg-access'));
  if(owned){const field=item.id.split(':')[0],id=item.id.split(':')[1];host.append(button('Выбрать',()=>select(field,id)));}
  if(!a.permanent&&!item.free){const ad=button(owned?'Продлить на 24 часа':'Открыть на 24 часа',()=>watch(item.id));ad.disabled=!account.features.ads||account.ads.remaining===0||a.expires>=now()+72*3600000;host.append(ad);
-  if(item.price){const buy=button('Навсегда · '+money(item.price),()=>purchase(item.id));host.append(buy);}}
+  if(item.price){const buy=button('Навсегда · '+money(item.price),()=>purchase(item.id));buy.disabled=!account.features.stars;host.append(buy);}}
 }
 function characterCard(c,details=false){const card=node('article',null,'tg-card');card.append(picture(c,details),node('small',c.collection),node('h3',c.name),node('p',c.role));
  if(details){card.append(node('p',c.bio),node('p',c.traits));const names=['Интеллект','Удача','Сила','Скорость','Харизма'];c.stats.forEach((value,i)=>{const row=node('label',names[i]+' · '+value+'/10','tg-stat'),meter=node('meter');meter.min=1;meter.max=10;meter.value=value;row.append(meter);card.append(row);});card.append(node('p','Характеристики декоративные: все игровые возможности одинаковы.','tg-note'));
   if(!c.free){const canvas=node('canvas',null,'tg-animation-preview'),animations=node('div',null,'tg-animation-buttons'),renderer=new window.ManagerCharacterAnimation.CharacterCanvasRenderer(canvas,c),playerId='preview';let gameId='preview:'+c.id;
    const dispatcher=new window.ManagerAnimationCore.AnimationEventDispatcher({registry:account.catalog.characters.map(c=>({...c,theme:c.theme??'classic'})),context:{gameId,players:{[playerId]:c.id},propertyIds:[1]},render:(event,signal)=>renderer.play(event,signal)});let sequence=0;
    for(const [type,label]of Object.entries(window.ManagerCharacterAnimation.labels))animations.append(button(label,()=>{gameId='preview:'+crypto.randomUUID();dispatcher.setContext({gameId,players:{[playerId]:c.id}});const local=type.startsWith('character.'),event={schemaVersion:1,eventId:'preview:'+crypto.randomUUID(),gameId,playerId,characterId:c.id,type,source:local?'local-ui':'game-engine',occurredAt:Date.now(),...(!local?{sequence:sequence++}:{}),...(['turn.started','dice.rolled','property.purchased'].includes(type)?{turnId:1}:{}),...(type==='dice.rolled'?{diceValues:[4,3]}:{}),...(type==='property.purchased'?{propertyId:1}:{}),...(type.startsWith('money.')?{amount:1000}:{})};local?dispatcher.dispatchLocal(event):dispatcher.dispatchGame(event);}));
-   canvas.addEventListener('click',()=>{});card.append(canvas,animations,node('small','Демонстрационные события. Предпросмотр не открывает доступ к игре.'));
+   const pause=()=>{if(document.hidden||document.body.dataset.tgActive==='false'||!dialog?.open){dispatcher.cancelAll();renderer.cancel();}};document.addEventListener('visibilitychange',pause);document.addEventListener('manager:activity',pause);dialog?.addEventListener('close',pause);card.append(canvas,animations,node('small','Демонстрационные события. Предпросмотр не открывает доступ к игре.'));
    renderer.load().then(()=>renderer.renderFrame({type:'character.idle'},.5)).catch(()=>{});
-   const observer=new MutationObserver(()=>{if(!canvas.isConnected){dispatcher.cancelAll();renderer.cancel();observer.disconnect();}});observer.observe(document.body,{childList:true,subtree:true});
+   const observer=new MutationObserver(()=>{if(!canvas.isConnected){dispatcher.cancelAll();renderer.cancel();document.removeEventListener('visibilitychange',pause);document.removeEventListener('manager:activity',pause);dialog?.removeEventListener('close',pause);observer.disconnect();}});observer.observe(document.body,{childList:true,subtree:true});
   }
  }else card.append(button('Биография и характеристики',()=>{renderDetail(c);}));
  actions(account.catalog.items.find(i=>i.id==='character:'+c.id),card);return card;
@@ -43,6 +45,8 @@ function render(){if(!bridge||!dialog)return;if(detailId&&tab==='characters'){re
  const host=$('tg-content');host.replaceChildren();const header=node('div',null,'tg-summary');
  const reset=Math.max(0,account.ads.resetAt-now()),h=Math.floor(reset/3600000),m=Math.floor(reset/60000)%60;
  if(account.role==='owner')header.append(node('strong','Все косметические товары доступны владельцу бесплатно','tg-owner-note'));else header.append(node('strong',`Доступно просмотров: ${account.ads.remaining} из 3`),node('span',`Обновление через ${h} ч ${m} мин · 00:00 МСК`));host.append(header);
+ if(!account.features.stars)host.append(node('p','Покупки Stars пока недоступны: ожидается настройка магазина.','tg-note'));
+ if(account.features.supportContact)host.append(node('p','Поддержка покупок: '+account.features.supportContact,'tg-note'));
  if(!account.features.ads)host.append(node('p','Рекламные награды пока недоступны: ожидается подключение серверного подтверждения AdsGram.','tg-note'));
  if(account.ads.remaining===0)host.append(node('p','Сегодня все рекламные награды получены. Новые просмотры будут доступны завтра в 00:00 МСК.'));
  host.append(node('p','Косметика не влияет на кубики, очки и правила.','tg-note'));
@@ -55,10 +59,10 @@ function render(){if(!bridge||!dialog)return;if(detailId&&tab==='characters'){re
    const card=node('article',null,'tg-card');card.append(node('h3',item.name));const preview=node('div',null,'tg-item-preview');preview.dataset.preview=item.id;preview.textContent=item.kind==='dice'?'⚄ ⚂':item.kind==='effect'?'Сияние':item.name;card.append(preview);actions(item,card);grid.append(card);}
   if(tab==='shop')for(const pack of account.catalog.packs){const card=node('article',null,'tg-card');card.append(node('h3',pack.name),node('p',pack.items.map(id=>account.catalog.items.find(i=>i.id===id).name).join(', ')),node('p','Только перечисленные предметы. Доступ навсегда.'));
    const overlap=pack.items.filter(id=>access(id).permanent);if(overlap.length)card.append(node('p','Уже куплено: '+overlap.map(id=>account.catalog.items.find(i=>i.id===id).name).join(', ')));
-   if(account.role==='owner')card.append(node('p','Доступ владельца · бесплатно'));else{const buy=button(money(pack.price),()=>purchase(pack.id));buy.disabled=overlap.length>0;card.append(buy);}grid.append(card);}
+   if(account.role==='owner')card.append(node('p','Доступ владельца · бесплатно'));else{const buy=button(money(pack.price),()=>purchase(pack.id));buy.disabled=!account.features.stars||overlap.length>0;card.append(buy);}grid.append(card);}
  }
 }
-async function purchase(product){const info=account.catalog.products.find(p=>p.id===product);if(!info)throw Error('Товар не найден.');
+async function purchase(product){if(!account.features.stars)throw Error('Магазин Stars ещё не подключён.');const info=account.catalog.products.find(p=>p.id===product);if(!info)throw Error('Товар не найден.');
  const names=info.items.map(id=>account.catalog.items.find(i=>i.id===id).name).join(', ');
  // User reviews exact contents and price before requesting the official invoice.
  const accepted=await new Promise(resolve=>tg.showPopup({title:info.name,message:names+' · навсегда · '+money(info.price),buttons:[{id:'buy',type:'default',text:'Перейти к оплате'},{id:'cancel',type:'cancel'}]},id=>resolve(id==='buy')));if(!accepted)return;
@@ -68,7 +72,7 @@ async function purchase(product){const info=account.catalog.products.find(p=>p.i
 }
 async function watch(item){if(!account.features.ads)throw Error('Рекламные награды ещё не подключены.');const intent=await api('ads/begin',{item});let watched=false;
  try{if(!window.Adsgram)await new Promise((resolve,reject)=>{const script=node('script');script.src='https://sad.adsgram.ai/js/sad.min.js';script.onload=resolve;script.onerror=()=>reject(Error('Не удалось загрузить рекламу.'));document.head.append(script);});
-  controller??=window.Adsgram.init({blockId:account.features.blockId});await controller.show();watched=true;
+  controller??=window.Adsgram.init({blockId:account.features.blockId});const result=await controller.show();if(!result?.done||result.error)throw Error('Просмотр рекламы не завершён. Награда не выдана.');watched=true;
   status('Проверяем просмотр на сервере…');const old=access(item).expires;
   for(let i=0;i<30;i++){await new Promise(r=>setTimeout(r,1500));sync(await api('profile'));if(access(item).expires!==old||access(item).permanent){render();status('Награда подтверждена.');return;}}
   throw Error('Подтверждение ещё не получено. Награда появится после проверки сервером.');
@@ -83,10 +87,10 @@ function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.styl
  tg.BackButton?.onClick(()=>dialog.close());dialog.addEventListener('close',()=>tg.BackButton?.hide());
  bridge.apply();render();
  document.addEventListener('visibilitychange',()=>{if(document.hidden){bridge.save();bridge.suspend();}else refresh();});
- tg.onEvent?.('activated',refresh);tg.onEvent?.('deactivated',()=>{bridge.save();bridge.suspend();});
+ const activity=active=>{document.body.dataset.tgActive=String(active);document.dispatchEvent(new CustomEvent('manager:activity',{detail:active}));if(active)refresh();else{bridge.save();bridge.suspend();}};tg.onEvent?.('activated',()=>activity(true));tg.onEvent?.('deactivated',()=>activity(false));
  setInterval(()=>{if(now()>=account.ads.resetAt)refresh();const theme='style:'+bridge.settings.uiTheme;if(!canUse(theme)){bridge.settings.uiTheme='heritage';bridge.apply();}cosmetics();},15000);
 }
-async function refresh(){try{sync(await api('profile'));if(dialog?.open)render();}catch(e){status(e.message,true);}}
+async function refresh(){if(profileWriting)return;const epoch=profileEpoch;try{const value=await api('profile');if(epoch!==profileEpoch)return;sync(value);if(dialog?.open)render();}catch(e){if(epoch===profileEpoch)status(e.message,true);}}
 function safeArea(){const a=tg.contentSafeAreaInset??{},b=tg.safeAreaInset??{};for(const edge of ['top','bottom','left','right'])document.documentElement.style.setProperty('--tg-inset-'+edge,Math.max(a[edge]??0,b[edge]??0)+'px');}
 async function start(){try{
  if(!tg?.initData)throw Error('Для входа откройте «Менеджер» через кнопку приложения в Telegram-боте.');
@@ -96,12 +100,12 @@ async function start(){try{
  characterAnimations=new window.CharacterAnimationController({catalog:account.catalog,storage,getSelected:character});
  window.ManagerTelegram={storage,art,canUse,open,attach,choices:all=>account.catalog.freeIds.map(id=>all.find(c=>c.id===id)),
   initialAppearance(all,colors){const selected=account.catalog.characters.find(c=>c.id===account.profile.character&&canUse('character:'+c.id)),c=all.find(c=>c.id===selected?.baseId)??all.find(c=>c.id==='cassette');return {character:c.id,color:c.color??colors[0].id};},
-  saveStyle:id=>api('profile',{style:id}).then(sync).catch(e=>status(e.message,true)),
+  saveStyle:id=>updateProfile({style:id}).catch(e=>status(e.message,true)),
   react(state){try{characterAnimations.syncState(state);}catch{}},
   commitLocal(state){try{characterAnimations.commitLocal(state);}catch{}},
   acceptNetwork(state,room){try{characterAnimations.acceptNetwork(state,room);}catch{}},
   async decorateRoomBody(body){if(!account.cosmeticTicket||account.cosmeticTicket.expires<now()+10000)sync(await api('profile'));return canUse('character:'+account.profile.character)&&account.cosmeticTicket?{...body,telegramCharacterId:account.profile.character,telegramCosmeticTicket:account.cosmeticTicket.ticket}:body;},
-  async verifyCosmetic(ticket,characterId){try{const result=await api('cosmetics/verify',{ticket,characterId});return result.valid===true;}catch{return false;}},
+  async verifyCosmetic(ticket,characterId,existingSeat=false){try{const result=await api('cosmetics/verify',{ticket,characterId,existingSeat},5000);return result.valid===true;}catch{return false;}},
   pinMatch(state){matchSkin=account.profile.character;storage.setItem('cosmetic-match',JSON.stringify({character:matchSkin}));try{characterAnimations.beginLocal(state);}catch{}},
   releaseMatch(){matchSkin=null;storage.removeItem('cosmetic-match');},
   validateSetup(){if(!canUse('character:'+account.profile.character))throw Error('Доступ к персонажу закончился. Выберите доступного в разделе «Персонажи».');
