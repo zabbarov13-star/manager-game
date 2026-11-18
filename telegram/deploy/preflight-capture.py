@@ -18,6 +18,8 @@ def capture(source, target, inherited=False):
             fd = os.dup(3 + len(descriptors)) if inherited else os.open(file, os.O_RDONLY | os.O_NOFOLLOW | os.O_NOATIME)
             if fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_ACCMODE != os.O_RDONLY or not fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_NOATIME:
                 raise RuntimeError('SOURCE_DESCRIPTOR_NOT_READ_ONLY')
+            if inherited and not os.fstatvfs(fd).f_flag & os.ST_RDONLY:
+                raise RuntimeError('SOURCE_FD_MOUNT_NOT_READ_ONLY')
             descriptors.append(fd)
             st = os.fstat(fd)
             if fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_ACCMODE != os.O_RDONLY or not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
@@ -76,7 +78,7 @@ def capture(source, target, inherited=False):
             c = b if inherited else os.stat(source + ['', '-wal', '-shm'][index], follow_symlinks=False)
             if (a.st_dev, a.st_ino) != (c.st_dev, c.st_ino) or (index < 2 and (a.st_size, a.st_mtime_ns) != (b.st_size, b.st_mtime_ns)):
                 raise RuntimeError('SOURCE_CHANGED')
-        return {'status': 'PASS', 'method': 'unix-wal-posix-read-lock-copy', 'sourceSqliteOpened': False, 'sourceDescriptorsReadOnly': True, 'shmCopied': False, 'expectedWalFrames': frames, 'expectedPageCount': pages}
+        return {'status': 'PASS', 'method': 'unix-wal-posix-read-lock-copy', 'sourceSqliteOpened': False, 'sourceDescriptorsReadOnly': True, 'sourceFdMountReadOnly': inherited, 'shmCopied': False, 'expectedWalFrames': frames, 'expectedPageCount': pages}
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         for fd in reversed(descriptors):
