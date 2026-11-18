@@ -19,7 +19,7 @@ test('HTTP: auth isolation, webhook signature, confirmed Stars, restoration, ref
  await call('/telegram/webhook',{update_id:2,message:{from:{id:123},refunded_payment:p}},null,200,{'X-Telegram-Bot-Api-Secret-Token':secret});assert.equal((await call('/api/profile',undefined,a.token)).access['character:mira'].available,false);
  await call('/api/profile',{style:'heritage'},a.token,403,{Origin:'https://evil.test'});
  await call('/ads/verified-receipt',{receiptId:'forged'},null,503);
- const cancelled=await call('/api/invoice',{product:'character:timur'},a.token);await call('/api/invoice/cancel',{orderId:cancelled.orderId},a.token);await call('/api/invoice',{product:'character:timur'},a.token);
+ const cancelled=await call('/api/invoice',{product:'character:crypto-monk'},a.token);await call('/api/invoice/cancel',{orderId:cancelled.orderId},a.token);await call('/api/invoice',{product:'character:crypto-monk'},a.token);
 });
 test('HTTP: original room engine creates, joins, starts and synchronizes a two-player match',async t=>{
  const server=createApp({botToken:token,webhookSecret:secret,origin:'https://unit.test',database:':memory:'}).listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(done=>server.close(done)));
@@ -30,4 +30,13 @@ test('HTTP: original room engine creates, joins, starts and synchronizes a two-p
  const actor=started.room.game.players[started.room.game.current].id===host.seatId?host:guest;
  const action={method:'roll',args:[],requestId:randomUUID(),gameRevision:started.room.gameRevision};await call(p+'/action',action,actor.token);await call(p+'/action',action,actor.token);
  assert.equal((await call(p,undefined,guest.token)).room.game.rolls,1);
+});
+
+test('HTTP: premium seat needs a live server ticket; client flags and internal-looking headers cannot bypass access',async t=>{
+ const server=createApp({botToken:token,webhookSecret:secret,origin:'https://unit.test',database:':memory:',ownerTelegramId:'123'}).listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(done=>server.close(done)));const base='http://127.0.0.1:'+server.address().port;
+ async function post(url,data,session,headers={}){const r=await fetch(base+url,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':randomUUID(),...(session?{Authorization:'Bearer '+session}:{}),...headers},body:JSON.stringify(data)});const value=await r.json();assert(r.ok,JSON.stringify(value));return value;}
+ const owner=await post('/api/session',{initData:signed()});const profile=await post('/api/profile',{character:'mira'},owner.token);
+ const host=await post('/api/rooms',{mode:'code',capacity:2,name:'Host',character:'cassette',color:'#1976ed',telegramCharacterId:'mira',telegramCosmeticTicket:profile.cosmeticTicket.ticket});assert.equal(host.room.seats[0].cosmeticCharacter,'mira');
+ const guest=await post('/api/rooms/'+host.room.code+'/join',{name:'Guest',character:'roller',color:'#ffd000',telegramCharacterId:'anonymous-hacker',telegramCharacterVerified:true,telegramCosmeticTicket:'0'.repeat(64)},null,{'X-Manager-Verified-Cosmetic':'1'});assert.equal(guest.room.seats[1].cosmeticCharacter,undefined);
+ assert.equal((await post('/api/cosmetics/verify',{ticket:profile.cosmeticTicket.ticket,characterId:'mira'})).valid,true);assert.equal((await post('/api/cosmetics/verify',{ticket:profile.cosmeticTicket.ticket,characterId:'asya'})).valid,false);
 });

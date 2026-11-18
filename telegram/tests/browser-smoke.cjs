@@ -32,7 +32,7 @@ function initData(){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
    await page.locator('#party-start').click();
    await page.locator('#settings-open').click();await page.locator('#music-on').uncheck();await page.getByRole('button',{name:'Готово',exact:true}).last().click();
    await page.locator('#roll-button').click();await page.waitForFunction(()=>/^\d/.test(document.getElementById('dice-result').textContent));
-   assert(await page.locator('.player-token image[href="/assets/mira.webp"]').count()>0);
+   assert(await page.locator('.player-token svg[data-tg-premium="mira"] image').count()>0);
    assert.equal(await page.evaluate(()=>localStorage.getItem('manager.field.v1')),'original-version-sentinel');
    assert(await page.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('manager.telegram.v1.123.'))));
    assert.deepEqual(errors,[]);await page.screenshot({path:require('node:path').resolve(__dirname,`../qa-${viewport.width}.png`),fullPage:true});

@@ -10,3 +10,8 @@
 .git
 packaging
 game-*.html
+telegram/.cache
+telegram/character-sources
+telegram/*.local.json
+telegram/art-review
+telegram/animation-demo

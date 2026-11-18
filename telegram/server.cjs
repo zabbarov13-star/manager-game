@@ -3,6 +3,7 @@ const {createServer}=require('node:http');
 const {readFileSync,mkdirSync,existsSync}=require('node:fs');
 const {resolve,dirname,extname}=require('node:path');
 const {randomBytes,createHmac}=require('node:crypto');
+const {Readable}=require('node:stream');
 const {Store}=require('./store.cjs');
 const {validateInitData,equal}=require('./auth.cjs');
 const catalog=require('./catalog.cjs');
@@ -18,7 +19,7 @@ function createApp(config={}){
  if(webhookSecret.length<32||(gatewayEnabled&&(!receiptSecret||receiptSecret.length<32)))throw Error('Use independent secrets of at least 32 characters.');
  const file=config.database??process.env.TELEGRAM_DATABASE??resolve(__dirname,'data/telegram.sqlite');
  if(file!==':memory:')mkdirSync(dirname(file),{recursive:true});
- const store=config.store??new Store(file),sessions=new Map(),rates=new Map();
+ const store=config.store??new Store(file,Date.now,{ownerTelegramId:config.ownerTelegramId??process.env.OWNER_TELEGRAM_ID}),sessions=new Map(),rates=new Map();
  const rooms=require('./rooms.cjs').createRooms({database:config.roomsDatabase??(file===':memory:'?':memory:':resolve(dirname(file),'rooms.sqlite')),allowedOrigins:[origin],trustProxy:false});
  const root=config.dist??resolve(__dirname,'dist');
  const bot=config.bot??(async(method,body)=>{
@@ -35,8 +36,20 @@ function createApp(config={}){
    if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:true});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);
-   let rate=rates.get(remote);if(!rate||rate.until<now){rate={n:0,until:now+60000};rates.set(remote,rate);}if(++rate.n>240)return send(res,429,{error:'Повторите запрос позже.'});
-   if(url.pathname==='/api/rooms'||url.pathname.startsWith('/api/rooms/')){rooms.emit('request',req,res);return;}
+   // Image/pose downloads must not exhaust the mutation/API request budget.
+   if(url.pathname.startsWith('/api/')||url.pathname.startsWith('/telegram/')||url.pathname.startsWith('/ads/')){
+    let rate=rates.get(remote);if(!rate||rate.until<now){rate={n:0,until:now+60000};rates.set(remote,rate);}if(++rate.n>240)return send(res,429,{error:'Повторите запрос позже.'});
+   }
+   if(url.pathname==='/api/rooms'||url.pathname.startsWith('/api/rooms/')){
+    if(req.method==='POST'){
+     const raw=await body(req),data=JSON.parse(raw);
+     const replacement=Readable.from([Buffer.from(raw)]);replacement.method=req.method;replacement.url=req.url;replacement.headers=req.headers;replacement.socket=req.socket;
+     replacement.managerCosmeticVerified=!!data&&typeof data==='object'&&!Array.isArray(data)&&store.verifyCosmetic(data.telegramCosmeticTicket,data.telegramCharacterId);
+     rooms.emit('request',replacement,res);return;
+    }
+    rooms.emit('request',req,res);return;
+   }
+   if(url.pathname==='/api/cosmetics/verify'&&req.method==='POST'){const data=JSON.parse(await body(req));return send(res,200,{valid:store.verifyCosmetic(data.ticket,data.characterId)});}
    if(url.pathname==='/telegram/webhook'&&req.method==='POST'){
     if(!equal(req.headers['x-telegram-bot-api-secret-token']??'',webhookSecret))return send(res,403,{error:'Forbidden'});
     const update=JSON.parse(await body(req));if(!Number.isSafeInteger(update.update_id))return send(res,400,{error:'Invalid update'});
@@ -66,14 +79,14 @@ function createApp(config={}){
      for(const [key,value]of sessions)if(value.expires<now)sessions.delete(key);
      if(sessions.size>=10000)return send(res,503,{error:'Сервер занят.'});
      const session=randomBytes(32).toString('hex');sessions.set(session,{user:user.id,expires:now+12*3600000});
-     return send(res,200,{token:session,user, ...store.profile(user.id),catalog,features:{ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,stars:true}});
+     const profile=store.profile(user.id);return send(res,200,{token:session,user,...profile,cosmeticTicket:store.cosmeticTicket(user.id),catalog,features:{ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,stars:true}});
     }
     const session=sessions.get((req.headers.authorization??'').replace(/^Bearer /,''));
     if(!session||session.expires<=now)return send(res,401,{error:'Откройте приложение заново в Telegram.'});
     const user=session.user;
-    if(url.pathname==='/api/profile'&&req.method==='GET')return send(res,200,store.profile(user));
+    if(url.pathname==='/api/profile'&&req.method==='GET')return send(res,200,{...store.profile(user),cosmeticTicket:store.cosmeticTicket(user)});
     const data=req.method==='POST'?JSON.parse(await body(req)):{};
-    if(url.pathname==='/api/profile'&&req.method==='POST')return send(res,200,store.select(user,data));
+    if(url.pathname==='/api/profile'&&req.method==='POST')return send(res,200,{...store.select(user,data),cosmeticTicket:store.cosmeticTicket(user)});
     if(url.pathname==='/api/ads/begin'&&req.method==='POST'){
      if(!gatewayEnabled||!blockId)return send(res,503,{error:'Серверное подтверждение AdsGram ещё не подключено.'});
      return send(res,200,store.beginAd(user,data.item));
