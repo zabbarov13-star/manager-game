@@ -16,7 +16,7 @@ test('one shared room service: APK/Telegram commands, premium RPC, adapter outag
  t.after(async()=>{await stop(apkProxy);await stop(tgProxy);await stop(common);await stop(adapter);await stop(adapter?.verifier);});
  assert.equal((await call(tg,'/health')).roomsEnabled,false);assert(!fs.existsSync(path.join(path.dirname(tgFile),'data/rooms.sqlite')));
  const isolated=path.join(dir,'adapter-alone');fs.mkdirSync(isolated);const alone=createApp({mode:'adapter',rpcSecret:secret,botToken:bot,webhookSecret:'w'.repeat(32),origin:'https://tg.fixture',database:path.join(isolated,'telegram.sqlite')});await stop(alone);alone.store.close();assert(!fs.existsSync(path.join(isolated,'rooms.sqlite')));
- await call(tgBase,'/api/rooms',{},null,503);assert.equal((await fetch(tgBase+'/internal/cosmetics/verify',{method:'POST'})).status,404);
+ await call(tgBase,'/api/rooms',{},null,503);assert.equal((await fetch(tgBase+'/internal/cosmetics/verify',{method:'POST'})).status,404);assert.equal((await fetch(tgBase+'/ads/verified-receipt',{method:'POST'})).status,404);
  const account=await call(tg,'/api/session',{initData:signed()}),profile=await call(tg,'/api/profile',{character:'mira'},account.token),premium={telegramCharacterId:'mira',telegramCosmeticTicket:profile.cosmeticTicket.ticket};
  const h=await call(apk,'/api/rooms',{name:'APK',mode:'code',capacity:2,character:'cassette',color:'#1976ed'},null,201),r='/api/rooms/'+h.room.code;
  await call(tg,r+'/join',{name:'Forged',character:'roller',color:'#ffd000',telegramCharacterId:'mira',telegramCosmeticTicket:'0'.repeat(64),telegramCharacterVerified:true},null,403,undefined,{'X-Manager-Verified-Cosmetic':'1'});

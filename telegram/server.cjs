@@ -35,7 +35,7 @@ function createApp(config={}){
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const url=new URL(req.url,'http://localhost');
   try{
-   if(/^\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||/^\/api\/(?:internal|admin)(?:\/|$)/.test(url.pathname))return send(res,404,{error:'Не найдено.'});
+   if(/^\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||/^\/api\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||modeKind==='adapter'&&url.pathname==='/ads/verified-receipt')return send(res,404,{error:'Не найдено.'});
    if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);

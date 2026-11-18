@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),{canonical,stripSite}=require('./caddy-guard.cjs');
-const privatePaths=['/internal','/internal/*','/admin','/admin/*','/api/internal','/api/internal/*','/api/admin','/api/admin/*'];
+const privatePaths=['/internal','/internal/*','/admin','/admin/*','/api/internal','/api/internal/*','/api/admin','/api/admin/*','/ads/verified-receipt'];
 function sharedSite(domain){if(!/^[a-z0-9.-]+$/.test(domain))throw Error('Invalid domain');return `${domain} {\n route {\n  @private path ${privatePaths.join(' ')}\n  respond @private 404\n  @rooms path /api/rooms /api/rooms/*\n  reverse_proxy @rooms 127.0.0.1:8080\n  reverse_proxy 127.0.0.1:8443\n }\n}\n`;}
 function verifySharedChange(before,after,domain){
  const a=stripSite(before,domain),b=stripSite(after,domain);assert.equal(canonical(a.config),canonical(b.config),'Unrelated Caddy configuration changed');assert.equal(b.owned.length,1);
