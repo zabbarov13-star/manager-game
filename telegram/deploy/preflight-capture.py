@@ -46,6 +46,8 @@ def capture(source, target, inherited=False):
         last = os.pread(wal, 24, wal_size - page_size - 24)
         if len(last)!=24 or int.from_bytes(last[4:8], 'big')!=pages or last[8:16]!=wh[16:24]:
             raise RuntimeError('WAL_COMMIT_UNCONFIRMED')
+        if wh[16:24] != sh[32:40] or int.from_bytes(wh[8:12], 'big') != page_size:
+            raise RuntimeError('WAL_SALT_OR_PAGE_SIZE_MISMATCH')
         if sum(st.st_size for st in original[:2]) > 256 * 1024**2:
             raise RuntimeError('CAPTURE_TOO_LARGE_FOR_SHORT_LOCK')
         os.mkdir(target, 0o700)
