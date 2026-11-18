@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly verified snapshots of isolated Manager staging
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=120
+Unit=manager-staging-backup.service
+
+[Install]
+WantedBy=timers.target
