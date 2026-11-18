@@ -1,0 +1,558 @@
+{
+  "tool": "built-in image_gen",
+  "export": "sharp; alpha-preserving WebP",
+  "characters": [
+    {
+      "id": "mira",
+      "sourceSha256": {
+        "base": "6c97af67a5c34745da5e90ed987220cd38585e81a20949ffb955c192076d6184",
+        "portrait": "7866b6ede4b6b1fe2d253f4c811db44303e84b3e07358b325284c3f622a9b898",
+        "expressions": "a5856d13980b8e3a29dba7c149b41120c9e108ed4348381f69c441710a70e5f8"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/mira.webp",
+          "bytes": 66746
+        },
+        {
+          "url": "/assets/mira-portrait.webp",
+          "bytes": 93454
+        },
+        {
+          "url": "/assets/premium-v2/mira-portrait-large.webp",
+          "bytes": 545808
+        },
+        {
+          "url": "/assets/premium-v2/mira-joy.webp",
+          "bytes": 82516
+        },
+        {
+          "url": "/assets/premium-v2/mira-failure.webp",
+          "bytes": 66458
+        },
+        {
+          "url": "/assets/premium-v2/mira-win.webp",
+          "bytes": 69698
+        },
+        {
+          "url": "/assets/premium-v2/mira-loss.webp",
+          "bytes": 58690
+        }
+      ]
+    },
+    {
+      "id": "timur",
+      "sourceSha256": {
+        "base": "a7a193e7e6953ff0b91cad381f197cd0839688252137485f1f680b3b5cc06403",
+        "portrait": "6409180fad59f704decb1919bf1fd659d388ce21364945e582fee6bde18498d4",
+        "expressions": "59639fd63d06c668d8991f35894d270b6e24ec574e9578b4d521b5ba4d7246b0"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/timur.webp",
+          "bytes": 65280
+        },
+        {
+          "url": "/assets/timur-portrait.webp",
+          "bytes": 103014
+        },
+        {
+          "url": "/assets/premium-v2/timur-portrait-large.webp",
+          "bytes": 572296
+        },
+        {
+          "url": "/assets/premium-v2/timur-joy.webp",
+          "bytes": 69804
+        },
+        {
+          "url": "/assets/premium-v2/timur-failure.webp",
+          "bytes": 62836
+        },
+        {
+          "url": "/assets/premium-v2/timur-win.webp",
+          "bytes": 76708
+        },
+        {
+          "url": "/assets/premium-v2/timur-loss.webp",
+          "bytes": 60822
+        }
+      ]
+    },
+    {
+      "id": "luna",
+      "sourceSha256": {
+        "base": "9b1dfa5ff7e94cd5c352d958e4364c8243034f8aca7803813979e91ae0c43bf8",
+        "portrait": "3bc84790f13f972773c09508479b3973e7f12cff49941de44be0af26b7e57d6f",
+        "expressions": "aa7b2692ab15dfaf31998e2e8608bfb9cef5aa33ad7f329f2a0bfc821dd945b7"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/luna.webp",
+          "bytes": 63122
+        },
+        {
+          "url": "/assets/luna-portrait.webp",
+          "bytes": 112772
+        },
+        {
+          "url": "/assets/premium-v2/luna-portrait-large.webp",
+          "bytes": 655368
+        },
+        {
+          "url": "/assets/premium-v2/luna-joy.webp",
+          "bytes": 76972
+        },
+        {
+          "url": "/assets/premium-v2/luna-failure.webp",
+          "bytes": 67642
+        },
+        {
+          "url": "/assets/premium-v2/luna-win.webp",
+          "bytes": 83320
+        },
+        {
+          "url": "/assets/premium-v2/luna-loss.webp",
+          "bytes": 65124
+        }
+      ]
+    },
+    {
+      "id": "felix",
+      "sourceSha256": {
+        "base": "63b10a23d9288f2d4ea631cd49fe3337e88af2f27b7a1e3ceb02ea02541c76fe",
+        "portrait": "c2d9e3a3c7ad93887a52dbca83a58fe01756d1ec6af80818678669dc4b437ea7",
+        "expressions": "b8b98f1cd087c416daafc5f6b52841188fe0a637b5d4322913e66d6a612148d3"
+      },
+      "sourcePortrait": {
+        "width": 1064,
+        "height": 1478
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/felix.webp",
+          "bytes": 60456
+        },
+        {
+          "url": "/assets/felix-portrait.webp",
+          "bytes": 97092
+        },
+        {
+          "url": "/assets/premium-v2/felix-portrait-large.webp",
+          "bytes": 626006
+        },
+        {
+          "url": "/assets/premium-v2/felix-joy.webp",
+          "bytes": 83440
+        },
+        {
+          "url": "/assets/premium-v2/felix-failure.webp",
+          "bytes": 61262
+        },
+        {
+          "url": "/assets/premium-v2/felix-win.webp",
+          "bytes": 79948
+        },
+        {
+          "url": "/assets/premium-v2/felix-loss.webp",
+          "bytes": 56596
+        }
+      ]
+    },
+    {
+      "id": "asya",
+      "sourceSha256": {
+        "base": "b347434871c60c0e5445b49d8f90c4e55690ae135072535f5e5d0cac9e0616da",
+        "portrait": "be2840c4ee0d8e489a1f13e287009503c0bb1a748cac41a0ab4a45858274cc8c",
+        "expressions": "aeb6f6c4f38aef872f8c90afb389229f456c4aeae43ef19a95ce1bc798b82584"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/asya.webp",
+          "bytes": 77254
+        },
+        {
+          "url": "/assets/asya-portrait.webp",
+          "bytes": 134608
+        },
+        {
+          "url": "/assets/premium-v2/asya-portrait-large.webp",
+          "bytes": 709748
+        },
+        {
+          "url": "/assets/premium-v2/asya-joy.webp",
+          "bytes": 86592
+        },
+        {
+          "url": "/assets/premium-v2/asya-failure.webp",
+          "bytes": 80112
+        },
+        {
+          "url": "/assets/premium-v2/asya-win.webp",
+          "bytes": 86546
+        },
+        {
+          "url": "/assets/premium-v2/asya-loss.webp",
+          "bytes": 70370
+        }
+      ]
+    },
+    {
+      "id": "oscar",
+      "sourceSha256": {
+        "base": "284cfa72cf657d92b70516c25364a763ae6927c8dcbb71dd9b1bdcd219296ab5",
+        "portrait": "3869358bd01542420090738a5caed8630246984a102def2f4e547a15c82e9c96",
+        "expressions": "8bc69192bd441cf263832130df8421fc74521bbdd418dd9dba206d8a94398274"
+      },
+      "sourcePortrait": {
+        "width": 1106,
+        "height": 1422
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/oscar.webp",
+          "bytes": 89482
+        },
+        {
+          "url": "/assets/oscar-portrait.webp",
+          "bytes": 116660
+        },
+        {
+          "url": "/assets/premium-v2/oscar-portrait-large.webp",
+          "bytes": 651452
+        },
+        {
+          "url": "/assets/premium-v2/oscar-joy.webp",
+          "bytes": 79840
+        },
+        {
+          "url": "/assets/premium-v2/oscar-failure.webp",
+          "bytes": 88378
+        },
+        {
+          "url": "/assets/premium-v2/oscar-win.webp",
+          "bytes": 91654
+        },
+        {
+          "url": "/assets/premium-v2/oscar-loss.webp",
+          "bytes": 94366
+        }
+      ]
+    },
+    {
+      "id": "bella",
+      "sourceSha256": {
+        "base": "36af1a5a887193b812a7bf7f02e4a2567db48e847c94a543a29410a0a16b9f84",
+        "portrait": "e8074c211569733121d44c5c0990c178cee737d1b4840a96fe4237698aefc94c",
+        "expressions": "4f82389a0215df98e51eed8e5fb958938cbd42ddfb7ea3ead3b5a295631ab092"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/bella.webp",
+          "bytes": 51118
+        },
+        {
+          "url": "/assets/bella-portrait.webp",
+          "bytes": 83322
+        },
+        {
+          "url": "/assets/premium-v2/bella-portrait-large.webp",
+          "bytes": 470018
+        },
+        {
+          "url": "/assets/premium-v2/bella-joy.webp",
+          "bytes": 64556
+        },
+        {
+          "url": "/assets/premium-v2/bella-failure.webp",
+          "bytes": 48214
+        },
+        {
+          "url": "/assets/premium-v2/bella-win.webp",
+          "bytes": 61244
+        },
+        {
+          "url": "/assets/premium-v2/bella-loss.webp",
+          "bytes": 44626
+        }
+      ]
+    },
+    {
+      "id": "marcel",
+      "sourceSha256": {
+        "base": "4457fb0dbf997dfc5c679e2aa8ce00b2729ad32154875244618e0f2a8334c403",
+        "portrait": "11fcf9b39a4a4887d43ca9bd2cbe0c6888795dafc71c41c0cfc3c06c8b96d094",
+        "expressions": "cd9d47e855a523af23bcb39cf863763a202d130e38fa8a6eda2661b47a44563a"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/marcel.webp",
+          "bytes": 65102
+        },
+        {
+          "url": "/assets/marcel-portrait.webp",
+          "bytes": 99486
+        },
+        {
+          "url": "/assets/premium-v2/marcel-portrait-large.webp",
+          "bytes": 551948
+        },
+        {
+          "url": "/assets/premium-v2/marcel-joy.webp",
+          "bytes": 87846
+        },
+        {
+          "url": "/assets/premium-v2/marcel-failure.webp",
+          "bytes": 69246
+        },
+        {
+          "url": "/assets/premium-v2/marcel-win.webp",
+          "bytes": 91616
+        },
+        {
+          "url": "/assets/premium-v2/marcel-loss.webp",
+          "bytes": 60732
+        }
+      ]
+    },
+    {
+      "id": "akira",
+      "sourceSha256": {
+        "base": "34b976a28d33a3d22a76a3542b99b401763929d3ee4335d7876a58f94bf470b8",
+        "portrait": "26c74173cf42452a61200582abd8fa1a31a795b7e54a98ce53297c2ac8840317",
+        "expressions": "282a51d45d3e067cfa59e651859138327b2e23c54c259688fe418a0895556cd3"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/akira.webp",
+          "bytes": 59472
+        },
+        {
+          "url": "/assets/akira-portrait.webp",
+          "bytes": 93718
+        },
+        {
+          "url": "/assets/premium-v2/akira-portrait-large.webp",
+          "bytes": 463762
+        },
+        {
+          "url": "/assets/premium-v2/akira-joy.webp",
+          "bytes": 70144
+        },
+        {
+          "url": "/assets/premium-v2/akira-failure.webp",
+          "bytes": 62912
+        },
+        {
+          "url": "/assets/premium-v2/akira-win.webp",
+          "bytes": 68996
+        },
+        {
+          "url": "/assets/premium-v2/akira-loss.webp",
+          "bytes": 58966
+        }
+      ]
+    },
+    {
+      "id": "hana",
+      "sourceSha256": {
+        "base": "2ef64fa033b173014fbfbf972c9424ca0a841a5f55f2c7ac63fd2878d803ed10",
+        "portrait": "2b62aadeff0b6d23af48144d90bc01bc8030e6ea6ac3221c8891686ae39bde8f",
+        "expressions": "c5e5239a8d690958e4ea1bc4bddfa216e5316f52b9991f97e3561abe7143beae"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/hana.webp",
+          "bytes": 79072
+        },
+        {
+          "url": "/assets/hana-portrait.webp",
+          "bytes": 120084
+        },
+        {
+          "url": "/assets/premium-v2/hana-portrait-large.webp",
+          "bytes": 644312
+        },
+        {
+          "url": "/assets/premium-v2/hana-joy.webp",
+          "bytes": 104768
+        },
+        {
+          "url": "/assets/premium-v2/hana-failure.webp",
+          "bytes": 80376
+        },
+        {
+          "url": "/assets/premium-v2/hana-win.webp",
+          "bytes": 104558
+        },
+        {
+          "url": "/assets/premium-v2/hana-loss.webp",
+          "bytes": 72310
+        }
+      ]
+    },
+    {
+      "id": "ren",
+      "sourceSha256": {
+        "base": "001475c164d23a5c7e0b14f126c0deb6a106789cc89f543499a453cc94225342",
+        "portrait": "e0d40796de7cde04cae49b327640270841dd3e85d46175a70b86a596cc890050",
+        "expressions": "aa9efa92e934fc2af9d7bbba71dde0b98a383adc3779ea188039fd6a8641a00b"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/ren.webp",
+          "bytes": 75082
+        },
+        {
+          "url": "/assets/ren-portrait.webp",
+          "bytes": 110398
+        },
+        {
+          "url": "/assets/premium-v2/ren-portrait-large.webp",
+          "bytes": 599280
+        },
+        {
+          "url": "/assets/premium-v2/ren-joy.webp",
+          "bytes": 86072
+        },
+        {
+          "url": "/assets/premium-v2/ren-failure.webp",
+          "bytes": 83080
+        },
+        {
+          "url": "/assets/premium-v2/ren-win.webp",
+          "bytes": 72852
+        },
+        {
+          "url": "/assets/premium-v2/ren-loss.webp",
+          "bytes": 75746
+        }
+      ]
+    },
+    {
+      "id": "yuki",
+      "sourceSha256": {
+        "base": "de03e8c10359844380c8df3adbd1635f62a113f15240dacc969d5655b6900f48",
+        "portrait": "8cea0340cde89066d4ee1020cde540946b3915d01221804b5a28bbc1ce764466",
+        "expressions": "db05cb0ad5d30bdea3c39b466053068ca629db47795486d9a865af06fadb2f5b"
+      },
+      "sourcePortrait": {
+        "width": 1086,
+        "height": 1448
+      },
+      "poseSheet": {
+        "width": 1254,
+        "height": 1254
+      },
+      "outputs": [
+        {
+          "url": "/assets/yuki.webp",
+          "bytes": 68380
+        },
+        {
+          "url": "/assets/yuki-portrait.webp",
+          "bytes": 115692
+        },
+        {
+          "url": "/assets/premium-v2/yuki-portrait-large.webp",
+          "bytes": 546124
+        },
+        {
+          "url": "/assets/premium-v2/yuki-joy.webp",
+          "bytes": 97258
+        },
+        {
+          "url": "/assets/premium-v2/yuki-failure.webp",
+          "bytes": 68186
+        },
+        {
+          "url": "/assets/premium-v2/yuki-win.webp",
+          "bytes": 101174
+        },
+        {
+          "url": "/assets/premium-v2/yuki-loss.webp",
+          "bytes": 66994
+        }
+      ]
+    }
+  ]
+}

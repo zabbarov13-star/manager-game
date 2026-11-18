@@ -15,7 +15,7 @@ function replace(a,b){if(!html.includes(a))throw Error('Telegram integration anc
 replace('if ("serviceWorker" in navigator && window.isSecureContext) {','if (false) {');
 replace("session?.code?.startsWith('mgr-')?'p2p':'server'", "session?.code?.startsWith('mgr-')||!session?'p2p':'server'");
 replace('<head>','<head><script src="https://telegram.org/js/telegram-web-app.js"></script>');
-replace('</head>','<link rel="stylesheet" href="/telegram.css"></head>');
+replace('</head>','<link rel="stylesheet" href="/telegram.css"><link rel="stylesheet" href="/premium-preview.css"></head>');
 replace("let storage;try{storage=localStorage;}catch{storage=null;}","let storage;try{storage=window.ManagerTelegram.storage;}catch{storage=null;}");
 replace('function avatarSVG(id,color){','function avatarSVG(id,color){const art=window.ManagerTelegram?.art(id,true);if(art)return art;');
 replace('function figureSVG(id,color){','function figureSVG(id,color){const art=window.ManagerTelegram?.art(id,false);if(art)return art;');
@@ -33,10 +33,18 @@ const scripts=[];html=html.replace(/<script>([\s\S]*?)<\/script>/g,(_,code)=>{sc
 // Diagnostics is a separate script and remains available, behind the original interface.
 html=html.replace(/<script id="manager-p2p-diagnostics">([\s\S]*?)<\/script>/g,(_,code)=>{scripts.push(code);return '';});
 fs.writeFileSync(path.join(out,'game.js'),scripts.join('\n'));
-replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/client.js"></script></body>');
+replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/premium-preview.js"></script><script src="/client.js"></script></body>');
 fs.writeFileSync(path.join(out,'index.html'),html);
-for(const name of ['client.js','telegram.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
+for(const name of ['client.js','premium-preview.js','telegram.css','premium-preview.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
 fs.mkdirSync(path.join(out,'assets'),{recursive:true});
-for(const name of fs.readdirSync(path.join(__dirname,'assets')))if(/\.webp$/.test(name))fs.copyFileSync(path.join(__dirname,'assets',name),path.join(out,'assets',name));
+function copyArt(directory, target) {
+  fs.mkdirSync(target, {recursive:true});
+  for (const entry of fs.readdirSync(directory, {withFileTypes:true})) {
+    const from=path.join(directory,entry.name),to=path.join(target,entry.name);
+    if(entry.isDirectory()) copyArt(from,to);
+    else if(/\.webp$/.test(entry.name)) fs.copyFileSync(from,to);
+  }
+}
+copyArt(path.join(__dirname,'assets'),path.join(out,'assets'));
 fs.writeFileSync(path.join(out,'BUILD.json'),JSON.stringify({baseline:'v0.19.1',commit:'ffa7f151874648ddf159c8a321827a4abe75ae00',sourceSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'index.html'))).digest('hex'),generatedAt:new Date().toISOString()},null,2));
 console.log('Telegram build ready:',out);

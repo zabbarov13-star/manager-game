@@ -22,3 +22,4 @@ jobs:
       - run: npm install --no-save --prefix telegram playwright@1.62.1
       - run: cd telegram && npx playwright install --with-deps chromium
       - run: node telegram/tests/browser-smoke.cjs
+      - run: node telegram/tests/premium-browser.cjs

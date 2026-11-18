@@ -34,8 +34,12 @@ function createApp(config={}){
   try{
    if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:true});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
+   // Browsing the complete raster collection must not exhaust the API abuse budget.
+   // Auth, commerce, ad callbacks and room requests remain throttled as before.
+   if(url.pathname.startsWith('/api/')||url.pathname.startsWith('/telegram/')||url.pathname.startsWith('/ads/')){
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);
    let rate=rates.get(remote);if(!rate||rate.until<now){rate={n:0,until:now+60000};rates.set(remote,rate);}if(++rate.n>240)return send(res,429,{error:'Повторите запрос позже.'});
+   }
    if(url.pathname==='/api/rooms'||url.pathname.startsWith('/api/rooms/')){rooms.emit('request',req,res);return;}
    if(url.pathname==='/telegram/webhook'&&req.method==='POST'){
     if(!equal(req.headers['x-telegram-bot-api-secret-token']??'',webhookSecret))return send(res,403,{error:'Forbidden'});

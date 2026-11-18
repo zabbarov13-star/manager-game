@@ -22,7 +22,7 @@ const premium = [
  ['yuki','Юки','Аниме','Конструктор','Создаёт маленьких роботов-помощников и ценит простые элегантные решения.','Уверенная, изобретательная',[10,6,7,9,8]],
 ];
 const characters = [...base.map(([id,name,role,bio,traits,stats])=>({id,name,role,bio,traits,stats,collection:'Оригинальная коллекция',free:true,baseId:id})),
- ...premium.map(([id,name,collection,role,bio,traits,stats],i)=>({id,name,collection,role,bio,traits,stats,free:false,baseId:base[i%6][0],portrait:`/assets/${id}-portrait.webp`,sprite:`/assets/${id}.webp`}))];
+ ...premium.map(([id,name,collection,role,bio,traits,stats],i)=>({id,name,collection,role,bio,traits,stats,free:false,baseId:base[i%6][0],portrait:`/assets/${id}-portrait.webp`,sprite:`/assets/${id}.webp`,...require('./premium-art.cjs')[id]}))];
 const styles = [['heritage','Стандартный'],['arcade','Аркада'],['studio','Студия'],['velvet','Бархат'],['aurora','Северное сияние']].map(([id,name])=>({id:`style:${id}`,theme:id,name,free:id==='heritage'}));
 const items = [...characters.map(c=>({id:`character:${c.id}`,name:c.name,free:c.free,price:c.free?0:10,kind:'character'})),...styles.map(s=>({...s,price:s.free?0:20,kind:'style'})),
  {id:'dice:jade',name:'Нефритовые кубики',price:15,kind:'dice'}, {id:'effect:sparkle',name:'Сияние фигурки',price:null,kind:'effect'}];
