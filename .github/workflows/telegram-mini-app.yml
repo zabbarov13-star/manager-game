@@ -7,6 +7,9 @@ on:
     paths: [telegram/**, .github/workflows/telegram-mini-app.yml]
 permissions:
   contents: read
+concurrency:
+  group: telegram-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-24.04
@@ -20,9 +23,20 @@ jobs:
       - run: cd telegram && npx tsc -p tsconfig.json
       - run: node telegram/build.cjs
       - run: node telegram/staging/init-local.cjs
+      - name: Validate isolated staging compose without starting services
+        env:
+          STAGING_DOMAIN: staging.example.invalid
+        run: docker compose --env-file telegram/.env -f telegram/staging/compose.yaml config --quiet
       - run: node --test telegram/tests/*.test.cjs tests/p2p-routing-baseline.cjs
       - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs online/server.test.cjs
-      - run: cd telegram && npx playwright install --with-deps chromium
+      - name: Select available Chrome or install Chromium
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "QA_CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            cd telegram
+            npx playwright install --with-deps chromium
+          fi
       - run: node telegram/animation/build-demo.cjs
       - run: node telegram/tests/animation-visual.cjs
       - run: node telegram/tests/animation-playback.cjs
