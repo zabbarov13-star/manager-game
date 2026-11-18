@@ -101,3 +101,4 @@ jobs:
             telegram/deploy/out/*.tar
             telegram/deploy/out/release.json
             telegram/deploy/out/shared-release.json
+            telegram/deploy/out/diagnostic-release.json
