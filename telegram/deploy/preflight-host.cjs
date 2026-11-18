@@ -2,7 +2,7 @@
 // Trusted bootstrap inventory only. No SQLite, application imports, setters or shell.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
 const expected={current:'/opt/manager-online/current',node:'/opt/manager-node/bin/node',database:'/var/lib/manager-online/rooms.sqlite',service:'manager-online.service',user:'manager-online',domain:'manager.95-181-169-84.sslip.io'};
-const sha=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const sha=f=>{const fd=fs.openSync(f,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW|fs.constants.O_NOATIME);try{return crypto.createHash('sha256').update(fs.readFileSync(fd)).digest('hex');}finally{fs.closeSync(fd);}};
 const run=(bin,args)=>{const r=cp.spawnSync(bin,args,{encoding:'utf8',timeout:10000,maxBuffer:8*1024**2});if(r.status!==0)throw Error('HOST_INVENTORY_UNAVAILABLE');return r.stdout.trim();};
 async function inventory(){
  const props=Object.fromEntries(run('/usr/bin/systemctl',['show',expected.service,'--property=ActiveState,SubState,UnitFileState,User,MainPID,WorkingDirectory']).split('\n').map(l=>[l.slice(0,l.indexOf('=')),l.slice(l.indexOf('=')+1)])),pid=Number(props.MainPID),current=fs.realpathSync(expected.current);

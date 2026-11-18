@@ -15,8 +15,8 @@ def capture(source, target, inherited=False):
     try:
         for suffix in ['', '-wal', '-shm']:
             file = source + suffix
-            fd = os.dup(3 + len(descriptors)) if inherited else os.open(file, os.O_RDONLY | os.O_NOFOLLOW)
-            if fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_ACCMODE != os.O_RDONLY:
+            fd = os.dup(3 + len(descriptors)) if inherited else os.open(file, os.O_RDONLY | os.O_NOFOLLOW | os.O_NOATIME)
+            if fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_ACCMODE != os.O_RDONLY or not fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_NOATIME:
                 raise RuntimeError('SOURCE_DESCRIPTOR_NOT_READ_ONLY')
             descriptors.append(fd)
             st = os.fstat(fd)
