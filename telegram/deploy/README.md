@@ -69,4 +69,4 @@ sudo node telegram/deploy/vps.cjs rollback --root /opt/manager-mini-app --approv
 
 После HTTPS и согласования настроек использовать dry-run `setup-bot.cjs`, затем отдельно разрешённый apply. Указать Main Mini App в BotFather. Пройти настоящий вход, owner, второе устройство, PeerJS и тестовый Stars-поток. AdsGram держать OFF до доверенного серверного подтверждения. Production-платежи, возвраты, Fragment и изменение действующего бота требуют отдельного разрешения.
 
-CI проверяет Node 18 инструменты, общую Compose-конфигурацию и реальный Caddy adapter/validate в одноразовом контейнере без портов/сети. Эти проверки не выдают PASS за фактический deploy на VPS или пользовательскую приёмку.
+CI проверяет Node 18 инструменты, общую Compose-конфигурацию, реальный Caddy adapter/validate и сборку приложения с Node 24. Bootstrap образа запускается без внешней сети, с read-only rootfs: проверяет HTTP UI/health, отказ анонимному профилю и integrity обеих SQLite на временном tmpfs. Реальные секреты/платежи для него не нужны. Эти проверки не выдают PASS за фактический deploy на VPS или пользовательскую приёмку.
