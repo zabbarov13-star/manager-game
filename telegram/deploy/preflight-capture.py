@@ -5,7 +5,7 @@ SQLite unix VFS: DB shared range, SHM DMS=128, WRITE/CKPT/RECOVER=120/121/122.
 """
 import fcntl, json, os, signal, stat, sys, time
 
-def capture(source, target, inherited=False):
+def capture(source, target):
     started = time.monotonic()
     def deadline(*_):
         raise RuntimeError('CAPTURE_DEADLINE')
@@ -15,10 +15,10 @@ def capture(source, target, inherited=False):
     try:
         for suffix in ['', '-wal', '-shm']:
             file = source + suffix
-            fd = os.dup(3 + len(descriptors)) if inherited else os.open(file, os.O_RDONLY | os.O_NOFOLLOW | os.O_NOATIME)
+            fd = os.dup(3 + len(descriptors))
             if fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_ACCMODE != os.O_RDONLY or not fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_NOATIME:
                 raise RuntimeError('SOURCE_DESCRIPTOR_NOT_READ_ONLY')
-            if inherited and not os.fstatvfs(fd).f_flag & os.ST_RDONLY:
+            if not os.fstatvfs(fd).f_flag & os.ST_RDONLY:
                 raise RuntimeError('SOURCE_FD_MOUNT_NOT_READ_ONLY')
             descriptors.append(fd)
             st = os.fstat(fd)
@@ -78,7 +78,7 @@ def capture(source, target, inherited=False):
             c = b if inherited else os.stat(source + ['', '-wal', '-shm'][index], follow_symlinks=False)
             if (a.st_dev, a.st_ino) != (c.st_dev, c.st_ino) or (index < 2 and (a.st_size, a.st_mtime_ns) != (b.st_size, b.st_mtime_ns)):
                 raise RuntimeError('SOURCE_CHANGED')
-        return {'status': 'PASS', 'method': 'unix-wal-posix-read-lock-copy', 'sourceSqliteOpened': False, 'sourceDescriptorsReadOnly': True, 'sourceFdMountReadOnly': inherited, 'shmCopied': False, 'expectedWalFrames': frames, 'expectedPageCount': pages}
+        return {'status': 'PASS', 'method': 'unix-wal-posix-read-lock-copy', 'sourceSqliteOpened': False, 'sourceDescriptorsReadOnly': True, 'sourceFdMountReadOnly': True, 'shmCopied': False, 'expectedWalFrames': frames, 'expectedPageCount': pages}
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         for fd in reversed(descriptors):
@@ -86,9 +86,9 @@ def capture(source, target, inherited=False):
 
 if __name__ == '__main__':
     try:
-        if len(sys.argv) not in (3,4) or (len(sys.argv)==4 and sys.argv[3]!='--inherited'):
-            raise RuntimeError('CAPTURE_ARGUMENTS')
-        print(json.dumps(capture(sys.argv[1], sys.argv[2], len(sys.argv)==4)))
+        if len(sys.argv)!=4 or sys.argv[3]!='--inherited' or os.geteuid()!=65534 or sys.argv[1]!='/production/db/rooms.sqlite' or sys.argv[2]!='/audit/captured':
+            raise RuntimeError('ISOLATED_CAPTURE_REQUIRED')
+        print(json.dumps(capture(sys.argv[1], sys.argv[2])))
     except BaseException:
         print('{"status":"NO-GO","reason":"READ_ONLY_CAPTURE_UNAVAILABLE"}')
         sys.exit(2)
