@@ -34,7 +34,7 @@ function safeException(error,seen=new Set(),depth=0){
  if(!error||typeof error!=='object'||seen.has(error)||depth>4)return {name:'Error',message:'[REDACTED_OR_CIRCULAR_CAUSE]'};
  seen.add(error);const name=['Error','TypeError','SyntaxError','AssertionError','HTTPStatusError','FixtureProtocolError'].includes(error.name)?error.name:'Error',message=safeMessage(error),frames=[];
  // Never include assertion diffs, source snippets, paths or arbitrary function names.
- for(const line of String(error.stack??'').split('\n')){const m=line.match(/(?:[\\/])(preflight-worker\.cjs|server\.cjs|engine\.cjs|room-extension\.cjs):(\d+):(\d+)\)?$/);if(m)frames.push({file:m[1],line:Number(m[2]),column:Number(m[3])});if(frames.length===8)break;}
+ for(const line of String(error.stack??'').split('\n')){const m=line.match(/(?:[\\/])(preflight-worker\.cjs|worker\.cjs|server\.cjs|engine\.cjs|room-extension\.cjs):(\d+):(\d+)\)?$/);if(m)frames.push({file:m[1],line:Number(m[2]),column:Number(m[3])});if(frames.length===8)break;}
  const out={name,message,stack:[name+': '+message,...frames.map(f=>`    at ${f.file}:${f.line}:${f.column}`)].join('\n'),location:frames[0]??null};
  if(['ECONNREFUSED','ECONNRESET','ETIMEDOUT','ENOENT','EACCES','SQLITE_BUSY','SQLITE_ERROR','SQLITE_CORRUPT'].includes(error.code))out.code=error.code;
  if(error.cause!==undefined)out.cause=safeException(error.cause,seen,depth+1);
