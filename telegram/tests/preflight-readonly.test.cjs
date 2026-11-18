@@ -3,6 +3,19 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const {inspectArchive,extractArchive}=require('../deploy/preflight-archive.cjs'),{outerArgs,compatibility}=require('../deploy/preflight-launch.cjs'),{adapterProbe}=require('../deploy/preflight-adapter.cjs'),{legacyServerFactory}=require('./legacy-fixture.cjs');
 const root=path.resolve(__dirname,'../..'),deploy=path.join(root,'telegram/deploy'),out=path.join(deploy,'out'),temp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'manager-readonly-test-')),sha=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 const release=()=>JSON.parse(fs.readFileSync(path.join(out,'shared-release.json'),'utf8')),archive=(m,k)=>path.join(out,m.runtimes.find(r=>r.kind===k).file);
+test('Linux Python helpers parse and have no unresolved global names, also checked on Windows',()=>{
+ const lint=`import builtins, pathlib, symtable, sys
+for name in sys.argv[1:]:
+ table=symtable.symtable(pathlib.Path(name).read_text(encoding='utf-8'),name,'exec')
+ known=set(table.get_identifiers())|set(dir(builtins))
+ def visit(scope):
+  missing=[s.get_name() for s in scope.get_symbols() if s.is_referenced() and s.is_global() and s.get_name() not in known]
+  assert not missing,(name,missing)
+  for child in scope.get_children(): visit(child)
+ visit(table)
+`;
+ cp.execFileSync(process.platform==='win32'?'python':'python3',['-c',lint,...['preflight-capture.py','preflight-source-fds.py'].map(f=>path.join(deploy,f))]);
+});
 function database(file){const db=new DatabaseSync(file);db.exec('PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0; CREATE TABLE online_rooms(code TEXT PRIMARY KEY,revision INTEGER,data TEXT,updated_at INTEGER); CREATE TABLE replay(id TEXT PRIMARY KEY,signature TEXT,status INTEGER,sealed TEXT,expires INTEGER)');return db;}
 test('direct privileged preflight refuses to run; outer sandbox has read-only mounts, no host net/socket mounts',()=>{
  const r=cp.spawnSync(process.execPath,[path.join(deploy,'preflight.cjs')],{encoding:'utf8'});assert.equal(r.status,2);assert(r.stderr.includes('NO-GO'));const legacy=cp.spawnSync(process.execPath,[path.join(deploy,'preflight-snapshot.cjs')],{encoding:'utf8'});assert.equal(legacy.status,2);assert(legacy.stderr.includes('NO-GO'));

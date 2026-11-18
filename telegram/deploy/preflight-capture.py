@@ -75,8 +75,7 @@ def capture(source, target):
         # Readers may update SHM read marks. Only DB/WAL must remain frozen.
         for index, fd in enumerate(descriptors):
             a, b = original[index], os.fstat(fd)
-            c = b if inherited else os.stat(source + ['', '-wal', '-shm'][index], follow_symlinks=False)
-            if (a.st_dev, a.st_ino) != (c.st_dev, c.st_ino) or (index < 2 and (a.st_size, a.st_mtime_ns) != (b.st_size, b.st_mtime_ns)):
+            if (a.st_dev, a.st_ino) != (b.st_dev, b.st_ino) or (index < 2 and (a.st_size, a.st_mtime_ns) != (b.st_size, b.st_mtime_ns)):
                 raise RuntimeError('SOURCE_CHANGED')
         return {'status': 'PASS', 'method': 'unix-wal-posix-read-lock-copy', 'sourceSqliteOpened': False, 'sourceDescriptorsReadOnly': True, 'sourceFdMountReadOnly': True, 'shmCopied': False, 'expectedWalFrames': frames, 'expectedPageCount': pages}
     finally:
