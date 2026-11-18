@@ -1,0 +1,851 @@
+{
+  "characters": [
+    {
+      "id": "cassette",
+      "name": "Кассета",
+      "role": "Диджей",
+      "bio": "Чувствует ритм города и собирает друзей за одним столом.",
+      "traits": "Общительный, находчивый",
+      "stats": [
+        6,
+        7,
+        5,
+        8,
+        10
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "cassette"
+    },
+    {
+      "id": "roller",
+      "name": "Ролик",
+      "role": "Скейтбордист",
+      "bio": "Исследует новые маршруты и всегда готов поддержать команду.",
+      "traits": "Энергичный, смелый",
+      "stats": [
+        6,
+        8,
+        7,
+        10,
+        7
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "roller"
+    },
+    {
+      "id": "frame",
+      "name": "Кадр",
+      "role": "Фотограф",
+      "bio": "Замечает детали и сохраняет истории путешествий в фотографиях.",
+      "traits": "Наблюдательный, спокойный",
+      "stats": [
+        9,
+        6,
+        5,
+        7,
+        8
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "frame"
+    },
+    {
+      "id": "radio",
+      "name": "Радио",
+      "role": "Радиолюбитель",
+      "bio": "Собирает приёмники и находит общий язык на любой частоте.",
+      "traits": "Любознательный, дружелюбный",
+      "stats": [
+        9,
+        7,
+        6,
+        6,
+        8
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "radio"
+    },
+    {
+      "id": "courier",
+      "name": "Руслан",
+      "role": "Велокурьер",
+      "bio": "Знает каждый переулок и доставляет хорошее настроение точно в срок.",
+      "traits": "Решительный, надёжный",
+      "stats": [
+        8,
+        7,
+        8,
+        9,
+        7
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "courier"
+    },
+    {
+      "id": "pixel",
+      "name": "Адель",
+      "role": "Компьютерщик",
+      "bio": "Превращает сложные задачи в понятные решения и любит честную игру.",
+      "traits": "Вдумчивый, изобретательный",
+      "stats": [
+        10,
+        6,
+        6,
+        7,
+        9
+      ],
+      "collection": "Оригинальная коллекция",
+      "free": true,
+      "baseId": "pixel"
+    },
+    {
+      "id": "mira",
+      "name": "Мира",
+      "collection": "3D-мультипликация",
+      "role": "Архитектор",
+      "bio": "Проектирует уютные кварталы и видит возможности там, где другие видят пустырь.",
+      "traits": "Творческая, внимательная",
+      "stats": [
+        10,
+        6,
+        5,
+        7,
+        8
+      ],
+      "free": false,
+      "baseId": "cassette",
+      "portrait": "/assets/mira-portrait.webp",
+      "sprite": "/assets/mira.webp"
+    },
+    {
+      "id": "timur",
+      "name": "Тимур",
+      "collection": "3D-мультипликация",
+      "role": "Механик",
+      "bio": "Чинит воздушные корабли и собирает необычные изобретения в своей мастерской.",
+      "traits": "Добродушный, решительный",
+      "stats": [
+        8,
+        7,
+        10,
+        6,
+        7
+      ],
+      "free": false,
+      "baseId": "roller",
+      "portrait": "/assets/timur-portrait.webp",
+      "sprite": "/assets/timur.webp"
+    },
+    {
+      "id": "luna",
+      "name": "Луна",
+      "collection": "3D-мультипликация",
+      "role": "Ботаник",
+      "bio": "Создаёт сады на крышах и возвращает зелень шумному городу.",
+      "traits": "Терпеливая, независимая",
+      "stats": [
+        9,
+        8,
+        6,
+        5,
+        9
+      ],
+      "free": false,
+      "baseId": "frame",
+      "portrait": "/assets/luna-portrait.webp",
+      "sprite": "/assets/luna.webp"
+    },
+    {
+      "id": "felix",
+      "name": "Феликс",
+      "collection": "3D-мультипликация",
+      "role": "Почтмейстер",
+      "bio": "Помнит сотни адресов и приносит в каждый дом маленькую историю.",
+      "traits": "Обаятельный, точный",
+      "stats": [
+        8,
+        9,
+        5,
+        8,
+        10
+      ],
+      "free": false,
+      "baseId": "radio",
+      "portrait": "/assets/felix-portrait.webp",
+      "sprite": "/assets/felix.webp"
+    },
+    {
+      "id": "asya",
+      "name": "Ася",
+      "collection": "Классическая анимация",
+      "role": "Картограф",
+      "bio": "Рисует карты забытых улиц и приглашает друзей в небольшие приключения.",
+      "traits": "Смелая, любопытная",
+      "stats": [
+        9,
+        7,
+        7,
+        9,
+        6
+      ],
+      "free": false,
+      "baseId": "courier",
+      "portrait": "/assets/asya-portrait.webp",
+      "sprite": "/assets/asya.webp"
+    },
+    {
+      "id": "oscar",
+      "name": "Оскар",
+      "collection": "Классическая анимация",
+      "role": "Часовщик",
+      "bio": "Слышит тиканье даже самых маленьких механизмов и никогда не торопит друзей.",
+      "traits": "Основательный, мягкий",
+      "stats": [
+        10,
+        5,
+        8,
+        4,
+        9
+      ],
+      "free": false,
+      "baseId": "pixel",
+      "portrait": "/assets/oscar-portrait.webp",
+      "sprite": "/assets/oscar.webp"
+    },
+    {
+      "id": "bella",
+      "name": "Белла",
+      "collection": "Классическая анимация",
+      "role": "Дирижёр",
+      "bio": "Собирает уличные оркестры и превращает будничный вечер в праздник.",
+      "traits": "Яркая, отзывчивая",
+      "stats": [
+        8,
+        6,
+        7,
+        8,
+        10
+      ],
+      "free": false,
+      "baseId": "cassette",
+      "portrait": "/assets/bella-portrait.webp",
+      "sprite": "/assets/bella.webp"
+    },
+    {
+      "id": "marcel",
+      "name": "Марсель",
+      "collection": "Классическая анимация",
+      "role": "Кондитер",
+      "bio": "Придумывает десерты с неожиданными сочетаниями и щедро делится рецептами.",
+      "traits": "Весёлый, щедрый",
+      "stats": [
+        8,
+        10,
+        6,
+        7,
+        9
+      ],
+      "free": false,
+      "baseId": "roller",
+      "portrait": "/assets/marcel-portrait.webp",
+      "sprite": "/assets/marcel.webp"
+    },
+    {
+      "id": "akira",
+      "name": "Акира",
+      "collection": "Аниме",
+      "role": "Курьер",
+      "bio": "Прокладывает маршруты в ночном городе и всегда держит обещания.",
+      "traits": "Сдержанный, быстрый",
+      "stats": [
+        8,
+        7,
+        7,
+        10,
+        6
+      ],
+      "free": false,
+      "baseId": "frame",
+      "portrait": "/assets/akira-portrait.webp",
+      "sprite": "/assets/akira.webp"
+    },
+    {
+      "id": "hana",
+      "name": "Хана",
+      "collection": "Аниме",
+      "role": "Садовник",
+      "bio": "Выращивает цветы между городскими башнями и мечтает о большом общем саде.",
+      "traits": "Заботливая, упорная",
+      "stats": [
+        9,
+        9,
+        5,
+        6,
+        8
+      ],
+      "free": false,
+      "baseId": "radio",
+      "portrait": "/assets/hana-portrait.webp",
+      "sprite": "/assets/hana.webp"
+    },
+    {
+      "id": "ren",
+      "name": "Рэн",
+      "collection": "Аниме",
+      "role": "Астроном",
+      "bio": "Наблюдает звёзды с крыши обсерватории и записывает новые идеи в блокнот.",
+      "traits": "Мечтательный, точный",
+      "stats": [
+        10,
+        8,
+        5,
+        7,
+        6
+      ],
+      "free": false,
+      "baseId": "courier",
+      "portrait": "/assets/ren-portrait.webp",
+      "sprite": "/assets/ren.webp"
+    },
+    {
+      "id": "yuki",
+      "name": "Юки",
+      "collection": "Аниме",
+      "role": "Конструктор",
+      "bio": "Создаёт маленьких роботов-помощников и ценит простые элегантные решения.",
+      "traits": "Уверенная, изобретательная",
+      "stats": [
+        10,
+        6,
+        7,
+        9,
+        8
+      ],
+      "free": false,
+      "baseId": "pixel",
+      "portrait": "/assets/yuki-portrait.webp",
+      "sprite": "/assets/yuki.webp"
+    }
+  ],
+  "styles": [
+    {
+      "id": "style:heritage",
+      "theme": "heritage",
+      "name": "Стандартный",
+      "free": true
+    },
+    {
+      "id": "style:arcade",
+      "theme": "arcade",
+      "name": "Аркада",
+      "free": false
+    },
+    {
+      "id": "style:studio",
+      "theme": "studio",
+      "name": "Студия",
+      "free": false
+    },
+    {
+      "id": "style:velvet",
+      "theme": "velvet",
+      "name": "Бархат",
+      "free": false
+    },
+    {
+      "id": "style:aurora",
+      "theme": "aurora",
+      "name": "Северное сияние",
+      "free": false
+    }
+  ],
+  "items": [
+    {
+      "id": "character:cassette",
+      "name": "Кассета",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:roller",
+      "name": "Ролик",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:frame",
+      "name": "Кадр",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:radio",
+      "name": "Радио",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:courier",
+      "name": "Руслан",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:pixel",
+      "name": "Адель",
+      "free": true,
+      "price": 0,
+      "kind": "character"
+    },
+    {
+      "id": "character:mira",
+      "name": "Мира",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:timur",
+      "name": "Тимур",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:luna",
+      "name": "Луна",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:felix",
+      "name": "Феликс",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:asya",
+      "name": "Ася",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:oscar",
+      "name": "Оскар",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:bella",
+      "name": "Белла",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:marcel",
+      "name": "Марсель",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:akira",
+      "name": "Акира",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:hana",
+      "name": "Хана",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:ren",
+      "name": "Рэн",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "character:yuki",
+      "name": "Юки",
+      "free": false,
+      "price": 10,
+      "kind": "character"
+    },
+    {
+      "id": "style:heritage",
+      "theme": "heritage",
+      "name": "Стандартный",
+      "free": true,
+      "price": 0,
+      "kind": "style"
+    },
+    {
+      "id": "style:arcade",
+      "theme": "arcade",
+      "name": "Аркада",
+      "free": false,
+      "price": 20,
+      "kind": "style"
+    },
+    {
+      "id": "style:studio",
+      "theme": "studio",
+      "name": "Студия",
+      "free": false,
+      "price": 20,
+      "kind": "style"
+    },
+    {
+      "id": "style:velvet",
+      "theme": "velvet",
+      "name": "Бархат",
+      "free": false,
+      "price": 20,
+      "kind": "style"
+    },
+    {
+      "id": "style:aurora",
+      "theme": "aurora",
+      "name": "Северное сияние",
+      "free": false,
+      "price": 20,
+      "kind": "style"
+    },
+    {
+      "id": "dice:jade",
+      "name": "Нефритовые кубики",
+      "price": 15,
+      "kind": "dice"
+    },
+    {
+      "id": "effect:sparkle",
+      "name": "Сияние фигурки",
+      "price": null,
+      "kind": "effect"
+    }
+  ],
+  "packs": [
+    {
+      "id": "pack:characters-1",
+      "name": "Коллекция 1",
+      "price": 25,
+      "items": [
+        "character:mira",
+        "character:timur",
+        "character:luna"
+      ]
+    },
+    {
+      "id": "pack:characters-2",
+      "name": "Коллекция 2",
+      "price": 25,
+      "items": [
+        "character:felix",
+        "character:asya",
+        "character:oscar"
+      ]
+    },
+    {
+      "id": "pack:characters-3",
+      "name": "Коллекция 3",
+      "price": 25,
+      "items": [
+        "character:bella",
+        "character:marcel",
+        "character:akira"
+      ]
+    },
+    {
+      "id": "pack:characters-4",
+      "name": "Коллекция 4",
+      "price": 25,
+      "items": [
+        "character:hana",
+        "character:ren",
+        "character:yuki"
+      ]
+    },
+    {
+      "id": "pack:styles",
+      "name": "Все дополнительные стили",
+      "price": 39,
+      "items": [
+        "style:arcade",
+        "style:studio",
+        "style:velvet",
+        "style:aurora"
+      ]
+    },
+    {
+      "id": "pack:cosmetics",
+      "name": "Полный комплект оформления",
+      "price": 39,
+      "items": [
+        "dice:jade",
+        "effect:sparkle"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "character:mira",
+      "name": "Мира",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:mira"
+      ]
+    },
+    {
+      "id": "character:timur",
+      "name": "Тимур",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:timur"
+      ]
+    },
+    {
+      "id": "character:luna",
+      "name": "Луна",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:luna"
+      ]
+    },
+    {
+      "id": "character:felix",
+      "name": "Феликс",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:felix"
+      ]
+    },
+    {
+      "id": "character:asya",
+      "name": "Ася",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:asya"
+      ]
+    },
+    {
+      "id": "character:oscar",
+      "name": "Оскар",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:oscar"
+      ]
+    },
+    {
+      "id": "character:bella",
+      "name": "Белла",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:bella"
+      ]
+    },
+    {
+      "id": "character:marcel",
+      "name": "Марсель",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:marcel"
+      ]
+    },
+    {
+      "id": "character:akira",
+      "name": "Акира",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:akira"
+      ]
+    },
+    {
+      "id": "character:hana",
+      "name": "Хана",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:hana"
+      ]
+    },
+    {
+      "id": "character:ren",
+      "name": "Рэн",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:ren"
+      ]
+    },
+    {
+      "id": "character:yuki",
+      "name": "Юки",
+      "free": false,
+      "price": 10,
+      "kind": "character",
+      "items": [
+        "character:yuki"
+      ]
+    },
+    {
+      "id": "style:arcade",
+      "theme": "arcade",
+      "name": "Аркада",
+      "free": false,
+      "price": 20,
+      "kind": "style",
+      "items": [
+        "style:arcade"
+      ]
+    },
+    {
+      "id": "style:studio",
+      "theme": "studio",
+      "name": "Студия",
+      "free": false,
+      "price": 20,
+      "kind": "style",
+      "items": [
+        "style:studio"
+      ]
+    },
+    {
+      "id": "style:velvet",
+      "theme": "velvet",
+      "name": "Бархат",
+      "free": false,
+      "price": 20,
+      "kind": "style",
+      "items": [
+        "style:velvet"
+      ]
+    },
+    {
+      "id": "style:aurora",
+      "theme": "aurora",
+      "name": "Северное сияние",
+      "free": false,
+      "price": 20,
+      "kind": "style",
+      "items": [
+        "style:aurora"
+      ]
+    },
+    {
+      "id": "dice:jade",
+      "name": "Нефритовые кубики",
+      "price": 15,
+      "kind": "dice",
+      "items": [
+        "dice:jade"
+      ]
+    },
+    {
+      "id": "pack:characters-1",
+      "name": "Коллекция 1",
+      "price": 25,
+      "items": [
+        "character:mira",
+        "character:timur",
+        "character:luna"
+      ]
+    },
+    {
+      "id": "pack:characters-2",
+      "name": "Коллекция 2",
+      "price": 25,
+      "items": [
+        "character:felix",
+        "character:asya",
+        "character:oscar"
+      ]
+    },
+    {
+      "id": "pack:characters-3",
+      "name": "Коллекция 3",
+      "price": 25,
+      "items": [
+        "character:bella",
+        "character:marcel",
+        "character:akira"
+      ]
+    },
+    {
+      "id": "pack:characters-4",
+      "name": "Коллекция 4",
+      "price": 25,
+      "items": [
+        "character:hana",
+        "character:ren",
+        "character:yuki"
+      ]
+    },
+    {
+      "id": "pack:styles",
+      "name": "Все дополнительные стили",
+      "price": 39,
+      "items": [
+        "style:arcade",
+        "style:studio",
+        "style:velvet",
+        "style:aurora"
+      ]
+    },
+    {
+      "id": "pack:cosmetics",
+      "name": "Полный комплект оформления",
+      "price": 39,
+      "items": [
+        "dice:jade",
+        "effect:sparkle"
+      ]
+    }
+  ],
+  "freeIds": [
+    "cassette",
+    "roller",
+    "frame",
+    "radio",
+    "courier",
+    "pixel"
+  ]
+}

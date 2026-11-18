@@ -2,7 +2,7 @@
 (()=>{
 'use strict';
 const tg=window.Telegram?.WebApp,loading=document.getElementById('telegram-loading');
-let account,bridge,dialog,tab='characters',busy=false,offset=0,matchSkin=null,controller,lastBalance=null;
+let account,bridge,dialog,tab='characters',busy=false,offset=0,matchSkin=null,controller,lastBalance=null,detailId=null,renderingFree=false;
 const $=id=>document.getElementById(id);
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
 const button=(label,action)=>{const b=node('button',label);b.type='button';b.onclick=()=>run(action);return b;};
@@ -12,7 +12,7 @@ const now=()=>Date.now()+offset;
 const access=id=>account?.access[id]??{available:false,permanent:false,expires:0};
 function canUse(id){const a=access(id);return a.permanent||a.expires>now();}
 const character=()=>account.catalog.characters.find(c=>c.id===(matchSkin??account.profile.character));
-function art(id,portrait){const c=character();if(!c||c.free||c.baseId!==id)return '';const src=portrait?c.portrait:c.sprite;return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${portrait?'100 100':'80 120'}" aria-hidden="true"><image href="${src}" width="${portrait?'100':'80'}" height="${portrait?'100':'120'}" preserveAspectRatio="xMidYMid meet"/></svg>`;}
+function art(id,portrait){const c=character();if(renderingFree||!c||c.free||c.baseId!==id)return '';const mood=document.body.dataset.tgReaction??'idle',src=portrait?c.portrait:(c.poses?.[mood]??c.sprite);return `<svg xmlns="http://www.w3.org/2000/svg" data-tg-premium="${c.id}" data-tg-view="${portrait?'portrait':'body'}" viewBox="0 0 ${portrait?'100 100':'80 120'}" aria-hidden="true"><image href="${src}" width="${portrait?'100':'80'}" height="${portrait?'100':'120'}" preserveAspectRatio="xMidYMid meet"/></svg>`;}
 function scopedStorage(id){const prefix=`manager.telegram.v1.${id}.`;return {getItem:key=>localStorage.getItem(prefix+key),setItem:(key,value)=>localStorage.setItem(prefix+key,value),removeItem:key=>localStorage.removeItem(prefix+key)};}
 const money=price=>price+' ⭐';
 function remaining(id){const a=access(id);return a.permanent?'Навсегда':a.expires>now()?'Осталось '+Math.ceil((a.expires-now())/3600000)+' ч':'Заблокирован';}
@@ -20,7 +20,7 @@ function cosmetics(){document.body.dataset.tgDice=canUse('dice:jade')&&account.p
 function status(message,error=false){const host=$('tg-message');if(host){host.textContent=message;host.dataset.error=String(error);}}
 async function run(fn){if(busy)return;busy=true;dialog?.setAttribute('aria-busy','true');try{await fn();}catch(e){status(e.message,true);}finally{busy=false;dialog?.removeAttribute('aria-busy');}}
 async function select(field,id){sync(await api('profile',{[field]:id}));render();status('Выбор сохранён.');}
-function picture(c){const box=node('div',null,'tg-portrait tg-idle');if(c.free){box.innerHTML=bridge.avatarSVG(c.id);}else{const img=node('img');img.src=c.portrait;img.alt=c.name;img.loading='lazy';box.append(img);}return box;}
+function picture(c){const box=node('div',null,'tg-portrait tg-idle');if(c.free){renderingFree=true;try{box.innerHTML=bridge.avatarSVG(c.id);}finally{renderingFree=false;}}else{const img=node('img');img.src=c.portrait;img.alt=c.name;img.loading='lazy';box.append(img);}return box;}
 function actions(item,host){const owned=canUse(item.id),a=access(item.id);host.append(node('p',remaining(item.id),'tg-access'));
  if(owned){const field=item.id.split(':')[0],id=item.id.split(':')[1];host.append(button('Выбрать',()=>select(field,id)));}
  if(!a.permanent&&!item.free){const ad=button(owned?'Продлить на 24 часа':'Открыть на 24 часа',()=>watch(item.id));ad.disabled=!account.features.ads||account.ads.remaining===0||a.expires>=now()+72*3600000;host.append(ad);
@@ -29,11 +29,22 @@ function actions(item,host){const owned=canUse(item.id),a=access(item.id);host.a
 function characterCard(c,details=false){const card=node('article',null,'tg-card');card.append(picture(c),node('small',c.collection),node('h3',c.name),node('p',c.role));
  if(details){card.append(node('p',c.bio),node('p',c.traits));const names=['Интеллект','Удача','Сила','Скорость','Харизма'];c.stats.forEach((value,i)=>{const row=node('label',names[i]+' · '+value+'/10','tg-stat'),meter=node('meter');meter.min=1;meter.max=10;meter.value=value;row.append(meter);card.append(row);});card.append(node('p','Характеристики декоративные: все игровые возможности одинаковы.','tg-note'));
   const animations=node('div',null,'tg-animation-controls');for(const [id,label]of [['idle','Ожидание'],['joy','Радость'],['failure','Неудача'],['win','Победа'],['loss','Поражение']])animations.append(button(label,()=>{card.querySelector('.tg-portrait').className='tg-portrait tg-'+id;}));card.append(animations);
- }else card.append(button('Биография и характеристики',()=>{renderDetail(c);}));
+ }else card.append(button(c.free?'Биография и характеристики':'Бесплатный предпросмотр',()=>{renderDetail(c);}));
  actions(account.catalog.items.find(i=>i.id==='character:'+c.id),card);return card;
 }
-function renderDetail(c){const content=$('tg-content');content.replaceChildren(button('← Все персонажи',()=>render()),characterCard(c,true));}
+function renderDetail(c){
+ const entering=detailId!==c.id;detailId=c.id;
+ const content=$('tg-content'),back=button('← Все персонажи',()=>{detailId=null;render();});
+ if(c.free){content.replaceChildren(back,characterCard(c,true));if(entering)dialog.scrollTop=0;return;}
+ const showcase=node('article',null,'tg-showcase');showcase.dataset.character=c.id;
+ const info=node('section',null,'tg-showcase-info');info.append(node('small',c.collection),node('h3',c.name),node('p',c.role),node('p',c.bio),node('p',c.traits));
+ const names=['Интеллект','Удача','Сила','Скорость','Харизма'];c.stats.forEach((value,i)=>{const row=node('label',names[i]+' · '+value+'/10','tg-stat'),meter=node('meter');meter.min=1;meter.max=10;meter.value=value;row.append(meter);info.append(row);});
+ info.append(node('p','Характеристики декоративные: все игровые возможности одинаковы.','tg-note'));
+ actions(account.catalog.items.find(i=>i.id==='character:'+c.id),info);
+ showcase.append(window.ManagerPremiumPreview.create(c),info);content.replaceChildren(back,showcase);if(entering)dialog.scrollTop=0;
+}
 function render(){if(!bridge||!dialog)return;dialog.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===tab)));
+ if(detailId){renderDetail(account.catalog.characters.find(c=>c.id===detailId));return;}
  const host=$('tg-content');host.replaceChildren();const header=node('div',null,'tg-summary');
  const reset=Math.max(0,account.ads.resetAt-now()),h=Math.floor(reset/3600000),m=Math.floor(reset/60000)%60;
  header.append(node('strong',`Доступно просмотров: ${account.ads.remaining} из 3`),node('span',`Обновление через ${h} ч ${m} мин · 00:00 МСК`));host.append(header);
@@ -68,10 +79,10 @@ async function watch(item){if(!account.features.ads)throw Error('Рекламн�
   throw Error('Подтверждение ещё не получено. Награда появится после проверки сервером.');
  }catch(e){if(!watched)await api('ads/cancel',{id:intent.id}).catch(()=>{});throw e;}
 }
-function open(value='characters'){tab=value;render();dialog.showModal();tg.BackButton?.show();refresh();}
+function open(value='characters'){detailId=null;tab=value;render();dialog.showModal();tg.BackButton?.show();refresh();}
 function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.style;
  dialog=node('dialog',null,'tg-dialog');dialog.setAttribute('aria-label','Персонажи, награды и магазин');const head=node('header'),title=node('h2','Коллекция «Менеджера»');head.append(title,button('Закрыть',()=>dialog.close()));
- const tabs=node('nav');tabs.setAttribute('aria-label','Разделы коллекции');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']]){const b=button(label,()=>{tab=id;render();});b.dataset.tab=id;tabs.append(b);}
+ const tabs=node('nav');tabs.setAttribute('aria-label','Разделы коллекции');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']]){const b=button(label,()=>{detailId=null;tab=id;render();});b.dataset.tab=id;tabs.append(b);}
  const message=node('p');message.id='tg-message';message.setAttribute('role','status');const content=node('section');content.id='tg-content';dialog.append(head,tabs,message,content);document.body.append(dialog);
  const entry=node('nav',null,'tg-entry');entry.setAttribute('aria-label','Telegram коллекция');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']])entry.append(button(label,()=>open(id)));document.querySelector('.topbar').after(entry);
  tg.BackButton?.onClick(()=>dialog.close());dialog.addEventListener('close',()=>tg.BackButton?.hide());
@@ -90,7 +101,7 @@ async function start(){try{
  window.ManagerTelegram={storage,art,canUse,open,attach,choices:all=>account.catalog.freeIds.map(id=>all.find(c=>c.id===id)),
   initialAppearance(all,colors){const selected=account.catalog.characters.find(c=>c.id===account.profile.character&&canUse('character:'+c.id)),c=all.find(c=>c.id===selected?.baseId)??all.find(c=>c.id==='cassette');return {character:c.id,color:c.color??colors[0].id};},
   saveStyle:id=>api('profile',{style:id}).then(sync).catch(e=>status(e.message,true)),
-  react(state){const c=character(),p=state.players.find(p=>p.character===c?.baseId);if(!p)return;const mood=state.phase==='over'?(state.winner===p.id?'win':'loss'):p.out?'loss':lastBalance===null?'idle':p.balance>lastBalance?'joy':p.balance<lastBalance?'failure':'idle';lastBalance=p.balance;document.body.dataset.tgReaction=mood;},
+  react(state){const c=character(),p=state.players.find(p=>p.character===c?.baseId);if(!p)return;const mood=state.phase==='over'?(state.winner===p.id?'win':'loss'):p.out?'loss':lastBalance===null?'idle':p.balance>lastBalance?'joy':p.balance<lastBalance?'failure':'idle';lastBalance=p.balance;document.body.dataset.tgReaction=mood;if(!c.free)document.querySelectorAll(`svg[data-tg-premium="${c.id}"][data-tg-view="body"] image`).forEach(image=>image.setAttribute('href',c.poses?.[mood]??c.sprite));},
   pinMatch(){matchSkin=account.profile.character;storage.setItem('cosmetic-match',JSON.stringify({character:matchSkin}));},
   releaseMatch(){matchSkin=null;storage.removeItem('cosmetic-match');},
   validateSetup(){if(!canUse('character:'+account.profile.character))throw Error('Доступ к персонажу закончился. Выберите доступного в разделе «Персонажи».');

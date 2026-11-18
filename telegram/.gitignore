@@ -4,6 +4,8 @@
 /.env.*
 !/.env.example
 /*.local.cjs
+/*.local.json
 /qa-*.png
 /art-review.png
+/art-review/screenshots/*.png
 /node_modules/
