@@ -16,6 +16,6 @@ test('compatibility diagnostic compares restored historical rows and runs old/ne
  if(process.env.PREFLIGHT_BWRAP_TEST==='1'){
   assert.equal(process.platform,'linux');assert.equal(process.getuid(),0);const sandbox=path.join(dir,'sandbox');fs.mkdirSync(sandbox);restoreRoom(snap.file,path.join(sandbox,'restored.sqlite'));
   for(const name of ['previous','candidate'])fs.cpSync(path.join(dir,name),path.join(sandbox,name),{recursive:true});
-  const r=cp.spawnSync('bwrap',sandboxArgs(sandbox,process.execPath,path.resolve(__dirname,'../deploy/preflight-worker.cjs')),{encoding:'utf8',timeout:60000});assert.equal(r.status,0,'Real bubblewrap probe must pass; no unsafe fallback');const proof=JSON.parse(fs.readFileSync(path.join(sandbox,'compatibility.json'),'utf8'));assert.equal(proof.status,'PASS');assert.equal(proof.historicalComparison.rooms,2);
+  const r=cp.spawnSync('bwrap',sandboxArgs(sandbox,process.execPath,path.resolve(__dirname,'../deploy/preflight-worker.cjs')),{encoding:'utf8',timeout:60000});assert.equal(r.status,0,'Synthetic sandbox diagnostic: '+(r.stderr??'').slice(0,2500)+(fs.existsSync(path.join(sandbox,'compatibility.json'))?fs.readFileSync(path.join(sandbox,'compatibility.json'),'utf8'):''));const proof=JSON.parse(fs.readFileSync(path.join(sandbox,'compatibility.json'),'utf8'));assert.equal(proof.status,'PASS');assert.equal(proof.historicalComparison.rooms,2);
  }
 });
