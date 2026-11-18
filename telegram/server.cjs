@@ -15,7 +15,8 @@ function createApp(config={}){
  const webhookSecret=config.webhookSecret??process.env.TELEGRAM_WEBHOOK_SECRET;
  const receiptSecret=config.receiptSecret??process.env.ADS_RECEIPT_SECRET;
  const blockId=config.blockId??process.env.ADSGRAM_BLOCK_ID;
- const gatewayEnabled=config.gatewayEnabled??process.env.ADS_VERIFIED_GATEWAY_ENABLED==='1';
+ // The shared adapter has no trusted ad-provider receiver. Never advertise a dead gateway.
+ const gatewayEnabled=modeKind!=='adapter'&&(config.gatewayEnabled??process.env.ADS_VERIFIED_GATEWAY_ENABLED==='1');
  const origin=config.origin??process.env.PUBLIC_ORIGIN;
  if(!token||!webhookSecret||!origin)throw Error('Set TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET and PUBLIC_ORIGIN.');
  if(new URL(origin).protocol!=='https:'&&!config.allowHttp)throw Error('PUBLIC_ORIGIN must use HTTPS.');

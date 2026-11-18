@@ -4,8 +4,8 @@ const privatePaths=['/internal','/internal/*','/admin','/admin/*','/api/internal
 function sharedSite(domain){if(!/^[a-z0-9.-]+$/.test(domain))throw Error('Invalid domain');return `${domain} {\n route {\n  @private path ${privatePaths.join(' ')}\n  respond @private 404\n  @rooms path /api/rooms /api/rooms/*\n  reverse_proxy @rooms 127.0.0.1:8080\n  reverse_proxy 127.0.0.1:8443\n }\n}\n`;}
 function verifySharedChange(before,after,domain){
  const a=stripSite(before,domain),b=stripSite(after,domain);assert.equal(canonical(a.config),canonical(b.config),'Unrelated Caddy configuration changed');assert.equal(b.owned.length,1);
- let routes=[b.owned[0]];while(routes.length===1&&routes[0].handle?.length===1&&routes[0].handle[0].handler==='subroute'){
-  assert(Object.keys(routes[0]).every(k=>['match','handle','terminal'].includes(k)));assert(Object.keys(routes[0].handle[0]).every(k=>['handler','routes'].includes(k)));routes=routes[0].handle[0].routes;
+ let routes=[b.owned[0]],outer=true;while(routes.length===1&&routes[0].handle?.length===1&&routes[0].handle[0].handler==='subroute'){
+  assert(Object.keys(routes[0]).every(k=>(outer?['match','handle','terminal']:['handle']).includes(k)));outer=false;assert(Object.keys(routes[0].handle[0]).every(k=>['handler','routes'].includes(k)));routes=routes[0].handle[0].routes;
  }
  assert.equal(routes.length,3,'Private deny, rooms and adapter routes must be ordered');
  const expected=[privatePaths,['/api/rooms','/api/rooms/*'],null];routes.forEach((r,i)=>{
