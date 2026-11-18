@@ -1,0 +1,6 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+function build(){const out=path.join(__dirname,'out'),manifest=JSON.parse(fs.readFileSync(path.join(out,'shared-release.json'),'utf8')),candidate=manifest.runtimes.find(r=>r.kind==='rooms');if(!candidate||!/^[0-9a-f]{40}$/.test(manifest.commit))throw Error('Build native runtimes first');const dir=fs.mkdtempSync(path.join(out,'diagnostic-'));
+ for(const file of ['preflight.cjs','preflight-worker.cjs','preflight-snapshot.cjs','caddy-guard.cjs','shared-routing.cjs'])fs.copyFileSync(path.join(__dirname,file),path.join(dir,file));fs.copyFileSync(path.join(out,candidate.file),path.join(dir,'candidate-rooms.tar'));fs.copyFileSync(path.join(out,'shared-release.json'),path.join(dir,'shared-release.json'));
+ const file='manager-diagnostic-'+manifest.commit+'.tar';cp.execFileSync('tar',['-cf',path.join(out,file),'-C',dir,'.']);const sha256=crypto.createHash('sha256').update(fs.readFileSync(path.join(out,file))).digest('hex');fs.writeFileSync(path.join(out,'diagnostic-release.json'),JSON.stringify({version:1,candidateCommit:manifest.commit,file,sha256},null,2));console.log('Diagnostic bundle prepared: scripts + public room runtime + checksum manifest; no env or player data.');}
+if(require.main===module)build();module.exports={build};

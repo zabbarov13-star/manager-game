@@ -11,6 +11,22 @@ concurrency:
   group: telegram-checks-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  preflight-isolation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: node telegram/build.cjs
+      - name: Verify real diagnostic sandbox on synthetic data only
+        run: |
+          if ! command -v bwrap >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y bubblewrap
+          fi
+          sudo env PATH="$PATH" PREFLIGHT_BWRAP_TEST=1 node --test telegram/tests/preflight.test.cjs
   deployment-tools-node18:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -34,6 +50,7 @@ jobs:
           node -e "const m=require('./telegram/deploy/out/release.json');require('./telegram/deploy/vps.cjs').safeArchive('./telegram/deploy/out/'+m.archive)"
       - run: node telegram/build.cjs
       - run: node telegram/tests/native-runtime.cjs
+      - run: node telegram/deploy/package-preflight.cjs
       - run: npm install --prefix telegram
       - run: cd telegram && npx tsc -p tsconfig.json
       - run: node telegram/staging/init-local.cjs

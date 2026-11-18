@@ -22,12 +22,12 @@ test('one room DB preserves legacy commands, credentials and replay across exten
  assert.deepEqual((await call(route,undefined,guest.token)).room.game,rolled.room.game);
  assert.deepEqual(await call(route+'/action',command,actor.token,200,key),rolled,'HTTP replay must retain its original response across the update');
  assert.deepEqual(rows('replay'),replayBefore);assert.deepEqual(rows('online_rooms'),roomsBefore);
- const method={purchase:'buy',end:'endTurn',event:'confirmCard'}[rolled.room.game.phase];assert(method,'Fixture needs an ordinary next action');
- const nextKey=randomUUID(),next={method,args:[],requestId:randomUUID(),gameRevision:rolled.room.gameRevision},advanced=await call(route+'/action',next,actor.token,200,nextKey);
+ const method={purchase:'buy',end:'endTurn',event:'confirmCard',roll:'roll'}[rolled.room.game.phase];assert(method,'Fixture needs an ordinary next action');
+ const nextActor=rolled.room.game.players[rolled.room.game.current].id===host.seatId?host:guest;const nextKey=randomUUID(),next={method,args:[],requestId:randomUUID(),gameRevision:rolled.room.gameRevision},advanced=await call(route+'/action',next,nextActor.token,200,nextKey);
  assert.equal(advanced.room.gameRevision,rolled.room.gameRevision+1);assert(advanced.room.animation,'Extended events are additive to the original game response');await stop();const replayExtended=rows('replay'),roomsExtended=rows('online_rooms');
  await open(legacy);
  assert.deepEqual((await call(route,undefined,host.token)).room.game,advanced.room.game);
- assert.deepEqual(await call(route+'/action',next,actor.token,200,nextKey),advanced,'Rollback must replay the newer response without a duplicate action');
+ assert.deepEqual(await call(route+'/action',next,nextActor.token,200,nextKey),advanced,'Rollback must replay the newer response without a duplicate action');
  assert.deepEqual(rows('replay'),replayExtended);assert.deepEqual(rows('online_rooms'),roomsExtended);
  await stop();const db=new DatabaseSync(database,{readOnly:true});assert.equal(db.prepare('PRAGMA integrity_check').get().integrity_check,'ok');db.close();
 });
