@@ -51,7 +51,7 @@ jobs:
         run: |
           docker build -f telegram/Dockerfile -t manager-mini-app:ci-only .
           docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=64m manager-mini-app:ci-only node deploy/runtime-check.cjs
-          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=128m manager-mini-app:ci-only node --test tests/shared-adapter.test.cjs
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=256m manager-mini-app:ci-only node --test tests/shared-adapter.test.cjs
       - name: Validate isolated staging compose without starting services
         env:
           STAGING_DOMAIN: staging.example.invalid
