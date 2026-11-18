@@ -17,5 +17,13 @@ test('compatibility diagnostic compares restored historical rows and runs old/ne
   assert.equal(process.platform,'linux');assert.equal(process.getuid(),0);const sandbox=path.join(dir,'sandbox');fs.mkdirSync(sandbox);restoreRoom(snap.file,path.join(sandbox,'restored.sqlite'));
   for(const name of ['previous','candidate'])fs.cpSync(path.join(dir,name),path.join(sandbox,name),{recursive:true});
   const worker=path.join(dir,'sandbox-worker.cjs');fs.copyFileSync(path.resolve(__dirname,'../deploy/preflight-worker.cjs'),worker);const r=cp.spawnSync('bwrap',sandboxArgs(sandbox,process.execPath,worker),{encoding:'utf8',timeout:60000});assert.equal(r.status,0,'Synthetic sandbox diagnostic: '+(r.stderr??'').slice(0,2500)+(fs.existsSync(path.join(sandbox,'compatibility.json'))?fs.readFileSync(path.join(sandbox,'compatibility.json'),'utf8'):''));const proof=JSON.parse(fs.readFileSync(path.join(sandbox,'compatibility.json'),'utf8'));assert.equal(proof.status,'PASS');assert.equal(proof.historicalComparison.rooms,2);
+  // Exercise the actual CLI failure artifact inside the same OS isolation.
+  const negative=path.join(dir,'negative-sandbox');fs.mkdirSync(negative);restoreRoom(snap.file,path.join(negative,'restored.sqlite'));
+  for(const name of ['previous','candidate'])fs.cpSync(path.join(dir,name),path.join(negative,name),{recursive:true});
+  const injectedWorker=path.join(dir,'negative-worker.cjs'),prefix=`'use strict';
+const realFetch=globalThis.fetch;let fixtureRolls=0;
+globalThis.fetch=async(url,options)=>{if(options?.method==='POST'&&String(url).endsWith('/action')&&JSON.parse(options.body).method==='roll'&&++fixtureRolls===2)return new Response(JSON.stringify({error:'Ключ запроса уже использован.',private:'PRIVATE_SENTINEL_DO_NOT_LOG'}),{status:409,headers:{'Content-Type':'application/json'}});return realFetch(url,options);};\n`;
+  fs.writeFileSync(injectedWorker,prefix+fs.readFileSync(worker,'utf8'));const failed=cp.spawnSync('bwrap',sandboxArgs(negative,process.execPath,injectedWorker),{encoding:'utf8',timeout:60000});assert.equal(failed.status,1);
+  const raw=fs.readFileSync(path.join(negative,'compatibility.json'),'utf8'),failure=JSON.parse(raw);assert.equal(failure.isolationVerified,true);assert.equal(failure.stage,'FIXTURE_UPGRADE_REPLAY');assert.equal(failure.operation,'REPLAY_ORIGINAL_ROLL');assert.equal(failure.http.expectedStatus,200);assert.equal(failure.http.actualStatus,409);assert.equal(failure.error.cause.message,'Ключ запроса уже использован.');assert(failure.error.location);assert(!raw.includes('PRIVATE_SENTINEL_DO_NOT_LOG'));assert.deepEqual(fingerprint(source),original);
  }
 });
