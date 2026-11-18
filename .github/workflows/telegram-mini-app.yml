@@ -28,14 +28,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24.22.1'
-      - run: npm install --prefix telegram
-      - run: cd telegram && npx tsc -p tsconfig.json
-      - run: node telegram/build.cjs
-      - run: node telegram/staging/init-local.cjs
       - name: Package committed source without private data
         run: |
           node telegram/deploy/package.cjs
           node -e "const m=require('./telegram/deploy/out/release.json');require('./telegram/deploy/vps.cjs').safeArchive('./telegram/deploy/out/'+m.archive)"
+      - run: npm install --prefix telegram
+      - run: cd telegram && npx tsc -p tsconfig.json
+      - run: node telegram/build.cjs
+      - run: node telegram/staging/init-local.cjs
       - name: Validate shared VPS compose without starting services
         env:
           MANAGER_IMAGE: manager-mini-app:ci-only
