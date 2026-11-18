@@ -76,7 +76,7 @@ Existing output/destination отвергаются. Восстановленны
 
 ## Проверенные сценарии и оставшиеся препятствия
 
-Локально PASS: adapter без room DB; настоящий HMAC RPC; подделка/повтор/неподписанный ответ/таймаут; APK-протокол+Telegram-профиль в одной партии; premium на start; отсутствие write-lock/блокировки очереди во время ожидания; 409 на гонке revision; отказ RPC без остановки партии/replay; рестарт адаптера; snapshot/restore раздельных БД с сохранением выбора и комнат; настоящий исходный HTTP-код после отката. Браузер PASS: desktop Chrome с APK HTML и мобильная ширина Mini App, create/join/ready/start/roll/reload, изображение Миры, без JS errors (`qa-results/shared-browser.json`). Telegram identity — подписанный fixture.
+Локально PASS: adapter без room DB; настоящий HMAC RPC; подделка/повтор/неподписанный ответ/таймаут; APK-протокол+Telegram-профиль в одной партии; premium на start; отсутствие write-lock/блокировки очереди во время ожидания; 409 на гонке revision; отказ RPC без остановки партии/replay; рестарт адаптера; snapshot/restore раздельных БД с сохранением выбора и комнат; настоящий исходный HTTP-код после отката. Браузер PASS: desktop Chrome с настоящим Android-staged APK HTML (через исходный packaging/stage-native.py) и мобильная ширина Mini App; внешний HTTP заблокирован в тесте, create/join/ready/start/roll/reload, изображение Миры, без JS errors (`qa-results/shared-browser.json`). Telegram identity — подписанный fixture.
 
 CI дополнительно проверяет native archives, shared integration внутри read-only/no-network контейнера и **реальный** Caddy adapt/validate/маршрутизацию, включая недоступность private paths до upstream. Состояние последнего прогона указывается в PR, а не предполагается по наличию теста.
 

@@ -2,7 +2,7 @@
 
 Для существующей manager-online.service используйте реализованную [SHARED-DEPLOYMENT.md](deploy/SHARED-DEPLOYMENT.md): один room server на 8080, adapter-only на 8443, закрытый RPC на 8444. Старые автономные инструкции ниже к этому VPS не применять.
 
-Для найденной manager-online.service приоритетен [план общего сервера APK/Telegram](deploy/SHARED-SERVER-PLAN.md). Старые автономные Compose/apply не применять: сначала разделить Telegram-адаптер и единственный сервер комнат, сохранить /var/lib/manager-online/rooms.sqlite и прежний origin APK.
+Для найденной manager-online.service приоритетен [план общего сервера APK/Telegram](deploy/SHARED-SERVER-PLAN.md). Старые автономные Compose/apply не применять: использовать разделённые Telegram-адаптер и единственный сервер комнат, сохранить /var/lib/manager-online/rooms.sqlite и прежний origin APK.
 
 Production и действующий бот не изменены, PR №5 не слит. Бот @ManagerGameTestBot и локальный токен уже подготовлены, но Telegram API пока недоступен из рабочей среды. На общем VPS найден прежний публичный клиент «Менеджера»; SSH root отклонён. Актуальный порядок — сначала [инвентаризация существующей установки](deploy/README.md) и согласование плана. Compose ниже с портами 80/443 предназначен только для выделенного стенда; на общем VPS его не запускать. Ниже подготовленные действия, а не отчёт о развёртывании.
 

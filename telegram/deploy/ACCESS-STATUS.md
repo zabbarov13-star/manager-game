@@ -6,7 +6,7 @@
 
 Владелец подтвердил `manager-online.service` (active/enabled), `/opt/manager-online/current`, запуск `/opt/manager-node/bin/node online/server.cjs`, Node v24.22.2, пользователя `manager-online`, loopback 8080 и `/var/lib/manager-online/rooms.sqlite` в WAL. На момент его проверки: 10 online_rooms и 228 replay. Копия `/root/manager-backups/rooms-before-update.sqlite` прошла integrity_check. «Смайлокрут» отдельно в Docker на 18080, HTTPS — Caddy. Из этой сессии эти сведения по SSH не перепроверены; доступ к БД не получен.
 
-**Актуальный план:** [SHARED-SERVER-PLAN.md](SHARED-SERVER-PLAN.md). Сохранить существующий сервер/БД для APK и Mini App; отдельно вынести Telegram-функции. Найдено архитектурное препятствие: текущий Telegram server сам открывает второй room server/DB. Его автономный deploy больше не является подходящим планом для этого VPS. Локальный fixture подтвердил последовательный переход старый engine → расширенный → старый с одной SQLite и сохранением replay, но не заменяет проверку фактической версии/копии VPS и смешанных клиентов.
+**Актуальный план:** [SHARED-SERVER-PLAN.md](SHARED-SERVER-PLAN.md). Сохранить существующий сервер/БД для APK и Mini App; отдельно вынести Telegram-функции. Архитектурное препятствие устранено режимом adapter-only и расширением общего сервера; актуальная инструкция — SHARED-DEPLOYMENT.md. Его автономный deploy больше не является подходящим планом для этого VPS. Локальный fixture подтвердил последовательный переход старый engine → расширенный → старый с одной SQLite и сохранением replay, но не заменяет проверку фактической версии/копии VPS и смешанных клиентов.
 
 ## Первоначальная внешняя проверка (до сведений владельца)
 
