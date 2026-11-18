@@ -11,6 +11,15 @@ concurrency:
   group: telegram-checks-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  deployment-tools-node18:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18.20.4'
+      - run: node --test telegram/tests/deployment.test.cjs
   verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -23,6 +32,20 @@ jobs:
       - run: cd telegram && npx tsc -p tsconfig.json
       - run: node telegram/build.cjs
       - run: node telegram/staging/init-local.cjs
+      - name: Package committed source without private data
+        run: |
+          node telegram/deploy/package.cjs
+          node -e "const m=require('./telegram/deploy/out/release.json');require('./telegram/deploy/vps.cjs').safeArchive('./telegram/deploy/out/'+m.archive)"
+      - name: Validate shared VPS compose without starting services
+        env:
+          MANAGER_IMAGE: manager-mini-app:ci-only
+          MANAGER_ENV_FILE: ../.env
+          MANAGER_ORIGIN: https://manager.95-181-169-84.sslip.io
+          MANAGER_DATA_DIR: /tmp/manager-ci-data
+          MANAGER_BACKUP_DIR: /tmp/manager-ci-backups
+        run: docker compose -f telegram/deploy/compose.host.yaml config --quiet
+      - name: Verify shared Caddy route isolation in a disposable container
+        run: node telegram/tests/caddy-isolation.cjs
       - name: Validate isolated staging compose without starting services
         env:
           STAGING_DOMAIN: staging.example.invalid
@@ -51,3 +74,5 @@ jobs:
             telegram/animation-demo/
             telegram/qa-*.png
             telegram/qa-results/
+            telegram/deploy/out/*.tar
+            telegram/deploy/out/release.json

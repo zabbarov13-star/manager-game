@@ -12,3 +12,5 @@
 /*.local.json
 /art-review/
 /animation-demo/screenshots/*.png
+/deploy/out/
+/deploy/reports/

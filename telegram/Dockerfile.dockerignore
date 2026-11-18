@@ -15,3 +15,5 @@ telegram/character-sources
 telegram/*.local.json
 telegram/art-review
 telegram/animation-demo
+telegram/deploy/out
+telegram/deploy/reports
