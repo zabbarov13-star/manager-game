@@ -1,0 +1,6 @@
+'use strict';
+// Prepare two separate PRIVATE env files; never give the room server a bot token.
+const fs=require('node:fs'),path=require('node:path'),{randomBytes}=require('node:crypto'),{prepareEnv}=require('./prepare-env.cjs');
+function prepare(source){const secret=randomBytes(32).toString('hex');let adapter=prepareEnv(source).replace('BIND=0.0.0.0','BIND=127.0.0.1').replace('PORT=8090','PORT=8443').replace('TELEGRAM_DATABASE=/data/telegram.sqlite','TELEGRAM_DATABASE=/var/lib/manager-telegram/telegram.sqlite');adapter+='TELEGRAM_MODE=adapter\nCOSMETIC_RPC_PORT=8444\nCOSMETIC_RPC_SECRET='+secret+'\n';return {adapter,rooms:'COSMETIC_RPC_SECRET='+secret+'\n'};}
+if(require.main===module){process.umask(0o077);const out=path.join(__dirname,'out');if(['adapter.env','cosmetics.env'].some(n=>fs.existsSync(path.join(out,n))))throw Error('Private shared env files already exist; do not rotate one side accidentally');const values=prepare(fs.readFileSync(path.join(__dirname,'../.env'),'utf8'));fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'adapter.env'),values.adapter,{mode:0o600});fs.writeFileSync(path.join(out,'cosmetics.env'),values.rooms,{mode:0o600});console.log('Two private env files prepared. Original env unchanged; no provider calls.');}
+module.exports={prepare};

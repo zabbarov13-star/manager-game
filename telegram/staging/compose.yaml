@@ -1,0 +1,30 @@
+name: manager-telegram-staging
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: telegram/Dockerfile
+    env_file: ../.env
+    environment:
+      TELEGRAM_ENV: test
+      PUBLIC_ORIGIN: https://${STAGING_DOMAIN:?Set a separate staging domain in private .env}
+      TELEGRAM_DATABASE: /data/telegram.sqlite
+      BIND: 0.0.0.0
+      PORT: 8090
+      ADS_VERIFIED_GATEWAY_ENABLED: "0"
+    volumes: [staging-data:/data, staging-backups:/backups]
+    restart: unless-stopped
+  https:
+    image: caddy:2
+    environment:
+      STAGING_DOMAIN: ${STAGING_DOMAIN:?Set a separate staging domain in private .env}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - staging-tls:/data
+    depends_on: [app]
+    restart: unless-stopped
+volumes:
+  staging-data:
+  staging-backups:
+  staging-tls:

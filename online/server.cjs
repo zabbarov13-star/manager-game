@@ -4,7 +4,6 @@ const { createCipheriv, createDecipheriv, createHash, randomBytes } = require('n
 const { createReadStream, mkdirSync, statfsSync } = require('node:fs');
 const { resolve, dirname } = require('node:path');
 const { isIP } = require('node:net');
-const { handleRooms } = require('./dist/engine.cjs');
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const keyFor = id => Buffer.from(hash('manager-response-v1:' + id), 'hex');
@@ -19,7 +18,8 @@ const allowedAssets = { '/': ['index.html', 'text/html; charset=utf-8'],
   '/manager-icon.png': ['manager-icon.png', 'image/png'] };
 const day = 86400000;
 
-function createRoomServer({ database, allowedOrigins = [], journal = 'wal', release, trustProxy = false, publicEnabled = true }) {
+function createRoomServer({ database, allowedOrigins = [], journal = 'wal', release, trustProxy = false, publicEnabled = true, extension }) {
+  const handleRooms = extension?.handleRooms ?? require('./dist/engine.cjs').handleRooms;
   if (!['wal', 'delete'].includes(journal)) throw Error('Unsupported SQLite journal mode');
   if (database !== ':memory:') mkdirSync(dirname(resolve(database)), { recursive: true, mode: 0o700 });
   const sqlite = new DatabaseSync(database);
@@ -71,10 +71,17 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
   let queue = Promise.resolve();
   let queued = 0;
 
-  async function transact(request, id, body) {
+  async function transact(request, id, body, prepared) {
     const now = Date.now();
     sqlite.exec('BEGIN IMMEDIATE');
     try {
+      // Network preflight finished before this queue; validate its snapshot under the lock.
+      if (prepared?.guard) {
+        const row = sqlite.prepare('SELECT revision FROM online_rooms WHERE code=?').get(prepared.guard.code);
+        if (row?.revision !== prepared.guard.revision && !replay.get(hash(id))) {
+          sqlite.exec('ROLLBACK');return json('Комната изменилась. Повторите запрос.', 409);
+        }
+      }
       if (now >= cleanupAt) {
         purge.run(now);
         purgeRooms.run(now - day, now - 7 * day, now - 30 * day);
@@ -99,7 +106,7 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
           const disk = statfsSync(dirname(resolve(database)));
           if (disk.bavail * disk.bsize < 128 * 1024 * 1024) result = json('Сервер временно не создаёт комнаты.', 503);
         }
-        result ??= await handleRooms(request, { DB, publicEnabled });
+        result ??= await handleRooms(request, { DB, publicEnabled, ...prepared?.environment });
         if (result.status >= 500) {
           sqlite.exec('ROLLBACK');
           return result;
@@ -149,11 +156,21 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
       body = Buffer.concat(chunks).toString('utf8');
     }
     if (queued >= 64) return json('Сервис перегружен. Повторите позже.', 503);
+    let prepared;
+    if (extension && !(id && replay.get(hash(id)))) {
+      try {
+        prepared = await extension.prepare({ pathname, method: req.method, authorization: req.headers.authorization ?? '', body,
+          readRoom: code => sqlite.prepare('SELECT revision,data FROM online_rooms WHERE code=?').get(code) });
+      } catch (error) {
+        if (!(id && replay.get(hash(id)))) return json(error.status === 403 ? 'Образ недоступен.' : 'Проверка образа временно недоступна. Повторите запрос.', error.status === 403 ? 403 : 503);
+      }
+    }
+    if (queued >= 64) return json('Сервис перегружен. Повторите позже.', 503);
     const request = new Request('https://room.internal' + pathname, {
-      method: req.method, headers: { Authorization: req.headers.authorization ?? '' }, body,
+      method: req.method, headers: { Authorization: req.headers.authorization ?? '', ...(extension ? { 'X-Manager-Verified-Cosmetic': prepared?.verified ? '1' : '0' } : {}) }, body,
     });
     queued++;
-    const work = queue.then(() => transact(request, id, body)).finally(() => queued--);
+    const work = queue.then(() => transact(request, id, body, prepared)).finally(() => queued--);
     queue = work.catch(() => {});
     return work;
   }
@@ -209,7 +226,10 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
 
 if (require.main === module) {
   process.umask(0o077);
+  const extension = process.env.ROOM_EXTENSION === 'telegram' ? require('../telegram/shared/room-extension.cjs').fromEnvironment() : undefined;
+  if (process.env.ROOM_EXTENSION && !extension) throw Error('Unknown room extension');
   createRoomServer({
+    extension,
     database: process.env.ROOM_DATABASE ?? 'data/rooms.sqlite',
     journal: process.env.ROOM_JOURNAL ?? 'wal',
     trustProxy: process.env.ROOM_TRUST_PROXY === '1',

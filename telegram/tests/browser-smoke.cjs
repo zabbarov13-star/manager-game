@@ -32,9 +32,10 @@ function initData(){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
    await page.locator('#party-start').click();
    await page.locator('#settings-open').click();await page.locator('#music-on').uncheck();await page.getByRole('button',{name:'Готово',exact:true}).last().click();
    await page.locator('#roll-button').click();await page.waitForFunction(()=>/^\d/.test(document.getElementById('dice-result').textContent));
-   assert(await page.locator('.player-token image[href="/assets/mira.webp"]').count()>0);
+   assert(await page.locator('.player-token svg[data-tg-premium="mira"] image').count()>0);
    assert.equal(await page.evaluate(()=>localStorage.getItem('manager.field.v1')),'original-version-sentinel');
    assert(await page.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('manager.telegram.v1.123.'))));
+   await page.reload();await page.locator('#telegram-loading').waitFor({state:'detached'});assert(await page.locator('.player-token svg[data-tg-premium="mira"] image').count()>0,'Saved local match and selected costume must survive reload');
    assert.deepEqual(errors,[]);await page.screenshot({path:require('node:path').resolve(__dirname,`../qa-${viewport.width}.png`),fullPage:true});
    console.log(`Verified ${viewport.width}px: auth, 18 portraits, stats, packs, local match, dice, isolated saves, no JS errors.`);await context.close();
   }

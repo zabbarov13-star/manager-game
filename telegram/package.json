@@ -2,6 +2,7 @@
   "name": "manager-telegram-mini-app",
   "version": "0.19.1-telegram.1",
   "private": true,
+  "devDependencies": {"typescript":"5.9.3","playwright":"1.62.1","sharp":"0.35.5"},
   "engines": { "node": ">=24.22.1 <25" },
   "scripts": {
     "build": "node build.cjs",

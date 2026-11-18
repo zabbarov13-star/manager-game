@@ -1,0 +1,1317 @@
+{
+  "uniqueScenarios": 108,
+  "executions": 216,
+  "deviceCaveat": "Viewport emulation on desktop Chrome; physical Android/iOS not tested",
+  "timings": {
+    "390": {
+      "p50Ms": 0.19999998807907104,
+      "p95Ms": 0.30000001192092896,
+      "maxMs": 1.4000000357627869,
+      "renderer": "Canvas 2D, 360×480, desktop Chrome, no device CPU emulation"
+    },
+    "1440": {
+      "p50Ms": 0.19999998807907104,
+      "p95Ms": 0.30000001192092896,
+      "maxMs": 0.30000001192092896,
+      "renderer": "Canvas 2D, 360×480, desktop Chrome, no device CPU emulation"
+    }
+  },
+  "results": [
+    {
+      "characterId": "mira",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "character.spawn",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "character.idle",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "turn.started",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "dice.rolled",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "property.purchased",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "money.received",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "money.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "game.won",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "game.lost",
+      "viewport": 390,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mira",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "asya",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "bella",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "akira",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "hana",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "yuki",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "mayor",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "character.spawn",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "character.idle",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "turn.started",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "dice.rolled",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "property.purchased",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "money.received",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "money.lost",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "game.won",
+      "viewport": 1440,
+      "visual": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "game.lost",
+      "viewport": 1440,
+      "visual": true
+    }
+  ]
+}

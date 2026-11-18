@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "scope": "Actual Android-staged APK HTML in desktop Chrome + signed Mini App host fixture, not physical Android/Telegram",
+  "oneRoomDatabase": true,
+  "externalNetworkBlocked": true,
+  "createJoinReadyStartRollReload": true,
+  "premium": "mira",
+  "errors": []
+}

@@ -7,3 +7,11 @@
 /qa-*.png
 /art-review.png
 /node_modules/
+/character-sources/
+/.cache/
+/*.local.json
+/art-review/
+/animation-demo/screenshots/*.png
+/deploy/out/
+/deploy/reports/
+/shared/dist/

@@ -1,0 +1,10 @@
+'use strict';
+const https=require('node:https'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+if(process.env.TELEGRAM_ENV!=='test'||!process.env.PUBLIC_ORIGIN?.startsWith('https://localhost:'))throw Error('Local staging requires TELEGRAM_ENV=test and a localhost HTTPS origin.');
+if(!process.env.TELEGRAM_BOT_TOKEN)throw Error('BLOCKED: add the separate Telegram test bot token to private telegram/.env.');
+const database=path.resolve(root,process.env.TELEGRAM_DATABASE??'data/staging/telegram.sqlite');
+if(!database.startsWith(path.join(root,'data/staging')+path.sep))throw Error('Local staging database must stay in telegram/data/staging.');
+const app=require('../server.cjs').createApp({database}),server=https.createServer({key:fs.readFileSync(path.join(root,'data/staging/tls/localhost-key.pem')),cert:fs.readFileSync(path.join(root,'data/staging/tls/localhost-cert.pem'))},(req,res)=>app.emit('request',req,res));
+server.on('close',()=>app.emit('close'));server.listen(Number(process.env.PORT??8443),'127.0.0.1',()=>console.log('Local test Mini App HTTPS listener ready. Certificate is local/self-signed, not a public trusted origin.'));
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>server.close());

@@ -1,0 +1,59 @@
+{
+  "renderer": "Canvas 2D; raster sprites and independent effect layers",
+  "characters": [
+    {
+      "id": "crypto-monk",
+      "baseSha256": "297d0d3f0dd061f433d327700436b488d77812eb6b89eae72e38cd7432f47b90",
+      "emotionSheetSha256": "d9c6aa64c61201c333ca1a33dbafad39cc1e2060ffcd4489a61d435923ad1e61",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "wallstreet-pirate",
+      "baseSha256": "f44cd652ca9d19d42839ae1886a9aaac64123a3d12a6e3d28ca6c4db6bbb9406",
+      "emotionSheetSha256": "ddb9bfac3ce0e3b9dfd7a5639ad19e0b5853c43b11bd951085e08a4899cd0b8a",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "mayor",
+      "baseSha256": "a739cfc1fae94e013ed4ce96f14b95a9f5cef1f0a1ce10232892e337ec482da1",
+      "emotionSheetSha256": "393315b28ba8a569ef583b82a3d435a3e37f7808665ff7c5a5e145137ec3d1f3",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "teen-investor",
+      "baseSha256": "08baebb239100ff5c2f34b02aa17074de8193cb48da2dd6ea5433b7fbec4eeea",
+      "emotionSheetSha256": "060cea07a68530a199b5e145a1143288708d865224aedd9a1dd08b070ea578fe",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "madam-franchise",
+      "baseSha256": "1a4ae6bf0417863441570bd7f4fde5cabacadf8c05deed67a7e09505636edc27",
+      "emotionSheetSha256": "41a1de14698e19f3b56d417a91ff79cce5c3962c992932b4a79e545f9149cfaa",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "id": "anonymous-hacker",
+      "baseSha256": "399ddab211a12f361563c0b570194c1d453b7ea7abc18a800c4bff778963c61e",
+      "emotionSheetSha256": "7a4e74d2501fa54205a0fb4a89ed62c9be8bf9b7f0701ac87f1cd0322964cb28",
+      "sheet": {
+        "width": 1254,
+        "height": 1254
+      }
+    }
+  ]
+}

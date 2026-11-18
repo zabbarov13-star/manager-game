@@ -1,0 +1,31 @@
+# Existing shared VPS: no second Caddy and no published 80/443.
+name: manager-mini-app
+services:
+  app:
+    image: ${MANAGER_IMAGE:?Use the verified release image}
+    env_file: ${MANAGER_ENV_FILE:?Private server env path}
+    environment:
+      PUBLIC_ORIGIN: ${MANAGER_ORIGIN:?Approved Manager origin}
+      TELEGRAM_DATABASE: /data/telegram.sqlite
+      BIND: 0.0.0.0
+      PORT: 8090
+      STARS_ENABLED: "0"
+      ADS_VERIFIED_GATEWAY_ENABLED: "0"
+    ports: ["127.0.0.1:8443:8090"]
+    volumes:
+      - ${MANAGER_DATA_DIR:?Confirmed Manager data directory}:/data
+      - ${MANAGER_BACKUP_DIR:?Private Manager backup directory}:/backups
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    cpus: 0.50
+    mem_limit: 512m
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8090/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5

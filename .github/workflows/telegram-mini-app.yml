@@ -7,7 +7,43 @@ on:
     paths: [telegram/**, .github/workflows/telegram-mini-app.yml]
 permissions:
   contents: read
+concurrency:
+  group: telegram-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
+  preflight-isolation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - run: node telegram/build.cjs
+      - run: node telegram/tests/native-runtime.cjs
+      - name: Prepare isolated CI Caddy binary without starting a service
+        run: |
+          id=$(docker create --network none caddy:2)
+          docker cp "$id:/usr/bin/caddy" "$RUNNER_TEMP/preflight-caddy"
+          docker rm "$id"
+          chmod 755 "$RUNNER_TEMP/preflight-caddy"
+          echo "QA_CADDY=$RUNNER_TEMP/preflight-caddy" >> "$GITHUB_ENV"
+      - name: Verify real diagnostic sandbox on synthetic data only
+        run: |
+          if ! command -v bwrap >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y bubblewrap
+          fi
+          sudo env PATH="$PATH" QA_CADDY="$QA_CADDY" PREFLIGHT_BWRAP_TEST=1 node --test telegram/tests/preflight*.test.cjs
+  deployment-tools-node18:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18.20.4'
+      - run: node --test telegram/tests/deployment.test.cjs
   verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -16,9 +52,61 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24.22.1'
+      - name: Package committed source without private data
+        run: |
+          node telegram/deploy/package.cjs
+          node -e "const m=require('./telegram/deploy/out/release.json');require('./telegram/deploy/vps.cjs').safeArchive('./telegram/deploy/out/'+m.archive)"
       - run: node telegram/build.cjs
+      - run: node telegram/tests/native-runtime.cjs
+      - run: node telegram/deploy/package-preflight.cjs
+      - run: npm install --prefix telegram
+      - run: cd telegram && npx tsc -p tsconfig.json
+      - run: node telegram/staging/init-local.cjs
+      - name: Validate shared VPS compose without starting services
+        env:
+          MANAGER_IMAGE: manager-mini-app:ci-only
+          MANAGER_ENV_FILE: ../.env
+          MANAGER_ORIGIN: https://manager.95-181-169-84.sslip.io
+          MANAGER_DATA_DIR: /tmp/manager-ci-data
+          MANAGER_BACKUP_DIR: /tmp/manager-ci-backups
+        run: docker compose -f telegram/deploy/compose.host.yaml config --quiet
+      - name: Verify shared Caddy route isolation in a disposable container
+        run: node telegram/tests/caddy-isolation.cjs
+      - name: Build and verify isolated Node 24 application image
+        run: |
+          docker build -f telegram/Dockerfile -t manager-mini-app:ci-only .
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=64m manager-mini-app:ci-only node deploy/runtime-check.cjs
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=256m manager-mini-app:ci-only node --test tests/shared-adapter.test.cjs
+      - name: Validate isolated staging compose without starting services
+        env:
+          STAGING_DOMAIN: staging.example.invalid
+        run: docker compose --env-file telegram/.env -f telegram/staging/compose.yaml config --quiet
       - run: node --test telegram/tests/*.test.cjs tests/p2p-routing-baseline.cjs
-      - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs
-      - run: npm install --no-save --prefix telegram playwright@1.62.1
-      - run: cd telegram && npx playwright install --with-deps chromium
+      - run: node --require ./telegram/tests/release-preload.cjs --test packaging/test-dice.cjs online/construction.test.cjs online/public.test.cjs online/server.test.cjs
+      - name: Select available Chrome or install Chromium
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "QA_CHROME=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          else
+            cd telegram
+            npx playwright install --with-deps chromium
+          fi
+      - run: node telegram/animation/build-demo.cjs
+      - run: node telegram/tests/animation-visual.cjs
+      - run: node telegram/tests/animation-playback.cjs
       - run: node telegram/tests/browser-smoke.cjs
+      - run: node telegram/tests/shared-browser.cjs
+      - run: node telegram/tests/character-field.cjs
+      - run: node telegram/tests/animation-multiplayer.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: telegram-animation-qa
+          path: |
+            telegram/animation-demo/
+            telegram/qa-*.png
+            telegram/qa-results/
+            telegram/deploy/out/*.tar
+            telegram/deploy/out/release.json
+            telegram/deploy/out/shared-release.json
+            telegram/deploy/out/diagnostic-release.json

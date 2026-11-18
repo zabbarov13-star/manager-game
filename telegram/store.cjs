@@ -1,13 +1,14 @@
 'use strict';
 const {DatabaseSync}=require('node:sqlite');
-const {randomUUID}=require('node:crypto');
+const {randomUUID,randomBytes}=require('node:crypto');
 const catalog=require('./catalog.cjs');
+const {canonicalItem,equivalentItems,ownerId}=require('./entitlements.cjs');
 const DAY=86400000;
 const dayKey=now=>new Date(now+10800000).toISOString().slice(0,10);
 const resetAt=now=>(Math.floor((now+10800000)/DAY)+1)*DAY-10800000;
 function fail(message,status=409){throw Object.assign(Error(message),{status});}
 class Store{
- constructor(file=':memory:',clock=Date.now){this.now=clock;this.db=new DatabaseSync(file);this.db.exec(`
+ constructor(file=':memory:',clock=Date.now,options={}){this.now=clock;this.ownerTelegramId=ownerId(options.ownerTelegramId??process.env.OWNER_TELEGRAM_ID);this.db=new DatabaseSync(file);this.db.exec(`
  PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;
  CREATE TABLE IF NOT EXISTS profiles(user TEXT PRIMARY KEY,name TEXT NOT NULL,character TEXT NOT NULL DEFAULT 'cassette',style TEXT NOT NULL DEFAULT 'heritage',dice TEXT,effect TEXT);
  CREATE TABLE IF NOT EXISTS grants(user TEXT NOT NULL,item TEXT NOT NULL,source TEXT NOT NULL,expires INTEGER,revoked INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(user,item,source));
@@ -15,23 +16,38 @@ class Store{
  CREATE TABLE IF NOT EXISTS receipts(id TEXT PRIMARY KEY,received INTEGER NOT NULL,body TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS orders(id TEXT PRIMARY KEY,user TEXT NOT NULL,product TEXT NOT NULL,amount INTEGER NOT NULL,items TEXT NOT NULL,created INTEGER NOT NULL,status TEXT NOT NULL,charge TEXT UNIQUE,checkout_query TEXT);
  CREATE TABLE IF NOT EXISTS updates(id INTEGER PRIMARY KEY,created INTEGER NOT NULL);
+ CREATE TABLE IF NOT EXISTS cosmetic_tickets(id TEXT PRIMARY KEY,user TEXT NOT NULL,character TEXT NOT NULL,expires INTEGER NOT NULL);
+ CREATE INDEX IF NOT EXISTS cosmetic_tickets_expiry ON cosmetic_tickets(expires);
  CREATE INDEX IF NOT EXISTS grants_user ON grants(user);
  CREATE INDEX IF NOT EXISTS ads_user_day ON ads(user,day,status);
  CREATE INDEX IF NOT EXISTS orders_user ON orders(user,status);
  `);}
  tx(fn){this.db.exec('BEGIN IMMEDIATE');try{const result=fn();this.db.exec('COMMIT');return result;}catch(e){this.db.exec('ROLLBACK');throw e;}}
  user(user){this.db.prepare('INSERT INTO profiles(user,name) VALUES(?,?) ON CONFLICT(user) DO UPDATE SET name=excluded.name').run(user.id,user.name);}
+ role(user){return this.ownerTelegramId!==null&&String(user)===this.ownerTelegramId?'owner':'player';}
+ cosmeticTicket(user){const profile=this.db.prepare('SELECT character FROM profiles WHERE user=?').get(user);if(!profile||!this.access(user,'character:'+profile.character).available)return null;
+  const now=this.now(),id=randomBytes(32).toString('hex'),access=this.access(user,'character:'+profile.character),expires=Math.min(now+300000,access.expires??Infinity);
+  this.db.prepare('DELETE FROM cosmetic_tickets WHERE expires<=?').run(now-7*DAY);this.db.prepare('INSERT INTO cosmetic_tickets VALUES(?,?,?,?)').run(id,user,profile.character,expires);return {ticket:id,characterId:profile.character,expires};
+ }
+ verifyCosmetic(ticket,characterId,{existingSeat=false}={}){if(typeof ticket!=='string'||!/^[a-f0-9]{64}$/.test(ticket)||typeof characterId!=='string')return false;const row=this.db.prepare('SELECT * FROM cosmetic_tickets WHERE id=? AND character=?').get(ticket,characterId);return !!row&&row.expires+(existingSeat?7*DAY:0)>this.now()&&this.access(row.user,'character:'+row.character).available;}
  access(user,item,now=this.now()){
+  item=canonicalItem(item);
+  const known=catalog.items.find(i=>i.id===item);
+  if(!known)return {available:false,permanent:false,expires:0};
+  if(this.role(user)==='owner'&&['character','style','dice','effect'].includes(known.kind))return {available:true,permanent:true,expires:null,reason:'owner'};
   if(catalog.items.some(i=>i.id===item&&i.free))return {available:true,permanent:true,expires:null};
-  const rows=this.db.prepare('SELECT expires FROM grants WHERE user=? AND item=? AND revoked=0').all(user,item);
+  const equivalents=equivalentItems(item);
+  const rows=this.db.prepare(`SELECT expires FROM grants WHERE user=? AND item IN (${equivalents.map(()=>'?').join(',')}) AND revoked=0`).all(user,...equivalents);
   const permanent=rows.some(r=>r.expires===null),expires=Math.max(0,...rows.map(r=>r.expires??0));
   return {available:permanent||expires>now,permanent,expires:permanent?null:expires};
  }
  profile(user){const now=this.now(),profile=this.db.prepare('SELECT character,style,dice,effect FROM profiles WHERE user=?').get(user);
+  const canonicalCharacter=canonicalItem('character:'+profile.character).slice(10);
+  if(canonicalCharacter!==profile.character){profile.character=canonicalCharacter;this.db.prepare('UPDATE profiles SET character=? WHERE user=?').run(canonicalCharacter,user);}
   const accesses=Object.fromEntries(catalog.items.map(i=>[i.id,this.access(user,i.id,now)]));
   if(!accesses[`style:${profile.style}`]?.available){profile.style='heritage';this.db.prepare('UPDATE profiles SET style=? WHERE user=?').run('heritage',user);}
   const used=this.db.prepare("SELECT count(*) AS n FROM ads WHERE user=? AND day=? AND status='issued'").get(user,dayKey(now)).n;
-  return {profile,access:accesses,ads:{remaining:3-used,resetAt:resetAt(now)},serverTime:now};
+  return {role:this.role(user),profile,access:accesses,ads:{remaining:3-used,resetAt:resetAt(now),exempt:this.role(user)==='owner'},serverTime:now};
  }
  select(user,values){return this.tx(()=>{for(const field of ['character','style','dice','effect'])if(Object.hasOwn(values,field)){
    const value=values[field];if(value===null&&['dice','effect'].includes(field)){this.db.prepare(`UPDATE profiles SET ${field}=NULL WHERE user=?`).run(user);continue;}

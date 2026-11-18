@@ -1,0 +1,174 @@
+{
+  "status": "PASS",
+  "scope": "Real app UI with signed test Telegram identities; no physical device sign-off",
+  "results": [
+    {
+      "characterId": "mira",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "asya",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "bella",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "akira",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "hana",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "yuki",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "mayor",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "teen-investor",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "width": 390,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "mira",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "asya",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "bella",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "akira",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "hana",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "yuki",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "crypto-monk",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "mayor",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "teen-investor",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "madam-franchise",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "width": 1440,
+      "selectionPersisted": true,
+      "field": true,
+      "reload": true
+    }
+  ]
+}
