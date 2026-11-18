@@ -20,13 +20,21 @@ jobs:
         with:
           node-version: '24.22.1'
       - run: node telegram/build.cjs
+      - run: node telegram/tests/native-runtime.cjs
+      - name: Prepare isolated CI Caddy binary without starting a service
+        run: |
+          id=$(docker create --network none caddy:2)
+          docker cp "$id:/usr/bin/caddy" "$RUNNER_TEMP/preflight-caddy"
+          docker rm "$id"
+          chmod 755 "$RUNNER_TEMP/preflight-caddy"
+          echo "QA_CADDY=$RUNNER_TEMP/preflight-caddy" >> "$GITHUB_ENV"
       - name: Verify real diagnostic sandbox on synthetic data only
         run: |
           if ! command -v bwrap >/dev/null 2>&1; then
             sudo apt-get update -qq
             sudo apt-get install -y bubblewrap
           fi
-          sudo env PATH="$PATH" PREFLIGHT_BWRAP_TEST=1 node --test telegram/tests/preflight.test.cjs
+          sudo env PATH="$PATH" QA_CADDY="$QA_CADDY" PREFLIGHT_BWRAP_TEST=1 node --test telegram/tests/preflight*.test.cjs
   deployment-tools-node18:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
