@@ -8,6 +8,9 @@ test('direct privileged preflight refuses to run; outer sandbox has read-only mo
  const r=cp.spawnSync(process.execPath,[path.join(deploy,'preflight.cjs')],{encoding:'utf8'});assert.equal(r.status,2);assert(r.stderr.includes('NO-GO'));
  const args=outerArgs({bundle:'/bundle-source',work:'/private',control:'/control-source',host:{node:process.execPath,current:'/old',expected:{database:'/live/rooms.sqlite'},caddyBinary:'/caddy'}});assert(args.includes('--unshare-all'));assert(args.includes('--unshare-user'));assert(args.includes('--cap-drop'));assert(!args.includes('--share-net'));assert(!args.includes('/run'));assert(!args.includes('/var/run/docker.sock'));assert.equal(args[args.indexOf('/live')-1],'--ro-bind');assert.equal(args[args.indexOf('/old')-1],'--ro-bind');
 });
+test('diagnostic archive has explicit safe POSIX modes on Windows and Linux',()=>{
+ const dir=temp(),source=path.join(dir,'source');fs.mkdirSync(source);fs.writeFileSync(path.join(source,'probe.cjs'),'public fixture');const file=path.join(dir,'bundle.tar');require('../deploy/package-preflight.cjs').writeFlatTar(source,file);const header=fs.readFileSync(file).subarray(0,512);assert.equal(parseInt(header.subarray(100,108).toString().replace(/\0/g,''),8),0o644);assert.equal(cp.execFileSync('tar',['-xOf',file,'probe.cjs'],{encoding:'utf8'}),'public fixture');
+});
 test('both real runtime archives validate; checksum, env injection and mismatched release are rejected',()=>{
  const manifest=release();for(const kind of ['rooms','adapter'])assert.equal(inspectArchive(archive(manifest,kind),manifest,kind).status,'PASS');
  const bad=structuredClone(manifest);bad.runtimes.find(r=>r.kind==='adapter').sha256='0'.repeat(64);assert.throws(()=>inspectArchive(archive(manifest,'adapter'),bad,'adapter'),/HASH_MISMATCH/);
