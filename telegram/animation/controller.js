@@ -72,6 +72,11 @@
       this.meta={gameId:'local:'+crypto.randomUUID(),revision:0,snapshot:null,throughSequence:-1};
       this.context(this.meta.gameId,state,this.ownBindings(state));this.commitLocal(state);
     }
+    restoreLocal(state){
+      this.network=false;this.hasLocalBaseline=true;this.dispatcher.cancelAll();this.stopIdle();
+      this.meta={gameId:'local:'+crypto.randomUUID(),revision:0,snapshot:Core.snapshot(state),throughSequence:0};
+      this.context(this.meta.gameId,state,this.ownBindings(state));this.dispatcher.resume(this.meta.gameId,0);this.saveMeta();
+    }
     syncState(state){
       if(state.gameMode==='online')return;
       if(!this.meta?.gameId)this.meta={gameId:'local:'+crypto.randomUUID(),revision:0,snapshot:Core.snapshot(state),throughSequence:0};

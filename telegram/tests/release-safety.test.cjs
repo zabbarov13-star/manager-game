@@ -6,6 +6,11 @@ test('official test Bot API is isolated and failures never expose token URLs',as
  assert.throws(()=>environment('staging'));assert.throws(()=>environment('https://evil.test'));
  const bad=createBotApi('never-log-this',{fetcher:async()=>{throw Error('https://api.telegram.org/botnever-log-this');}});await assert.rejects(bad('getMe',{}),e=>!e.message.includes('never-log-this'));
 });
+
+test('refund helper cannot operate in production or revoke a grant before the authenticated webhook',async()=>{
+ const {refundTestPayment}=require('../test-refund.cjs');await assert.rejects(refundTestPayment({mode:'production'}),/only operates/);const dir=fs.mkdtempSync(path.join(os.tmpdir(),'manager-test-refund-')),file=path.join(dir,'telegram.sqlite'),store=new Store(file);store.user({id:'5000',name:'Test fixture'});const order=store.order('5000','character:mira');store.paid('5000',{invoice_payload:order.id,total_amount:10,currency:'XTR',telegram_payment_charge_id:'test-only-charge'});const calls=[];
+ const result=await refundTestPayment({orderId:order.id,database:file,mode:'test',bot:async(method,body)=>{calls.push({method,body});return true;}});assert(result.awaitingWebhook);assert.deepEqual(calls,[{method:'refundStarPayment',body:{user_id:5000,telegram_payment_charge_id:'test-only-charge'}}]);assert(store.access('5000','character:mira').permanent);store.close();
+});
 test('unconfigured Stars refuse new invoices, health reports reality, paysupport uses configured contact',async t=>{
  const sent=[],app=createApp({environment:'test',botToken:'test-only',webhookSecret:'s'.repeat(32),origin:'https://test.invalid',database:':memory:',supportContact:'@fixture_support',bot:async(method,body)=>{sent.push({method,body});return true;}}).listen(0,'127.0.0.1');await once(app,'listening');t.after(()=>new Promise(r=>app.close(r)));const base='http://127.0.0.1:'+app.address().port;
  assert.equal((await (await fetch(base+'/health')).json()).starsConfigured,false);

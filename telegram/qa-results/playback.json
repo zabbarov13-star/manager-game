@@ -5,10 +5,10 @@
     {
       "characterId": "mira",
       "type": "character.spawn",
-      "elapsedMs": 830,
+      "elapsedMs": 820.3000000119209,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 142.29999995231628,
+      "maxGapMs": 149.5999999642372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -16,10 +16,10 @@
     {
       "characterId": "asya",
       "type": "character.spawn",
-      "elapsedMs": 830.1000000238419,
+      "elapsedMs": 820.5,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 225.30000001192093,
+      "maxGapMs": 240.0999999642372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -27,10 +27,10 @@
     {
       "characterId": "bella",
       "type": "character.spawn",
-      "elapsedMs": 830.1999999880791,
+      "elapsedMs": 820.5,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 227.69999998807907,
+      "maxGapMs": 242.69999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -38,10 +38,10 @@
     {
       "characterId": "akira",
       "type": "character.spawn",
-      "elapsedMs": 830.3000000119209,
+      "elapsedMs": 820.6000000238419,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 229.80000001192093,
+      "maxGapMs": 244.69999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -49,10 +49,10 @@
     {
       "characterId": "hana",
       "type": "character.spawn",
-      "elapsedMs": 830.3999999761581,
+      "elapsedMs": 820.6000000238419,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 234,
+      "maxGapMs": 259.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -60,10 +60,10 @@
     {
       "characterId": "yuki",
       "type": "character.spawn",
-      "elapsedMs": 830.3999999761581,
+      "elapsedMs": 820.8000000119209,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 238.10000002384186,
+      "maxGapMs": 263.60000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -71,10 +71,10 @@
     {
       "characterId": "crypto-monk",
       "type": "character.spawn",
-      "elapsedMs": 830.5,
+      "elapsedMs": 820.8000000119209,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 240.69999998807907,
+      "maxGapMs": 267,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -82,10 +82,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "character.spawn",
-      "elapsedMs": 830.5,
+      "elapsedMs": 820.8000000119209,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 244.60000002384186,
+      "maxGapMs": 271.19999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -93,10 +93,10 @@
     {
       "characterId": "mayor",
       "type": "character.spawn",
-      "elapsedMs": 830.5999999642372,
+      "elapsedMs": 820.8000000119209,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 247.10000002384186,
+      "maxGapMs": 273.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -104,10 +104,10 @@
     {
       "characterId": "teen-investor",
       "type": "character.spawn",
-      "elapsedMs": 830.6000000238419,
+      "elapsedMs": 820.8999999761581,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 249.5999999642372,
+      "maxGapMs": 276.19999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -115,10 +115,10 @@
     {
       "characterId": "madam-franchise",
       "type": "character.spawn",
-      "elapsedMs": 830.6000000238419,
+      "elapsedMs": 821,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 259.39999997615814,
+      "maxGapMs": 278.9000000357628,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -126,10 +126,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "character.spawn",
-      "elapsedMs": 830.8000000119209,
+      "elapsedMs": 821.1999999880791,
       "expectedMs": 800,
       "frames": 14,
-      "maxGapMs": 262.39999997615814,
+      "maxGapMs": 281.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -137,10 +137,10 @@
     {
       "characterId": "mira",
       "type": "character.idle",
-      "elapsedMs": 1614.199999988079,
+      "elapsedMs": 1640.300000011921,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 51.89999997615814,
+      "frames": 43,
+      "maxGapMs": 51.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -148,10 +148,10 @@
     {
       "characterId": "asya",
       "type": "character.idle",
-      "elapsedMs": 1614.2999999523163,
+      "elapsedMs": 1640.300000011921,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 50.40000003576279,
+      "frames": 43,
+      "maxGapMs": 51.59999996423721,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -159,10 +159,10 @@
     {
       "characterId": "bella",
       "type": "character.idle",
-      "elapsedMs": 1614.2999999523163,
+      "elapsedMs": 1640.199999988079,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 53.90000003576279,
+      "frames": 43,
+      "maxGapMs": 55,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -170,10 +170,10 @@
     {
       "characterId": "akira",
       "type": "character.idle",
-      "elapsedMs": 1614.199999988079,
+      "elapsedMs": 1640.2999999523163,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 57.30000001192093,
+      "frames": 43,
+      "maxGapMs": 58.60000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -181,10 +181,10 @@
     {
       "characterId": "hana",
       "type": "character.idle",
-      "elapsedMs": 1614.300000011921,
+      "elapsedMs": 1640.3999999761581,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 61.5,
+      "frames": 43,
+      "maxGapMs": 62.40000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -192,10 +192,10 @@
     {
       "characterId": "yuki",
       "type": "character.idle",
-      "elapsedMs": 1614.300000011921,
+      "elapsedMs": 1640.5,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 65.5,
+      "frames": 43,
+      "maxGapMs": 66.10000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -203,10 +203,10 @@
     {
       "characterId": "crypto-monk",
       "type": "character.idle",
-      "elapsedMs": 1614.3999999761581,
+      "elapsedMs": 1640.5999999642372,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 69.89999997615814,
+      "frames": 43,
+      "maxGapMs": 70.10000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -214,10 +214,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "character.idle",
-      "elapsedMs": 1614.3999999761581,
+      "elapsedMs": 1640.5999999642372,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 74.19999998807907,
+      "frames": 43,
+      "maxGapMs": 74.29999995231628,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -225,10 +225,10 @@
     {
       "characterId": "mayor",
       "type": "character.idle",
-      "elapsedMs": 1614.5,
+      "elapsedMs": 1640.699999988079,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 78,
+      "frames": 43,
+      "maxGapMs": 78.09999996423721,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -236,9 +236,9 @@
     {
       "characterId": "teen-investor",
       "type": "character.idle",
-      "elapsedMs": 1614.5999999642372,
+      "elapsedMs": 1640.7999999523163,
       "expectedMs": 1600,
-      "frames": 41,
+      "frames": 43,
       "maxGapMs": 82,
       "bodySamples": 6,
       "propSamples": 6,
@@ -247,10 +247,10 @@
     {
       "characterId": "madam-franchise",
       "type": "character.idle",
-      "elapsedMs": 1614.699999988079,
+      "elapsedMs": 1640.7999999523163,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 86.19999998807907,
+      "frames": 43,
+      "maxGapMs": 85.90000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -258,10 +258,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "character.idle",
-      "elapsedMs": 1614.800000011921,
+      "elapsedMs": 1641,
       "expectedMs": 1600,
-      "frames": 41,
-      "maxGapMs": 90.19999998807907,
+      "frames": 43,
+      "maxGapMs": 89.90000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -269,10 +269,10 @@
     {
       "characterId": "mira",
       "type": "turn.started",
-      "elapsedMs": 664.8000000119209,
+      "elapsedMs": 681,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 171.5,
+      "maxGapMs": 163.69999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -280,10 +280,10 @@
     {
       "characterId": "asya",
       "type": "turn.started",
-      "elapsedMs": 664.8999999761581,
+      "elapsedMs": 681,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 175,
+      "maxGapMs": 166.60000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -291,10 +291,10 @@
     {
       "characterId": "bella",
       "type": "turn.started",
-      "elapsedMs": 664.8999999761581,
+      "elapsedMs": 681,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 177.30000001192093,
+      "maxGapMs": 169.0999999642372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -302,10 +302,10 @@
     {
       "characterId": "akira",
       "type": "turn.started",
-      "elapsedMs": 665,
+      "elapsedMs": 681.1000000238419,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 179.5999999642372,
+      "maxGapMs": 171.70000004768372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -313,10 +313,10 @@
     {
       "characterId": "hana",
       "type": "turn.started",
-      "elapsedMs": 665.0999999642372,
+      "elapsedMs": 681,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 182.4000000357628,
+      "maxGapMs": 175.10000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -324,10 +324,10 @@
     {
       "characterId": "yuki",
       "type": "turn.started",
-      "elapsedMs": 665.0999999642372,
+      "elapsedMs": 681.0999999642372,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 185.10000002384186,
+      "maxGapMs": 178.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -335,7 +335,29 @@
     {
       "characterId": "crypto-monk",
       "type": "turn.started",
-      "elapsedMs": 665.1999999880791,
+      "elapsedMs": 681.0999999642372,
+      "expectedMs": 650,
+      "frames": 14,
+      "maxGapMs": 181.0999999642372,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "turn.started",
+      "elapsedMs": 681.3000000119209,
+      "expectedMs": 650,
+      "frames": 14,
+      "maxGapMs": 184.29999995231628,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "mayor",
+      "type": "turn.started",
+      "elapsedMs": 681.3000000119209,
       "expectedMs": 650,
       "frames": 14,
       "maxGapMs": 188,
@@ -344,34 +366,12 @@
       "lastProgress": 1
     },
     {
-      "characterId": "wallstreet-pirate",
-      "type": "turn.started",
-      "elapsedMs": 665.1999999880791,
-      "expectedMs": 650,
-      "frames": 14,
-      "maxGapMs": 193.0999999642372,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "mayor",
-      "type": "turn.started",
-      "elapsedMs": 665.3000000119209,
-      "expectedMs": 650,
-      "frames": 14,
-      "maxGapMs": 195.79999995231628,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
       "characterId": "teen-investor",
       "type": "turn.started",
-      "elapsedMs": 665.3999999761581,
+      "elapsedMs": 681.3999999761581,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 198.9000000357628,
+      "maxGapMs": 192.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -379,10 +379,10 @@
     {
       "characterId": "madam-franchise",
       "type": "turn.started",
-      "elapsedMs": 665.5,
+      "elapsedMs": 681.3999999761581,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 201.69999998807907,
+      "maxGapMs": 195.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -390,10 +390,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "turn.started",
-      "elapsedMs": 665.5999999642372,
+      "elapsedMs": 681.5,
       "expectedMs": 650,
       "frames": 14,
-      "maxGapMs": 204.80000001192093,
+      "maxGapMs": 198.19999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -401,10 +401,10 @@
     {
       "characterId": "mira",
       "type": "dice.rolled",
-      "elapsedMs": 830,
+      "elapsedMs": 839.6999999880791,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 49.89999997615814,
+      "frames": 22,
+      "maxGapMs": 45.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -412,10 +412,10 @@
     {
       "characterId": "asya",
       "type": "dice.rolled",
-      "elapsedMs": 830.1000000238419,
+      "elapsedMs": 839.8000000119209,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 47,
+      "frames": 22,
+      "maxGapMs": 46.59999996423721,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -423,10 +423,10 @@
     {
       "characterId": "bella",
       "type": "dice.rolled",
-      "elapsedMs": 830.0999999642372,
+      "elapsedMs": 839.8999999761581,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 50.59999996423721,
+      "frames": 22,
+      "maxGapMs": 50.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -434,10 +434,10 @@
     {
       "characterId": "akira",
       "type": "dice.rolled",
-      "elapsedMs": 830.1999999880791,
+      "elapsedMs": 840.1000000238419,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 54.09999996423721,
+      "frames": 22,
+      "maxGapMs": 53.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -445,10 +445,10 @@
     {
       "characterId": "hana",
       "type": "dice.rolled",
-      "elapsedMs": 830.2999999523163,
+      "elapsedMs": 840.1999999880791,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 58.40000003576279,
+      "frames": 22,
+      "maxGapMs": 57.90000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -456,10 +456,10 @@
     {
       "characterId": "yuki",
       "type": "dice.rolled",
-      "elapsedMs": 830.3999999761581,
+      "elapsedMs": 840.3000000119209,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 62,
+      "frames": 22,
+      "maxGapMs": 61.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -467,10 +467,10 @@
     {
       "characterId": "crypto-monk",
       "type": "dice.rolled",
-      "elapsedMs": 830.5,
+      "elapsedMs": 840.3999999761581,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 66.10000002384186,
+      "frames": 22,
+      "maxGapMs": 66,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -478,10 +478,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "dice.rolled",
-      "elapsedMs": 830.5999999642372,
+      "elapsedMs": 840.3999999761581,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 70.29999995231628,
+      "frames": 22,
+      "maxGapMs": 69.20000004768372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -489,10 +489,10 @@
     {
       "characterId": "mayor",
       "type": "dice.rolled",
-      "elapsedMs": 830.6999999880791,
+      "elapsedMs": 840.5999999642372,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 74.69999998807907,
+      "frames": 22,
+      "maxGapMs": 72,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -500,10 +500,10 @@
     {
       "characterId": "teen-investor",
       "type": "dice.rolled",
-      "elapsedMs": 830.7999999523163,
+      "elapsedMs": 840.5999999642372,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 78.60000002384186,
+      "frames": 22,
+      "maxGapMs": 75.09999996423721,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -511,10 +511,10 @@
     {
       "characterId": "madam-franchise",
       "type": "dice.rolled",
-      "elapsedMs": 830.8999999761581,
+      "elapsedMs": 840.7999999523163,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 82.30000001192093,
+      "frames": 22,
+      "maxGapMs": 78.40000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -522,10 +522,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "dice.rolled",
-      "elapsedMs": 831.0999999642372,
+      "elapsedMs": 840.7999999523163,
       "expectedMs": 800,
-      "frames": 21,
-      "maxGapMs": 85.40000003576279,
+      "frames": 22,
+      "maxGapMs": 82,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -533,10 +533,10 @@
     {
       "characterId": "mira",
       "type": "property.purchased",
-      "elapsedMs": 2025.5,
+      "elapsedMs": 2029.0999999642372,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 92.90000003576279,
+      "frames": 46,
+      "maxGapMs": 76,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -544,10 +544,10 @@
     {
       "characterId": "asya",
       "type": "property.purchased",
-      "elapsedMs": 2025.699999988079,
+      "elapsedMs": 2029.300000011921,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 90.59999996423721,
+      "frames": 46,
+      "maxGapMs": 76,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -555,10 +555,10 @@
     {
       "characterId": "bella",
       "type": "property.purchased",
-      "elapsedMs": 2025.699999988079,
+      "elapsedMs": 2029.3999999761581,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 90.60000002384186,
+      "frames": 46,
+      "maxGapMs": 81,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -566,10 +566,10 @@
     {
       "characterId": "akira",
       "type": "property.purchased",
-      "elapsedMs": 2025.800000011921,
+      "elapsedMs": 2029.300000011921,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 93.20000004768372,
+      "frames": 46,
+      "maxGapMs": 85.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -577,10 +577,10 @@
     {
       "characterId": "hana",
       "type": "property.purchased",
-      "elapsedMs": 2025.9000000357628,
+      "elapsedMs": 2029.4000000357628,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 98.5,
+      "frames": 46,
+      "maxGapMs": 91.19999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -588,10 +588,10 @@
     {
       "characterId": "yuki",
       "type": "property.purchased",
-      "elapsedMs": 2026,
+      "elapsedMs": 2029.5,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 103.19999998807907,
+      "frames": 46,
+      "maxGapMs": 96.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -599,10 +599,10 @@
     {
       "characterId": "crypto-monk",
       "type": "property.purchased",
-      "elapsedMs": 2026,
+      "elapsedMs": 2029.6000000238419,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 110.80000001192093,
+      "frames": 46,
+      "maxGapMs": 101.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -610,43 +610,43 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "property.purchased",
-      "elapsedMs": 2026.0999999642372,
+      "elapsedMs": 2029.7000000476837,
       "expectedMs": 2000,
-      "frames": 43,
+      "frames": 46,
+      "maxGapMs": 108.10000002384186,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "mayor",
+      "type": "property.purchased",
+      "elapsedMs": 2029.7000000476837,
+      "expectedMs": 2000,
+      "frames": 46,
+      "maxGapMs": 113,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "property.purchased",
+      "elapsedMs": 2029.800000011921,
+      "expectedMs": 2000,
+      "frames": 46,
       "maxGapMs": 117.89999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
     },
     {
-      "characterId": "mayor",
-      "type": "property.purchased",
-      "elapsedMs": 2026.0999999642372,
-      "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 125,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "teen-investor",
-      "type": "property.purchased",
-      "elapsedMs": 2026.199999988079,
-      "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 131.9000000357628,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
       "characterId": "madam-franchise",
       "type": "property.purchased",
-      "elapsedMs": 2026.199999988079,
+      "elapsedMs": 2029.9000000357628,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 138.89999997615814,
+      "frames": 46,
+      "maxGapMs": 124.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -654,10 +654,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "property.purchased",
-      "elapsedMs": 2026.3999999761581,
+      "elapsedMs": 2030,
       "expectedMs": 2000,
-      "frames": 43,
-      "maxGapMs": 146.10000002384186,
+      "frames": 46,
+      "maxGapMs": 129.5999999642372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -665,10 +665,10 @@
     {
       "characterId": "mira",
       "type": "money.received",
-      "elapsedMs": 1050.4000000357628,
+      "elapsedMs": 1020.6999999880791,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 78.19999998807907,
+      "maxGapMs": 80.90000003576279,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -676,10 +676,10 @@
     {
       "characterId": "asya",
       "type": "money.received",
-      "elapsedMs": 1050.3999999761581,
+      "elapsedMs": 1020.8000000119209,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 84,
+      "maxGapMs": 76.89999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -687,10 +687,10 @@
     {
       "characterId": "bella",
       "type": "money.received",
-      "elapsedMs": 1050.5,
+      "elapsedMs": 1020.8999999761581,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 88.39999997615814,
+      "maxGapMs": 83.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -698,10 +698,10 @@
     {
       "characterId": "akira",
       "type": "money.received",
-      "elapsedMs": 1050.5999999642372,
+      "elapsedMs": 1020.8999999761581,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 92.70000004768372,
+      "maxGapMs": 90,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -709,10 +709,10 @@
     {
       "characterId": "hana",
       "type": "money.received",
-      "elapsedMs": 1050.5999999642372,
+      "elapsedMs": 1021.0999999642372,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 99.60000002384186,
+      "maxGapMs": 97.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -720,10 +720,10 @@
     {
       "characterId": "yuki",
       "type": "money.received",
-      "elapsedMs": 1050.800000011921,
+      "elapsedMs": 1023.0999999642372,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 106.19999998807907,
+      "maxGapMs": 102.89999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -731,10 +731,10 @@
     {
       "characterId": "crypto-monk",
       "type": "money.received",
-      "elapsedMs": 1050.800000011921,
+      "elapsedMs": 1023.1999999880791,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 113.29999995231628,
+      "maxGapMs": 109.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -742,10 +742,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "money.received",
-      "elapsedMs": 1051,
+      "elapsedMs": 1023.2999999523163,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 120.40000003576279,
+      "maxGapMs": 114.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -753,10 +753,10 @@
     {
       "characterId": "mayor",
       "type": "money.received",
-      "elapsedMs": 1051.0999999642372,
+      "elapsedMs": 1023.3999999761581,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 127.09999996423721,
+      "maxGapMs": 121.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -764,10 +764,10 @@
     {
       "characterId": "teen-investor",
       "type": "money.received",
-      "elapsedMs": 1051.199999988079,
+      "elapsedMs": 1023.5,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 134.20000004768372,
+      "maxGapMs": 128.9000000357628,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -775,10 +775,10 @@
     {
       "characterId": "madam-franchise",
       "type": "money.received",
-      "elapsedMs": 1051.199999988079,
+      "elapsedMs": 1023.5999999642372,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 141,
+      "maxGapMs": 135.89999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -786,10 +786,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "money.received",
-      "elapsedMs": 1051.2000000476837,
+      "elapsedMs": 1023.6999999880791,
       "expectedMs": 1000,
       "frames": 23,
-      "maxGapMs": 148.0999999642372,
+      "maxGapMs": 142.79999995231628,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -797,10 +797,10 @@
     {
       "characterId": "mira",
       "type": "money.lost",
-      "elapsedMs": 1029.5,
+      "elapsedMs": 1024.5999999642372,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 157.30000001192093,
+      "maxGapMs": 154,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -808,10 +808,10 @@
     {
       "characterId": "asya",
       "type": "money.lost",
-      "elapsedMs": 1029.5,
+      "elapsedMs": 1024.6000000238419,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 164.0999999642372,
+      "maxGapMs": 160.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -819,10 +819,10 @@
     {
       "characterId": "bella",
       "type": "money.lost",
-      "elapsedMs": 1029.5999999642372,
+      "elapsedMs": 1024.7000000476837,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 170.4000000357628,
+      "maxGapMs": 167.39999997615814,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -830,10 +830,10 @@
     {
       "characterId": "akira",
       "type": "money.lost",
-      "elapsedMs": 1029.699999988079,
+      "elapsedMs": 1024.800000011921,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 176.69999998807907,
+      "maxGapMs": 173.69999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -841,10 +841,10 @@
     {
       "characterId": "hana",
       "type": "money.lost",
-      "elapsedMs": 1029.800000011921,
+      "elapsedMs": 1024.9000000357628,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 183.19999998807907,
+      "maxGapMs": 180.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -852,10 +852,10 @@
     {
       "characterId": "yuki",
       "type": "money.lost",
-      "elapsedMs": 1029.8999999761581,
+      "elapsedMs": 1025,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 188.89999997615814,
+      "maxGapMs": 186.9000000357628,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -863,10 +863,10 @@
     {
       "characterId": "crypto-monk",
       "type": "money.lost",
-      "elapsedMs": 1029.8999999761581,
+      "elapsedMs": 1025,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 195.10000002384186,
+      "maxGapMs": 193.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -874,10 +874,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "money.lost",
-      "elapsedMs": 1030,
+      "elapsedMs": 1025.1000000238419,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 202,
+      "maxGapMs": 199,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -885,10 +885,10 @@
     {
       "characterId": "mayor",
       "type": "money.lost",
-      "elapsedMs": 1030.0999999642372,
+      "elapsedMs": 1025.1000000238419,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 208.4000000357628,
+      "maxGapMs": 203.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -896,10 +896,10 @@
     {
       "characterId": "teen-investor",
       "type": "money.lost",
-      "elapsedMs": 1030.1000000238419,
+      "elapsedMs": 1025.199999988079,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 211.39999997615814,
+      "maxGapMs": 206.30000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -907,10 +907,10 @@
     {
       "characterId": "madam-franchise",
       "type": "money.lost",
-      "elapsedMs": 1030,
+      "elapsedMs": 1025.300000011921,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 215.89999997615814,
+      "maxGapMs": 211.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -918,65 +918,65 @@
     {
       "characterId": "anonymous-hacker",
       "type": "money.lost",
-      "elapsedMs": 1030,
+      "elapsedMs": 1025.300000011921,
       "expectedMs": 1000,
       "frames": 24,
-      "maxGapMs": 219.9000000357628,
+      "maxGapMs": 217.70000004768372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
     },
     {
       "characterId": "mira",
-      "type": "game.won",
-      "elapsedMs": 2437.800000011921,
-      "expectedMs": 2400,
-      "frames": 47,
-      "maxGapMs": 179.30000001192093,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "asya",
-      "type": "game.won",
-      "elapsedMs": 2437.900000035763,
-      "expectedMs": 2400,
-      "frames": 47,
-      "maxGapMs": 179.30000001192093,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "bella",
-      "type": "game.won",
-      "elapsedMs": 2438.100000023842,
-      "expectedMs": 2400,
-      "frames": 47,
-      "maxGapMs": 179.30000001192093,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "akira",
-      "type": "game.won",
-      "elapsedMs": 2438.199999988079,
-      "expectedMs": 2400,
-      "frames": 47,
-      "maxGapMs": 179.19999998807907,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "hana",
       "type": "game.won",
       "elapsedMs": 2438.400000035763,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.19999998807907,
+      "maxGapMs": 170.19999998807907,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "asya",
+      "type": "game.won",
+      "elapsedMs": 2438.5,
+      "expectedMs": 2400,
+      "frames": 47,
+      "maxGapMs": 170.0999999642372,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "bella",
+      "type": "game.won",
+      "elapsedMs": 2438.699999988079,
+      "expectedMs": 2400,
+      "frames": 47,
+      "maxGapMs": 170.19999998807907,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "akira",
+      "type": "game.won",
+      "elapsedMs": 2439,
+      "expectedMs": 2400,
+      "frames": 47,
+      "maxGapMs": 170.10000002384186,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "hana",
+      "type": "game.won",
+      "elapsedMs": 2439.199999988079,
+      "expectedMs": 2400,
+      "frames": 47,
+      "maxGapMs": 170.10000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -984,10 +984,10 @@
     {
       "characterId": "yuki",
       "type": "game.won",
-      "elapsedMs": 2438.5,
+      "elapsedMs": 2439.399999976158,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.10000002384186,
+      "maxGapMs": 170.19999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -995,10 +995,10 @@
     {
       "characterId": "crypto-monk",
       "type": "game.won",
-      "elapsedMs": 2438.600000023842,
+      "elapsedMs": 2440,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.0999999642372,
+      "maxGapMs": 170.20000004768372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1006,10 +1006,10 @@
     {
       "characterId": "wallstreet-pirate",
       "type": "game.won",
-      "elapsedMs": 2438.699999988079,
+      "elapsedMs": 2440,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.19999998807907,
+      "maxGapMs": 170.0999999642372,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1017,10 +1017,10 @@
     {
       "characterId": "mayor",
       "type": "game.won",
-      "elapsedMs": 2438.800000011921,
+      "elapsedMs": 2440.199999988079,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.10000002384186,
+      "maxGapMs": 170.10000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1028,10 +1028,10 @@
     {
       "characterId": "teen-investor",
       "type": "game.won",
-      "elapsedMs": 2439.5,
+      "elapsedMs": 2440.300000011921,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.10000002384186,
+      "maxGapMs": 169.69999998807907,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1039,10 +1039,10 @@
     {
       "characterId": "madam-franchise",
       "type": "game.won",
-      "elapsedMs": 2439.599999964237,
+      "elapsedMs": 2440.5,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179,
+      "maxGapMs": 169.60000002384186,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1050,10 +1050,10 @@
     {
       "characterId": "anonymous-hacker",
       "type": "game.won",
-      "elapsedMs": 2439.699999988079,
+      "elapsedMs": 2440.600000023842,
       "expectedMs": 2400,
       "frames": 47,
-      "maxGapMs": 179.0999999642372,
+      "maxGapMs": 169.5,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1061,117 +1061,7 @@
     {
       "characterId": "mira",
       "type": "game.lost",
-      "elapsedMs": 2433.2999999523163,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 151.10000002384186,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "asya",
-      "type": "game.lost",
-      "elapsedMs": 2433.5,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 151.10000002384186,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "bella",
-      "type": "game.lost",
-      "elapsedMs": 2433.5,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 151,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "akira",
-      "type": "game.lost",
-      "elapsedMs": 2433.599999964237,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 151,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "hana",
-      "type": "game.lost",
-      "elapsedMs": 2433.699999988079,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 150.80000001192093,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "yuki",
-      "type": "game.lost",
-      "elapsedMs": 2434.099999964237,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 150.89999997615814,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "crypto-monk",
-      "type": "game.lost",
-      "elapsedMs": 2434.2999999523163,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 150.89999997615814,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "wallstreet-pirate",
-      "type": "game.lost",
-      "elapsedMs": 2434.300000011921,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 150.79999995231628,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "mayor",
-      "type": "game.lost",
-      "elapsedMs": 2434.300000011921,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 150.69999998807907,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "teen-investor",
-      "type": "game.lost",
-      "elapsedMs": 2434.400000035763,
-      "expectedMs": 2400,
-      "frames": 61,
-      "maxGapMs": 149.70000004768372,
-      "bodySamples": 6,
-      "propSamples": 6,
-      "lastProgress": 1
-    },
-    {
-      "characterId": "madam-franchise",
-      "type": "game.lost",
-      "elapsedMs": 2434.5,
+      "elapsedMs": 2439.199999988079,
       "expectedMs": 2400,
       "frames": 61,
       "maxGapMs": 149.60000002384186,
@@ -1180,12 +1070,122 @@
       "lastProgress": 1
     },
     {
-      "characterId": "anonymous-hacker",
+      "characterId": "asya",
       "type": "game.lost",
-      "elapsedMs": 2434.600000023842,
+      "elapsedMs": 2439.400000035763,
       "expectedMs": 2400,
       "frames": 61,
-      "maxGapMs": 149.30000001192093,
+      "maxGapMs": 149.5,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "bella",
+      "type": "game.lost",
+      "elapsedMs": 2439.400000035763,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.5,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "akira",
+      "type": "game.lost",
+      "elapsedMs": 2439.5,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.5,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "hana",
+      "type": "game.lost",
+      "elapsedMs": 2439.5,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.5,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "yuki",
+      "type": "game.lost",
+      "elapsedMs": 2439.600000023842,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.39999997615814,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "crypto-monk",
+      "type": "game.lost",
+      "elapsedMs": 2440.199999988079,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.4000000357628,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "wallstreet-pirate",
+      "type": "game.lost",
+      "elapsedMs": 2440.199999988079,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.39999997615814,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "mayor",
+      "type": "game.lost",
+      "elapsedMs": 2440.300000011921,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 149.29999995231628,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "teen-investor",
+      "type": "game.lost",
+      "elapsedMs": 2440.300000011921,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 148.30000001192093,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "madam-franchise",
+      "type": "game.lost",
+      "elapsedMs": 2440.400000035763,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 148.19999998807907,
+      "bodySamples": 6,
+      "propSamples": 6,
+      "lastProgress": 1
+    },
+    {
+      "characterId": "anonymous-hacker",
+      "type": "game.lost",
+      "elapsedMs": 2440.5,
+      "expectedMs": 2400,
+      "frames": 61,
+      "maxGapMs": 147.80000001192093,
       "bodySamples": 6,
       "propSamples": 6,
       "lastProgress": 1
@@ -1195,55 +1195,55 @@
     "animated": true,
     "stopped": true
   },
-  "decodeAndWarmMs": 535.6999999880791,
+  "decodeAndWarmMs": 542.8000000119209,
   "representative": [
     {
       "type": "character.spawn",
       "frames": 26,
-      "p95GapMs": 33.40000003576279,
-      "maxGapMs": 33.40000003576279
+      "p95GapMs": 33.5,
+      "maxGapMs": 33.69999998807907
     },
     {
       "type": "character.idle",
       "frames": 49,
       "p95GapMs": 33.5,
-      "maxGapMs": 33.60000002384186
+      "maxGapMs": 33.5
     },
     {
       "type": "turn.started",
       "frames": 21,
-      "p95GapMs": 33.5,
-      "maxGapMs": 33.5
+      "p95GapMs": 33.60000002384186,
+      "maxGapMs": 33.60000002384186
     },
     {
       "type": "dice.rolled",
       "frames": 25,
-      "p95GapMs": 33.40000003576279,
-      "maxGapMs": 33.40000003576279
+      "p95GapMs": 33.60000002384186,
+      "maxGapMs": 33.60000002384186
     },
     {
       "type": "property.purchased",
       "frames": 61,
       "p95GapMs": 33.5,
-      "maxGapMs": 33.89999997615814
+      "maxGapMs": 33.5
     },
     {
       "type": "money.received",
       "frames": 31,
-      "p95GapMs": 33.40000003576279,
+      "p95GapMs": 33.5,
       "maxGapMs": 33.5
     },
     {
       "type": "money.lost",
       "frames": 31,
       "p95GapMs": 33.40000003576279,
-      "maxGapMs": 33.5
+      "maxGapMs": 33.40000003576279
     },
     {
       "type": "game.won",
       "frames": 73,
       "p95GapMs": 33.5,
-      "maxGapMs": 34.19999998807907
+      "maxGapMs": 33.5
     },
     {
       "type": "game.lost",

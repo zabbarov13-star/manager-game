@@ -103,6 +103,7 @@ async function start(){try{
   saveStyle:id=>updateProfile({style:id}).catch(e=>status(e.message,true)),
   react(state){try{characterAnimations.syncState(state);}catch{}},
   commitLocal(state){try{characterAnimations.commitLocal(state);}catch{}},
+  restoreLocal(state){try{characterAnimations.restoreLocal(state);}catch{}},
   acceptNetwork(state,room){try{characterAnimations.acceptNetwork(state,room);}catch{}},
   async decorateRoomBody(body){if(!account.cosmeticTicket||account.cosmeticTicket.expires<now()+10000)sync(await api('profile'));return canUse('character:'+account.profile.character)&&account.cosmeticTicket?{...body,telegramCharacterId:account.profile.character,telegramCosmeticTicket:account.cosmeticTicket.ticket}:body;},
   async verifyCosmetic(ticket,characterId,existingSeat=false){try{const result=await api('cosmetics/verify',{ticket,characterId,existingSeat},5000);return result.valid===true;}catch{return false;}},
