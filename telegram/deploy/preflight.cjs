@@ -22,6 +22,7 @@ function unpackCandidate(tar,manifestFile,destination){const m=JSON.parse(fs.rea
  return {commit:m.commit,archiveSha256:entry.sha256,serverSha256:digest(path.join(destination,'online/server.cjs')),engineSha256:digest(path.join(destination,'telegram/shared/dist/engine.cjs'))};}
 const {sandboxArgs}=require('./preflight-isolation.cjs');
 function assertOuterIsolation(host){
+ const further=cp.spawnSync('/usr/bin/unshare',['--user','--map-root-user','/usr/bin/true'],{stdio:'ignore',timeout:1000});if(further.error||further.status===null||further.status===0)throw Error('FURTHER_USER_NAMESPACES_NOT_DISABLED');
  const status=fs.readFileSync('/proc/self/status','utf8'),mounts=fs.readFileSync('/proc/self/mountinfo','utf8').split('\n').map(l=>l.split(' '));
  if(process.platform!=='linux'||process.getuid()!==65534||!/^CapEff:\s+0+$/m.test(status)||!/^NoNewPrivs:\s+1$/m.test(status))throw Error('OUTER_PRIVILEGES_UNSAFE');
  for(const name of ['mnt','net','pid','user'])if(fs.readlinkSync('/proc/self/ns/'+name)===host.namespaces[name])throw Error('OUTER_NAMESPACE_NOT_ISOLATED');
