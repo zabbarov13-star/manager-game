@@ -32,9 +32,10 @@ jobs:
         run: |
           node telegram/deploy/package.cjs
           node -e "const m=require('./telegram/deploy/out/release.json');require('./telegram/deploy/vps.cjs').safeArchive('./telegram/deploy/out/'+m.archive)"
+      - run: node telegram/build.cjs
+      - run: node telegram/tests/native-runtime.cjs
       - run: npm install --prefix telegram
       - run: cd telegram && npx tsc -p tsconfig.json
-      - run: node telegram/build.cjs
       - run: node telegram/staging/init-local.cjs
       - name: Validate shared VPS compose without starting services
         env:
@@ -50,6 +51,7 @@ jobs:
         run: |
           docker build -f telegram/Dockerfile -t manager-mini-app:ci-only .
           docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=64m manager-mini-app:ci-only node deploy/runtime-check.cjs
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp:rw,noexec,nosuid,size=128m manager-mini-app:ci-only node --test tests/shared-adapter.test.cjs
       - name: Validate isolated staging compose without starting services
         env:
           STAGING_DOMAIN: staging.example.invalid
@@ -68,6 +70,7 @@ jobs:
       - run: node telegram/tests/animation-visual.cjs
       - run: node telegram/tests/animation-playback.cjs
       - run: node telegram/tests/browser-smoke.cjs
+      - run: node telegram/tests/shared-browser.cjs
       - run: node telegram/tests/character-field.cjs
       - run: node telegram/tests/animation-multiplayer.cjs
       - uses: actions/upload-artifact@v4
@@ -80,3 +83,4 @@ jobs:
             telegram/qa-results/
             telegram/deploy/out/*.tar
             telegram/deploy/out/release.json
+            telegram/deploy/out/shared-release.json

@@ -56,4 +56,5 @@ fs.mkdirSync(path.join(out,'assets'),{recursive:true});
 function copyAssets(from,to){fs.mkdirSync(to,{recursive:true});for(const entry of fs.readdirSync(from,{withFileTypes:true})){const src=path.join(from,entry.name),dest=path.join(to,entry.name);if(entry.isDirectory())copyAssets(src,dest);else if(entry.name.endsWith('.webp'))fs.copyFileSync(src,dest);}}
 copyAssets(path.join(__dirname,'assets'),path.join(out,'assets'));
 fs.writeFileSync(path.join(out,'BUILD.json'),JSON.stringify({baseline:'v0.19.1',commit:'ffa7f151874648ddf159c8a321827a4abe75ae00',sourceSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'index.html'))).digest('hex'),generatedAt:new Date().toISOString()},null,2));
+require('./shared/build.cjs').buildSharedEngine();
 console.log('Telegram build ready:',out);

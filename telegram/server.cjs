@@ -9,6 +9,7 @@ const {validateInitData,equal}=require('./auth.cjs');
 const catalog=require('./catalog.cjs');
 const {environment,createBotApi}=require('./bot-api.cjs');
 function createApp(config={}){
+ const modeKind=config.mode??process.env.TELEGRAM_MODE??'standalone';if(!['adapter','standalone'].includes(modeKind))throw Error('Invalid TELEGRAM_MODE.');
  const mode=environment(config.environment),support=config.supportContact??process.env.SUPPORT_CONTACT??'',starsEnabled=config.starsEnabled??process.env.STARS_ENABLED==='1';
  const token=config.botToken??process.env.TELEGRAM_BOT_TOKEN;
  const webhookSecret=config.webhookSecret??process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -23,7 +24,8 @@ function createApp(config={}){
  const file=configuredFile===':memory:'?configuredFile:resolve(__dirname,configuredFile);
  if(file!==':memory:')mkdirSync(dirname(file),{recursive:true});
  const store=config.store??new Store(file,Date.now,{ownerTelegramId:config.ownerTelegramId??process.env.OWNER_TELEGRAM_ID}),sessions=new Map(),rates=new Map();
- const rooms=require('./rooms.cjs').createRooms({database:config.roomsDatabase??(file===':memory:'?':memory:':resolve(dirname(file),'rooms.sqlite')),allowedOrigins:[origin],trustProxy:false,verifyCosmetic:(ticket,id)=>store.verifyCosmetic(ticket,id,{existingSeat:true})});
+ const rooms=modeKind==='adapter'?null:require('./rooms.cjs').createRooms({database:config.roomsDatabase??(file===':memory:'?':memory:':resolve(dirname(file),'rooms.sqlite')),allowedOrigins:[origin],trustProxy:false,verifyCosmetic:(ticket,id)=>store.verifyCosmetic(ticket,id,{existingSeat:true})});
+ const verifier=modeKind==='adapter'?require('./shared/verification.cjs').createVerificationServer(store,config.rpcSecret??process.env.COSMETIC_RPC_SECRET):null;
  const root=config.dist??resolve(__dirname,'dist');
  const bot=config.bot??createBotApi(token,{mode}),starsReady=!!(starsEnabled&&support.trim());
  const send=(res,status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));};
@@ -33,7 +35,8 @@ function createApp(config={}){
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const url=new URL(req.url,'http://localhost');
   try{
-   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady});
+   if(/^\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||/^\/api\/(?:internal|admin)(?:\/|$)/.test(url.pathname))return send(res,404,{error:'Не найдено.'});
+   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);
    // Image/pose downloads must not exhaust the mutation/API request budget.
@@ -44,6 +47,7 @@ function createApp(config={}){
     let rate=rates.get(remote);if(!rate||rate.until<now){rate={n:0,until:now+60000};rates.set(remote,rate);}if(++rate.n>240)return send(res,429,{error:'Повторите запрос позже.'});
    }
    if(url.pathname==='/api/rooms'||url.pathname.startsWith('/api/rooms/')){
+    if(!rooms)return send(res,503,{error:'Игровые комнаты обслуживает общий сервер. Проверьте маршрутизацию.'});
     if(req.method==='POST'){
      const raw=await body(req),data=JSON.parse(raw);
      const replacement=Readable.from([Buffer.from(raw)]);replacement.method=req.method;replacement.url=req.url;replacement.headers=req.headers;replacement.socket=req.socket;
@@ -113,7 +117,7 @@ function createApp(config={}){
   }catch(e){send(res,e.status??(e instanceof SyntaxError?400:500),{error:e.status||e instanceof SyntaxError?e.message:'Сервис временно недоступен.'});}
  });
  server.requestTimeout=15000;server.headersTimeout=10000;server.maxConnections=256;
- server.on('close',()=>{store.close();rooms.emit('close');});server.store=store;return server;
+ server.on('close',()=>{if(verifier?.listening)verifier.close();store.close();rooms?.emit('close');});server.store=store;server.verifier=verifier;return server;
 }
-if(require.main===module){process.umask(0o077);createApp().listen(Number(process.env.PORT??8090),process.env.BIND??'127.0.0.1');}
+if(require.main===module){process.umask(0o077);const app=createApp(),adapter=!!app.verifier,bind=process.env.BIND??'127.0.0.1';if(adapter&&bind!=='127.0.0.1')throw Error('Adapter must bind IPv4 loopback.');const listen=()=>app.listen(Number(process.env.PORT??(adapter?8443:8090)),bind);if(adapter){app.verifier.once('error',()=>{console.error('Private verifier could not start.');process.exitCode=1;});app.verifier.listen(Number(process.env.COSMETIC_RPC_PORT??8444),'127.0.0.1',listen);}else listen();}
 module.exports={createApp};

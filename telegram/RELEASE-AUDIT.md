@@ -28,3 +28,5 @@
 - BLOCKED: физические Android/iOS и разрешение на реальные финансовые операции. Автоматизация не выдаётся за такую приёмку.
 
 Итоговые PASS/FAIL/BLOCKED, доказательства и действия владельца дополняются по мере выполнения в `RELEASE-ACCEPTANCE.md`.
+
+10. Исправлено дублирование комнат в целевой архитектуре: adapter-only без room DB, общий server extension с HMAC RPC до очереди/SQLite lock и проверкой revision. Replay сохраняет исходные signature/body; восстановление и откат проверены с замороженным исходным server.cjs (fddd6d5), а не только двумя версиями engine. Подробности deploy/SHARED-DEPLOYMENT.md.

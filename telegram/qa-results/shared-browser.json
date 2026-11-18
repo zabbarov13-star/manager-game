@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "scope": "Legacy APK HTML in desktop Chrome + signed Mini App host fixture, not physical Android/Telegram",
+  "oneRoomDatabase": true,
+  "createJoinReadyStartRollReload": true,
+  "premium": "mira",
+  "errors": []
+}
