@@ -67,6 +67,7 @@ function createApp(config={}){
      await bot('answerPreCheckoutQuery',{pre_checkout_query_id:q.id,ok:!error,...(error?{error_message:error}:{})});
     }
     const msg=update.message;
+    if(msg?.chat?.type==='private'&&/^\/start(?:@\w+)?(?:\s|$)/i.test(msg.text??''))await bot('sendMessage',{chat_id:msg.chat.id,text:'Чтобы играть в «Менеджер», нажмите кнопку ниже.',reply_markup:{inline_keyboard:[[{text:'🎲 Открыть игру',web_app:{url:new URL('/',origin).href}}]]}});
     if(msg?.text?.match(/^\/(?:paysupport|support)(?:@\w+)?(?:\s|$)/))await bot('sendMessage',{chat_id:msg.chat.id,text:support?'Помощь по покупкам: '+support:'Поддержка платежей ещё не настроена владельцем приложения. Не совершайте покупки до настройки поддержки.'});
     if(msg?.successful_payment)store.paid(String(msg.from.id),msg.successful_payment);
     if(msg?.refunded_payment)store.refunded(String(msg.from.id),msg.refunded_payment);
