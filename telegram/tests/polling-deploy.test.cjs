@@ -22,12 +22,11 @@ test('optional polling deploy script has valid Python syntax and targets only Ma
 
 test('Manager installer waits through startup connection refusals and bounds timeout',t=>{
  const script=resolve(__dirname,'../deploy/enable-outbound-updates.py');
- const code=String.raw\`
+ const code=String.raw`
 import importlib.util,sys,contextlib
 spec=importlib.util.spec_from_file_location("manager_installer",sys.argv[1])
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 calls=[]
-m.request.urlopen=lambda *args,**kwargs: (_ for _ in ()).throw(ConnectionRefusedError()) if len(calls)<2 else contextlib.nullcontext(object())
 m.json.load=lambda _: {"ok":True,"mode":"adapter"}
 m.cmd=lambda *args,**kwargs: calls.append(args)
 # Record failed HTTP attempts, so success happens on the third attempt.
@@ -47,7 +46,7 @@ m.request.urlopen=lambda *a,**k:(_ for _ in ()).throw(ConnectionRefusedError())
 try:m.wait_for_adapter(seconds=0.3,pause=0.1)
 except RuntimeError as e:assert "did not become healthy" in str(e)
 else:raise AssertionError("timeout never raised")
-\`;
+`;
  const output=spawnSync('python3',['-B','-c',code,script],{encoding:'utf8',timeout:10000});
  if(output.error?.code==='ENOENT'){t.skip('Python is not installed on this test machine');return;}
  assert.equal(output.status,0,output.stderr);
