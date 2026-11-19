@@ -137,6 +137,27 @@ def restore(backup, values):
         telegram(values, "setChatMenuButton", {"menu_button": json.loads(menu_file.read_text())})
 
 
+
+def wait_for_adapter(seconds=40, pause=0.5):
+    """Wait for the restarted Manager adapter to bind the loopback HTTP port."""
+    deadline = time.monotonic() + seconds
+    last_error = "not responding"
+    while time.monotonic() < deadline:
+        try:
+            with request.urlopen("http://127.0.0.1:8443/health", timeout=2) as response:
+                health = json.load(response)
+            if health.get("ok") is True and health.get("mode") == "adapter":
+                cmd("systemctl", "is-active", "--quiet", "manager-telegram.service")
+                return
+            last_error = "unexpected health response"
+        except (OSError, ValueError) as error:
+            last_error = type(error).__name__
+        time.sleep(pause)
+    raise RuntimeError(
+        "Manager adapter did not become healthy within "
+        + str(seconds) + " seconds (" + last_error + ")."
+    )
+
 def install():
     if os.geteuid() != 0:
         raise RuntimeError("Run as root on the Manager VPS.")
@@ -177,11 +198,7 @@ def install():
         write_atomic(SERVER, source_server)
         write_atomic(POLLER, source_poller)
         cmd("systemctl", "restart", "manager-telegram.service")
-        cmd("systemctl", "is-active", "--quiet", "manager-telegram.service")
-        with request.urlopen("http://127.0.0.1:8443/health", timeout=8) as response:
-            health = json.load(response)
-        if not health.get("ok") or health.get("mode") != "adapter":
-            raise RuntimeError("Manager adapter health check failed.")
+        wait_for_adapter()
 
         write_atomic(UNIT, SERVICE_TEXT.encode())
         cmd("systemctl", "daemon-reload")
