@@ -52,7 +52,7 @@ public final class MainActivity extends Activity {
     return null; // HTTPS room requests use the same origin as the bundled page.
 
    }
-   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'));console.log('MANAGER_READY '+JSON.stringify({secure:isSecureContext,title:document.title,buttons:document.querySelectorAll('button').length,rtc:typeof RTCPeerConnection,native:!!window.ManagerNative}))",null);}
+   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'));console.log('MANAGER_READY '+JSON.stringify({secure:isSecureContext,title:document.title,buttons:document.querySelectorAll('button').length,rtc:typeof RTCPeerConnection,native:!!window.ManagerAndroid,menu:!!document.querySelector('#main-menu'),screen:document.body.dataset.screen}))",null);}
   });
   web.setWebChromeClient(new WebChromeClient(){
    @Override public void onPermissionRequest(PermissionRequest r){r.deny();} // Data-channel WebRTC needs no camera/microphone permission.

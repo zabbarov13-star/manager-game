@@ -101,9 +101,15 @@ const { createRoomServer } = require('./server.cjs');
     if (screenshotDir) await a.screenshot({ path: join(screenshotDir, 'desktop-table.png') });
 
     await a.locator('#tab-chat').click();
+    const lastSent = new WeakMap();
     const sendMessage = async (page, message) => {
+      const remaining = 850 - (Date.now() - (lastSent.get(page) ?? 0));
+      if (remaining > 0) await page.waitForTimeout(remaining);
+      const response = page.waitForResponse(r => r.url().endsWith('/chat') && r.request().method() === 'POST');
       await page.getByRole('textbox', { name: 'Сообщение в чат' }).fill(message);
       await button(page, 'Отправить').click();
+      assert.equal((await response).status(), 200, 'Chat submission must be accepted');
+      lastSent.set(page, Date.now());
     };
     const long = 'Проверка переноса: ' + 'я'.repeat(275);
     await sendMessage(a, long);

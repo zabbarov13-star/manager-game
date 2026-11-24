@@ -19,6 +19,7 @@ const gamePage = value => {
 let window;
 function open() {
   window = new BrowserWindow({
+    show: !smoke,
     width: 1370, height: 920, minWidth: 390, minHeight: 520,
     webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false },
   });
@@ -35,9 +36,9 @@ function open() {
         const state = await window.webContents.executeJavaScript(`(() => {
           const saved = localStorage.getItem('manager.qa-desktop');
           localStorage.setItem('manager.qa-desktop','saved');
-          return {saved, dice:!!document.querySelector('.panel-dice'), board:!!document.querySelector('#board')};
+          return {saved, dice:!!document.querySelector('.panel-dice'), board:!!document.querySelector('#board'),menu:!!document.querySelector('#main-menu'),screen:document.body.dataset.screen};
         })()`);
-        if (!state.dice || !state.board || (process.env.MANAGER_SMOKE_REOPEN === '1' && state.saved !== 'saved')) {
+        if (!state.dice || !state.board || !state.menu || state.screen !== 'menu' || (process.env.MANAGER_SMOKE_REOPEN === '1' && state.saved !== 'saved')) {
           throw Error(JSON.stringify(state));
         }
         clearTimeout(timer);
