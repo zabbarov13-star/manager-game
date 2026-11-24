@@ -83,9 +83,8 @@ function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.styl
  dialog=node('dialog',null,'tg-dialog');dialog.setAttribute('aria-label','Персонажи, награды и магазин');const head=node('header'),title=node('h2','Коллекция «Менеджера»');head.append(title,button('Закрыть',()=>dialog.close()));
  const tabs=node('nav');tabs.setAttribute('aria-label','Разделы коллекции');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']]){const b=button(label,()=>{detailId=null;tab=id;render();});b.dataset.tab=id;tabs.append(b);}
  const message=node('p');message.id='tg-message';message.setAttribute('role','status');const content=node('section');content.id='tg-content';dialog.append(head,tabs,message,content);document.body.append(dialog);
- const entry=node('nav',null,'tg-entry');entry.setAttribute('aria-label','Telegram коллекция');for(const [id,label]of [['characters','Персонажи'],['rewards','Бесплатные награды'],['shop','Магазин']])entry.append(button(label,()=>open(id)));document.querySelector('.topbar').after(entry);
- tg.BackButton?.onClick(()=>dialog.close());dialog.addEventListener('close',()=>tg.BackButton?.hide());
- bridge.apply();render();
+  tg.BackButton?.onClick(()=>dialog.close());dialog.addEventListener('close',()=>tg.BackButton?.hide());
+ bridge.apply();
  document.addEventListener('visibilitychange',()=>{if(document.hidden){bridge.save();bridge.suspend();}else refresh();});
  const activity=active=>{document.body.dataset.tgActive=String(active);document.dispatchEvent(new CustomEvent('manager:activity',{detail:active}));if(active)refresh();else{bridge.save();bridge.suspend();}};tg.onEvent?.('activated',()=>activity(true));tg.onEvent?.('deactivated',()=>activity(false));
  setInterval(()=>{if(now()>=account.ads.resetAt)refresh();const theme='style:'+bridge.settings.uiTheme;if(!canUse(theme)){bridge.settings.uiTheme='heritage';bridge.apply();}cosmetics();},15000);

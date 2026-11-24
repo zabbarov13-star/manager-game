@@ -33,12 +33,13 @@ function mountChatView({ tab, panel, messages }) {
     const count = unread > 99 ? '99+' : String(unread);
     badge.hidden = !unread;
     badge.textContent = count;
+    tab.classList.toggle('chat-has-unread',unread>0);
     tab.setAttribute('aria-label', unread ? 'Чат · непрочитанных ' + count : 'Чат');
     status.textContent = unread ? 'Непрочитанных сообщений: ' + count : '';
   }
 
   function markRead() {
-    if (panel.hidden || document.hidden) return;
+    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu') return;
     if (unread) {
       unread = 0;
       updateBadge();
@@ -77,7 +78,7 @@ function mountChatView({ tab, panel, messages }) {
     const incoming = initial ? [] : history.slice(previous + 1).filter(message => message.seatId !== ownSeat);
     code = room.code;
     lastMessage = newest;
-    if (panel.hidden || document.hidden) unread += incoming.length;
+    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu') unread += incoming.length;
     updateBadge();
     if (incoming.length) notify();
 

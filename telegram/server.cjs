@@ -113,9 +113,9 @@ function createApp(config={}){
    if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'Method not allowed'});
    const name=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname).slice(1);
    const path=resolve(root,name);if(!path.startsWith(root+require('node:path').sep)||!existsSync(path))return send(res,404,{error:'Не найдено.'});
-   const ext=extname(path);if(!['.html','.js','.css','.webp','.png','.json','.webmanifest'].includes(ext))return send(res,404,{error:'Не найдено.'});
-   const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.webp':'image/webp','.png':'image/png','.json':'application/json','.webmanifest':'application/manifest+json'};
-   res.writeHead(200,{'Content-Type':mime[ext],'Cache-Control':'no-cache'});res.end(req.method==='HEAD'?undefined:readFileSync(path));
+   const ext=extname(path);if(!['.mp3','.woff','.woff2','.ttf','.svg','.jpg', '.html','.js','.css','.webp','.png','.json','.webmanifest'].includes(ext))return send(res,404,{error:'Не найдено.'});
+   const mime={'.mp3':'audio/mpeg','.woff':'font/woff','.woff2':'font/woff2','.ttf':'font/ttf','.svg':'image/svg+xml','.jpg':'image/jpeg','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.webp':'image/webp','.png':'image/png','.json':'application/json','.webmanifest':'application/manifest+json'};
+   res.writeHead(200,{'Content-Type':mime[ext],'X-Content-Type-Options':'nosniff','Cache-Control':/^assets\/runtime\/[a-f0-9]{64}\./.test(name)?'public, max-age=31536000, immutable':'no-cache'});res.end(req.method==='HEAD'?undefined:readFileSync(path));
   }catch(e){send(res,e.status??(e instanceof SyntaxError?400:500),{error:e.status||e instanceof SyntaxError?e.message:'Сервис временно недоступен.'});}
  });
  server.requestTimeout=15000;server.headersTimeout=10000;server.maxConnections=256;

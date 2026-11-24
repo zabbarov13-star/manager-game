@@ -22,7 +22,7 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
   }
   const [host,member]=pages;
   // Owner collection grants selections without payment/advertisement buttons or fabricated history.
-  await host.locator('.tg-entry').getByRole('button',{name:'Персонажи',exact:true}).click();assert.equal(await host.locator('.tg-card').count(),18);assert.equal(await host.locator('.tg-card').getByRole('button',{name:'Выбрать',exact:true}).count(),18);assert.equal(await host.getByRole('button',{name:/⭐|Смотреть рекламу/}).count(),0);
+  await host.locator('[data-menu=shop]').click();assert.equal(await host.locator('.tg-card').count(),18);assert.equal(await host.locator('.tg-card').getByRole('button',{name:'Выбрать',exact:true}).count(),18);assert.equal(await host.getByRole('button',{name:/⭐|Смотреть рекламу/}).count(),0);
   for(const width of [390,1280]){await host.setViewportSize({width,height:900});
   for(const name of ['Мира','Ася','Белла','Акира','Хана','Юки','Крипто-Монах','Пират Уолл-Стрит','Мэр-Коррупционер','Инвестор-Тинейджер','Мадам Франшиза','Хакер-Аноним']){
    const card=host.locator('.tg-card').filter({has:host.getByRole('heading',{name,exact:true})});await card.getByRole('button',{name:'Биография и характеристики'}).click();await host.locator('.tg-animation-preview').waitFor();await host.locator('.tg-card img').evaluate(img=>img.decode());

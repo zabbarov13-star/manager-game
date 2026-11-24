@@ -10,3 +10,6 @@
 /release-output/
 /packaging/windows/payload/
 /packaging/windows/out/
+
+__pycache__/
+*.pyc

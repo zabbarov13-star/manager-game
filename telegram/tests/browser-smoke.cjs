@@ -16,7 +16,7 @@ function initData(){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
    await page.route('https://telegram.org/js/telegram-web-app.js',route=>route.fulfill({contentType:'text/javascript',body:`window.Telegram={WebApp:{initData:${JSON.stringify(initData())},ready(){},expand(){},onEvent(){},BackButton:{show(){},hide(){},onClick(){}},showPopup(o,cb){cb('cancel')}}};`}));
    await page.addInitScript(()=>localStorage.setItem('manager.field.v1','original-version-sentinel'));
    await page.goto(url);try{await page.locator('#telegram-loading').waitFor({state:'detached',timeout:10000});}catch(e){console.error('Bootstrap diagnostics:',errors,await page.locator('#telegram-loading').textContent());throw e;}
-   await page.locator('.tg-entry').getByRole('button',{name:'Персонажи',exact:true}).click();
+   await page.locator('[data-menu=shop]').click();
    assert.equal(await page.locator('.tg-card').count(),18);
    assert.equal(await page.locator('.tg-card img').count(),12);
    const missing=await page.locator('.tg-card img').evaluateAll(images=>Promise.all(images.map(img=>img.decode().then(()=>null,()=>img.src))));assert(missing.every(v=>v===null),JSON.stringify(missing));

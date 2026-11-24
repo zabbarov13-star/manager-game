@@ -55,7 +55,8 @@ const { createRoomServer } = require('./server.cjs');
     const iconBytes = await icon.body();
     assert.equal(iconBytes.readUInt32BE(16), 512);
     assert.equal(iconBytes.readUInt32BE(20), 512);
-    assert.match(await a.locator('link[rel=icon]').getAttribute('href'), /^data:image\/png;base64,/);
+    const favicon=await (await a.request.get(new URL(await a.locator('link[rel=icon]').first().getAttribute('href'),url).href)).body();
+    assert.equal(favicon.readUInt32BE(16),32);assert.equal(favicon.readUInt32BE(20),32);
     assert.equal(await a.locator('link[rel=apple-touch-icon]').getAttribute('href'), './manager-icon.png');
     await button(a, 'Настройки').click();
     await button(a, 'Начать партию · 2–6 игроков').click();
@@ -181,7 +182,7 @@ const { createRoomServer } = require('./server.cjs');
     const finder = await browser.newContext();
     const c = await creator.newPage(), d = await finder.newPage();
     await Promise.all([c.goto(url), d.goto(url)]);
-    for (const page of [c, d]) await button(page, 'Играть онлайн').click();
+    for (const page of [c, d]) {await page.locator('[data-menu=play]').click();await page.locator('[data-menu=online]').click();}
     await c.getByRole('textbox', { name: 'Ваше имя' }).fill('Хозяин');
     await c.getByRole('combobox', { name: 'Тип комнаты' }).selectOption('public');
     await c.getByRole('textbox', { name: 'Название комнаты' }).fill('Открытая QA');

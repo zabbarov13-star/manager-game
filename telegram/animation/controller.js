@@ -7,9 +7,9 @@
       this.catalog=catalog;this.storage=storage;this.getSelected=getSelected;this.renderers=new Map();this.bindings={};this.engineBindings=new Map();this.idleTimers=new Map();this.spawnedContexts=new Set();this.meta=null;this.network=false;this.view=null;
       try{this.meta=JSON.parse(storage.getItem('animation-local.v1'));}catch{}
       this.dispatcher=new Core.AnimationEventDispatcher({registry:catalog.characters.map(c=>({...c,theme:c.theme??'classic'})),context:{gameId:'unbound',players:{}},render:(event,signal)=>this.render(event,signal)});
-      this.active=true;this.lastEvents=new Map();this.onVisibility=()=>this.setActive(!document.hidden&&document.body.dataset.tgActive!=='false');
-      this.onActivity=event=>this.setActive(event.detail===true&&!document.hidden);
-      document.addEventListener('visibilitychange',this.onVisibility);document.addEventListener('manager:activity',this.onActivity);
+      this.active=document.body.dataset.screen!=='menu';this.lastEvents=new Map();this.onVisibility=()=>this.setActive(!document.hidden&&document.body.dataset.tgActive!=='false'&&document.body.dataset.screen!=='menu');
+      this.onActivity=event=>this.setActive(event.detail===true&&!document.hidden&&document.body.dataset.screen!=='menu');
+      document.addEventListener('manager:screen',this.onVisibility);document.addEventListener('visibilitychange',this.onVisibility);document.addEventListener('manager:activity',this.onActivity);
     }
     setActive(active){this.active=active;if(!active){this.dispatcher.cancelAll();this.stopIdle();}else{this.startIdle();for(const [id,event]of this.lastEvents)if(this.dispatcher.terminal.has(id)){const record=this.renderers.get(id);record?.renderer.load().then(()=>{if(this.active&&this.renderers.get(id)===record)record.renderer.renderFrame(event,1);}).catch(()=>{});}}}
     definition(id){return this.catalog.characters.find(c=>c.id===id);}
@@ -111,7 +111,7 @@
         for(const event of payload.events??[])this.dispatcher.dispatchGame(event);
       }
     }
-    destroy(){document.removeEventListener('visibilitychange',this.onVisibility);document.removeEventListener('manager:activity',this.onActivity);this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values())record.renderer.cancel();this.renderers.clear();this.view?.remove();}
+    destroy(){document.removeEventListener('manager:screen',this.onVisibility);document.removeEventListener('visibilitychange',this.onVisibility);document.removeEventListener('manager:activity',this.onActivity);this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values())record.renderer.cancel();this.renderers.clear();this.view?.remove();}
   }
   window.CharacterAnimationController=CharacterAnimationController;
 })();

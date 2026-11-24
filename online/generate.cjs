@@ -2,8 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const source = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-let html = source;
+const source = fs.readFileSync(path.join(root, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
+let html = require('../ui/build.cjs').embed(source);
 function replace(from, to) {
   const offset = html.indexOf(from);
   if (offset < 0 || html.indexOf(from, offset + from.length) >= 0) throw Error('Client anchor changed: ' + from);
@@ -57,6 +57,7 @@ require('./dice-presentation.cjs')(replace);
 const out = path.join(__dirname, 'dist');
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, 'engine.cjs'), engine);
+html = require('../ui/assets.cjs').split(html, out, fs);
 fs.writeFileSync(path.join(out, 'index.html'), html);
 for (const name of ['manifest.webmanifest','manager-icon.png']) {
   fs.copyFileSync(path.join(root, name), path.join(out, name));

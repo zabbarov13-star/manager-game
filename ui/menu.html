@@ -1,0 +1,22 @@
+<section id="main-menu" aria-label="Главное меню">
+  <div class="menu-brand"><span class="menu-overline">НАСТОЛЬНАЯ СТРАТЕГИЯ</span><h1>Менеджер</h1><p>Назад в прошлое. Навстречу новым возможностям.</p></div>
+  <img id="menu-watermark" src="{{manager-icon}}" alt="" aria-hidden="true">
+  <nav class="menu-actions" aria-label="Разделы игры">
+    <button type="button" data-menu="play" class="menu-play"><span>Играть</span><small>Ваш следующий большой ход</small><b aria-hidden="true">→</b></button>
+    <button type="button" data-menu="settings"><span>Настройки</span><small>Звук, оформление и управление</small></button>
+    <button type="button" data-menu="rules"><span>Правила</span><small>Все правила знакомой игры</small></button>
+    <button type="button" data-menu="shop"><span>Магазин</span><small>Персонажи и ваша коллекция</small></button>
+    <button type="button" data-menu="more"><span>Ещё игры</span><small>Другие проекты автора</small></button>
+  </nav>
+  <section id="menu-play-options" aria-label="Начало игры" hidden>
+    <h2>Соберите свой стол</h2><p>На одном устройстве, против компьютера или онлайн.</p>
+    <button type="button" data-menu="new" class="primary-button">Новая игра</button>
+    <button type="button" data-menu="continue" class="secondary-button" hidden>Продолжить</button>
+    <button type="button" data-menu="online" class="secondary-button">Играть онлайн</button>
+    <button type="button" data-menu="explore" class="secondary-button">Обзор поля</button>
+    <button type="button" data-menu="back" class="secondary-button">Назад</button>
+  </section>
+  <p id="menu-status" role="status">Готовим ваш стол…</p>
+</section>
+<dialog id="platform-shop"><form method="dialog"><div class="dialog-heading"><h2>Ваша коллекция</h2><button class="close-button" aria-label="Закрыть магазин">×</button></div><p>Бесплатные фигурки выбираются при настройке партии. Оформление доступно в настройках.</p><p>Покупки Telegram Stars, сохранённые покупки и рекламные награды доступны через Telegram Mini App после проверки аккаунта. В этой версии оплата недоступна.</p><button type="button" data-menu="new" class="primary-button">Выбрать персонажа для партии</button><button type="button" data-menu="settings" class="secondary-button">Оформление</button></form></dialog>
+<dialog id="more-games"><form method="dialog"><div class="dialog-heading"><h2>Ещё игры</h2><button class="close-button" aria-label="Закрыть список игр">×</button></div><div id="more-games-list"><a class="menu-game-card" href="https://github.com/zabbarov13-star/smaylokrut-v2.19" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="{{smaylokrut}}" alt="Смайлокрут" loading="lazy"><span><strong>Смайлокрут</strong><small>Проект и выпуски автора →</small></span></a><a class="menu-game-card" href="https://github.com/zabbarov13-star/cat-and-differences" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="{{cat-and-differences}}" alt="Кот и отличия" loading="lazy"><span><strong>Кот и отличия</strong><small>Проект автора →</small></span></a></div><p class="module-note">Ссылки ведут на опубликованные проекты автора.</p></form></dialog>
