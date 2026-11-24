@@ -11,4 +11,6 @@ test('an opponent and a legacy peer never inherit the viewing player look',()=>{
  assert.deepEqual(JSON.parse(JSON.stringify(motion.actorLook('b',room))),{theme:'velvet',dice:''});
  assert.deepEqual(JSON.parse(JSON.stringify(motion.actorLook('legacy',room))),{theme:'heritage',dice:''});
  const node={dataset:{}};motion.dice(node,motion.actorLook('a',room));motion.dice(node,motion.actorLook('b',room));assert.deepEqual(node.dataset,{look:'velvet',dice:''});
+ const own={theme:'arcade',dice:'jade'};assert.strictEqual(motion.localLook({id:'p0',kind:'human'},own),own);
+ for(const player of [{id:'p0',kind:'bot'},{id:'p1',kind:'human'},{id:'p1',kind:'bot'}])assert.deepEqual(JSON.parse(JSON.stringify(motion.localLook(player,own))),{theme:'heritage',dice:''});
 });

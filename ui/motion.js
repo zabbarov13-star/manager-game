@@ -32,6 +32,7 @@
   return {theme:themes.includes(seat?.cosmeticStyle)?seat.cosmeticStyle:'heritage',dice:seat?.cosmeticDice==='jade'?'jade':''};
  }
  function dice(node,look={}){node.dataset.look=themes.includes(look.theme)?look.theme:'heritage';node.dataset.dice=look.dice==='jade'?'jade':'';}
+ function localLook(player,look){return player?.id==='p0'&&player.kind!=='bot'?look:{theme:'heritage',dice:''};}
  function notify(playerId,phase){if(phases[phase]&&typeof playerId==='string')document.dispatchEvent(new CustomEvent('manager:motion',{detail:{playerId,phase}}));}
- window.ManagerMotion={gait,phases,actorLook,dice,notify};
+ window.ManagerMotion={gait,phases,actorLook,localLook,dice,notify};
 })();
