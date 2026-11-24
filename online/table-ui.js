@@ -39,7 +39,7 @@ function mountChatView({ tab, panel, messages }) {
   }
 
   function markRead() {
-    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu') return;
+    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu' || document.querySelector('dialog[open]')) return;
     if (unread) {
       unread = 0;
       updateBadge();
@@ -50,7 +50,7 @@ function mountChatView({ tab, panel, messages }) {
     markRead();
     messages.scrollTop = messages.scrollHeight;
   });
-  document.addEventListener('visibilitychange', markRead);
+  document.addEventListener('visibilitychange', markRead);document.addEventListener('close',markRead,true);
   document.addEventListener('click', event => {
     if (event.isTrusted && !tab.hidden && preference.checked &&
         document.getElementById('sfx-on').checked && sound.ctx?.state !== 'running') {
@@ -78,7 +78,7 @@ function mountChatView({ tab, panel, messages }) {
     const incoming = initial ? [] : history.slice(previous + 1).filter(message => message.seatId !== ownSeat);
     code = room.code;
     lastMessage = newest;
-    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu') unread += incoming.length;
+    if (panel.hidden || document.hidden || document.body.dataset.screen==='menu' || document.querySelector('dialog[open]')) unread += incoming.length;
     updateBadge();
     if (incoming.length) notify();
 

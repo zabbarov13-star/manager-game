@@ -125,6 +125,8 @@ const { createRoomServer } = require('./server.cjs');
     assert.equal(await b.locator('.chat-avatar svg').count(), 3);
     assert.equal(await b.locator('.chat-message').evaluateAll(rows => rows.every(row => row.scrollWidth <= row.clientWidth)), true);
     if (screenshotDir) await b.locator('.sidebar').screenshot({ path: join(screenshotDir, 'mobile-chat.png') });
+    await a.locator('#settings-open').click();await sendMessage(b,'Сообщение под модальным окном');await a.locator('.chat-unread').getByText('1',{exact:true}).waitFor({state:'attached'});assert.equal(await a.locator('#tab-chat').getAttribute('aria-label'),'Чат · непрочитанных 1');await a.locator('#settings-dialog .close-button').click();await a.waitForFunction(()=>document.querySelector('.chat-unread').hidden);
+
 
     await button(b, 'Настройки').click();
     const settings = b.locator('#settings-dialog');
