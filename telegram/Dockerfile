@@ -2,6 +2,7 @@ FROM node:24.22.1-bookworm-slim
 WORKDIR /app
 COPY index.html manifest.webmanifest manager-icon.png sw.js ./
 COPY online ./online
+COPY ui ./ui
 COPY telegram ./telegram
 RUN node telegram/build.cjs && mkdir -p /data /backups && chown node:node /data /backups
 USER node
