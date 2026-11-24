@@ -92,9 +92,9 @@
     "physicalAndroid": "BLOCKED",
     "physicalIOS": "BLOCKED",
     "telegramRealClients": "BLOCKED",
-    "macOSLinuxNative": "BLOCKED",
+    "macOSLinuxNative": "Electron macOS/Windows smoke PASS; Linux Chromium/WebKit PASS; physical/full UX acceptance BLOCKED",
     "installedVpsRevision": "BLOCKED",
-    "linuxNamespaceIsolation": "BLOCKED_UNLESS_PREFLIGHT_BWRAP_TEST_1",
+    "linuxNamespaceIsolation": "PASS_ON_CI_SYNTHETIC_FIXTURES",
     "peerJsScenario": {
       "status": "FAIL",
       "reason": "Signaling timeout after 20 seconds",
@@ -123,5 +123,7 @@
     "Native HTML staging is not a native binary/device test.",
     "One Linux namespace test is skipped on Windows.",
     "Existing November 18 external PeerJS PASS was not reused."
-  ]
+  ],
+  "ciCodeCommit": "4a8c477a161c409e2a895392345efb8fae935994",
+  "ciSummary": "12 PASS, deploy SKIPPED"
 }

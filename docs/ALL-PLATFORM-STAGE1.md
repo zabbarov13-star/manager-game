@@ -6,13 +6,13 @@
 
 | Клиент | Подтверждённая сборка | Проверка новой версии |
 |---|---|---|
-| Веб Windows/macOS/Linux | `index.html`; `node online/generate.cjs` | Chromium на Windows, настольная и мобильная эмуляция; другие ОС не проверены |
+| Веб Windows/macOS/Linux | `index.html`; `node online/generate.cjs` | Chromium Windows и Linux; WebKit на Linux; macOS через существующую Electron-оболочку. Физические мобильные устройства не проверены |
 | Android/iOS браузер | Тот же HTML, адаптивный интерфейс | Chromium с Android/iPhone viewport; это не Safari и не физическое устройство |
 | Telegram Android/iOS/Desktop | `node telegram/build.cjs`, проверенный `initData`, общий сервер комнат | Настоящий локальный API и подписанные тестовые личности; хост Telegram имитирован |
 | PWA | `manifest.webmanifest`, `sw.js` | Существующий браузерный тест offline/reload/reconnect |
-| Android APK | Gradle, JDK 17, SDK 35; `python packaging/stage-native.py android` | Новый встроенный HTML подготовлен; совместная партия с прежним APK HTML проверяется в Chromium, новый APK на устройстве не установлен |
-| Windows/macOS Electron | `python packaging/stage-native.py desktop`, electron-builder | Новый общий HTML подготовлен; новые EXE/DMG пока не собраны и не запущены |
-| iOS native | Xcode-проект и подготовка `stage-native.py ios` | Общий HTML подготовлен; подпись, Xcode и физическая установка BLOCKED |
+| Android APK | Gradle, JDK 17, SDK 35; `python packaging/stage-native.py android` | Новый встроенный HTML подготовлен; совместная партия с прежним APK HTML проверяется в Chromium, новый debug APK собран и дважды запущен в Android-эмуляторе с проверкой главного меню; физическая установка не проверена |
+| Windows/macOS Electron | `python packaging/stage-native.py desktop`, electron-builder | Общий HTML и Electron-оболочка дважды запущены на Windows/macOS с восстановлением тестового профиля. Новые установщики EXE/DMG не опубликованы |
+| iOS native | Xcode-проект и подготовка `stage-native.py ios` | Unsigned Simulator app собран Xcode и дважды запущен с проверкой меню и сохранения. Физическая подпись/установка BLOCKED |
 
 Наличие прежних бинарных выпусков подтверждено в [v0.19.1](https://github.com/zabbarov13-star/manager-game/releases/tag/v0.19.1): APK, AAB, Windows EXE/ZIP, macOS DMG, iOS Simulator ZIP. Это не новые сборки этого PR. TestFlight/App Store-релиз не подтверждён.
 
@@ -57,8 +57,10 @@ QA собирает обе версии, проверяет два runtime-ар�
 
 ## Границы готовности
 
-PASS локальных проверок не является полной приёмкой реальных Telegram-клиентов, физических Android/iOS, новых подписанных приложений или внешнего PeerJS. Эти пункты остаются BLOCKED, пока нет соответствующей среды. Общий движок, wire protocol и PeerJS-источники не менялись; peer-server репозиторий не требует рефакторинга для этого UI.
+PASS локальных проверок не является полной приёмкой реальных Telegram-клиентов, физических Android/iOS, новых подписанных приложений или внешнего PeerJS. Эти пункты остаются BLOCKED; успешные эмуляторы и smoke-запуски не заменяют полную приёмку. Общий движок, wire protocol и PeerJS-источники не менялись; peer-server репозиторий не требует рефакторинга для этого UI.
 
 Этап 2 не объявляется выполненным и не смешивается с этим PR. Его отдельная ветка/PR создаётся после прохождения приёмки обязательного этапа. Новые художественные образы и изменения экономики «Отдыха» в этот PR не входят.
 
 [Результат контрольного прогона и измерения](qa/STAGE1-REPORT.md).
+
+[Успешные задания CI проверенной версии](qa/stage1-ci.json). Docker-контекст исключает `.env`, SQLite, данные и локальные артефакты; зависимости Telegram закреплены lockfile. Новые сборки не публикуются как релиз и не развёртываются.
