@@ -21,6 +21,7 @@ const shell=window.ManagerShell={
  },
  enterGame(){document.body.dataset.screen='game';document.dispatchEvent(new CustomEvent('manager:screen'));bridge?.resume();if(savedCamera){const value=savedCamera;savedCamera=null;requestAnimationFrame(()=>bridge.restoreCamera(value));}refresh();},
  beforeRender(){if(tradeMenu)document.querySelector('.turn-tools').append(tradeMenu);},
+ restActions(host){const b=document.createElement('button');b.type='button';b.className='secondary-button';b.textContent='Обзор владений';b.onclick=()=>bridge.showTab('assets');host.append(b);},
  afterRender(){const trade=tradeMenu,players=$('players-panel');if(trade&&players&&trade.parentNode!==players)players.append(trade);},
  drawConstruction(state){
   document.querySelectorAll('.tile-buildings,.tile-owner-name').forEach(e=>e.remove());

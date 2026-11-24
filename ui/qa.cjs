@@ -12,7 +12,7 @@ function step(name,command,args,extra={}){
 try{
  step('shared-source',process.execPath,['ui/build.cjs']);step('web-build',process.execPath,['online/generate.cjs']);step('telegram-build',process.execPath,['telegram/build.cjs']);
  step('runtime-archives',process.execPath,['telegram/tests/native-runtime.cjs']);
- const tests=['tests/p2p-routing-baseline.cjs','ui/tests/presentation.test.cjs','ui/tests/rooms.test.cjs','online/server.test.cjs','online/public.test.cjs','online/construction.test.cjs','packaging/test-dice.cjs',...fs.readdirSync(path.join(root,'telegram/tests')).filter(n=>n.endsWith('.test.cjs')).map(n=>'telegram/tests/'+n)];
+ const tests=['tests/p2p-routing-baseline.cjs','ui/tests/presentation.test.cjs','ui/tests/movement.test.cjs','ui/tests/rooms.test.cjs','online/server.test.cjs','online/public.test.cjs','online/construction.test.cjs','packaging/test-dice.cjs',...fs.readdirSync(path.join(root,'telegram/tests')).filter(n=>n.endsWith('.test.cjs')).map(n=>'telegram/tests/'+n)];
  const tls=require('./tests/tls-fixture.cjs')();
  step('unit-integration',process.execPath,['--test',...tests],{QA_TLS_DIR:tls});
  report.external.linuxNamespaceIsolation='BLOCKED_UNLESS_PREFLIGHT_BWRAP_TEST_1';

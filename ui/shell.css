@@ -49,3 +49,11 @@ body.modern-ui[data-theme] #board-stage>#roll-button:disabled{display:none!impor
  body.modern-ui[data-theme] #board-stage>#roll-button{font-size:max(12px,1.6cqw)}
  .modern-ui .deck strong{font-size:2.2cqw}
 }
+
+body.modern-ui #panel-game .turn-panel{min-height:0;margin:0}.modern-ui .player-token{transform:translate(-50%,-100%)}
+
+.modern-ui .inspector{min-height:0}
+@keyframes manager-panel-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.modern-ui [role=tabpanel]:not([hidden]){animation:manager-panel-enter .16s ease-out}
+@media(prefers-reduced-motion:reduce){.modern-ui [role=tabpanel]{animation:none!important}}
+.modern-ui.no-motion [role=tabpanel]{animation:none!important}

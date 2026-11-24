@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const read = name => fs.readFileSync(path.join(__dirname, name), 'utf8').replace(/\r\n/g, '\n');
 function embed(html) {
   const blocks = {
-    head: '<style id="manager-shell-style">\n' + read('shell.css') + '\n</style>\n<script>\n' + read('shell.js') + '\n</script>',
+    head: '<style id="manager-shell-style">\n' + read('shell.css') + '\n</style>\n<script>\n' + read('presentation.js')+'\n'+read('shell.js') + '\n</script>',
     menu: read('menu.html').replace('{{manager-icon}}','data:image/webp;base64,'+fs.readFileSync(path.join(__dirname,'assets/manager.webp')).toString('base64')).replace('{{smaylokrut}}','data:image/webp;base64,'+fs.readFileSync(path.join(__dirname,'assets/smaylokrut.webp')).toString('base64')).replace('{{cat-and-differences}}','data:image/webp;base64,'+fs.readFileSync(path.join(__dirname,'assets/cat-and-differences.webp')).toString('base64')) + '\n<script>window.ManagerShell.boot();</script>'
   };
   for (const [name, content] of Object.entries(blocks)) {
