@@ -30,7 +30,8 @@
     "desktopClickBlockedByMissingGeometry": true,
     "telegramWebAuthenticatedSession": "NOT_CONFIRMED",
     "adbPortableVendorChecksum": "PASS",
-    "adbConnectedDevices": 0
+    "adbConnectedDevices": 0,
+    "realTelegramDesktopMainMenu": true
   },
   "sideEffects": {
     "newCiRetries": 0,
@@ -53,5 +54,23 @@
       "combinedZip": "49473025215ec2489813bb3118efcbdd7210ef5da76e5e993319530a75baa908"
     }
   },
-  "finalAcceptanceObservedAt": "2026-11-24T17:15:05.869753+00:00"
+  "finalAcceptanceObservedAt": "2026-11-24T17:15:05.869753+00:00",
+  "desktopRealClientAcceptance": {
+    "observedAt": "2026-11-24T17:26:16.640296+00:00",
+    "userOpenedMiniApp": true,
+    "windowTitle": "Мини-приложение: ManagerGameTestBot",
+    "standOriginMatchesPrivateConfig": true,
+    "mainMenu": "PASS",
+    "visibleActions": [
+      "Играть",
+      "Настройки",
+      "Правила",
+      "Магазин"
+    ],
+    "serverAuthentication": "NOT_CONFIRMED",
+    "gameActions": "BLOCKED",
+    "clickError": "coordinate input geometry is unavailable",
+    "keyboardFallback": "Panel focus unchanged after Tab and F6",
+    "physicalDevice": false
+  }
 }
