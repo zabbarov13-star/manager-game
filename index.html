@@ -216,6 +216,7 @@ const $=id=>document.getElementById(id);let bridge,pending=null,booted=false,tra
 const shell=window.ManagerShell={
  get inMenu(){return document.body.dataset.screen==='menu';},
  boot(){if(booted)return;booted=true;
+  if(window.ManagerAndroid||window.ManagerNative)document.querySelectorAll('.menu-game-card').forEach(a=>a.target='_self');
   document.addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(b){e.preventDefault();action(b.dataset.menu);}});
  },
  mount(value){document.body.prepend(document.querySelector('.topbar'));bridge=value;tradeMenu=$('trade-menu');document.body.classList.add('modern-ui');try{const value=JSON.parse(bridge.storage?.getItem('manager.camera.v1'));if(value&&Number.isFinite(value.zoom)&&value.zoom>=.5&&value.zoom<=2.5&&['left','top'].every(k=>Number.isFinite(value[k])&&value[k]>=0))savedCamera=value;}catch{}window.addEventListener('pagehide',saveCamera);const menu=document.createElement('button');menu.type='button';menu.className='icon-button menu-open';menu.dataset.menu='home';menu.textContent='Меню';document.querySelector('.header-actions').prepend(menu);

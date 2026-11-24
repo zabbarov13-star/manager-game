@@ -81,7 +81,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       await desktop.getByRole('button', { name: 'Закрыть настройки' }).click();
       await desktop.reload();await desktop.locator('[data-menu=play]').click();await desktop.locator('[data-menu=continue]').click();
       assert.equal(await desktop.locator('#camera-follow').isChecked(), follow);
-      for (let i = 0; i < 4; i++) await desktop.locator('#zoom-in').click();
+      while(await zoom(desktop)<200)await desktop.locator('#zoom-in').click();while(await zoom(desktop)>200)await desktop.locator('#zoom-out').click();
       await view.evaluate(node => node.scrollTo(0, 0));
       await desktop.locator('#tab-log').click();
       await desktop.evaluate(() => {

@@ -26,7 +26,11 @@ public final class MainActivity extends Activity {
   settings.setMediaPlaybackRequiresUserGesture(true);settings.setSupportMultipleWindows(false);settings.setTextZoom(100);
   web.addJavascriptInterface(new Bridge(),"ManagerAndroid");
   web.setWebViewClient(new WebViewClient(){
-   @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){return !local(request.getUrl());}
+   @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
+    String external=request.getUrl().toString();
+    if(request.isForMainFrame()&&request.hasGesture()&&("https://github.com/zabbarov13-star/smaylokrut-v2.19".equals(external)||"https://github.com/zabbarov13-star/cat-and-differences".equals(external))){try{startActivity(new Intent(Intent.ACTION_VIEW,request.getUrl()));}catch(RuntimeException e){toast("Браузер недоступен");}return true;}
+    return !local(request.getUrl());
+   }
    @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request){
     Uri u=request.getUrl();
     if (trusted(u) && "GET".equals(request.getMethod())) {

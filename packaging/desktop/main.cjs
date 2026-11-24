@@ -1,4 +1,4 @@
-const { app, BrowserWindow, net, protocol, session } = require('electron');
+const { app, BrowserWindow, net, protocol, session, shell } = require('electron');
 const { readFile } = require('node:fs/promises');
 const { join } = require('node:path');
 
@@ -22,9 +22,10 @@ function open() {
     width: 1370, height: 920, minWidth: 390, minHeight: 520,
     webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false },
   });
-  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  const external = url => ['https://github.com/zabbarov13-star/smaylokrut-v2.19','https://github.com/zabbarov13-star/cat-and-differences'].includes(url);
+  window.webContents.setWindowOpenHandler(({url}) => {if(external(url))shell.openExternal(url).catch(()=>{});return { action: 'deny' };});
   window.webContents.on('will-navigate', (event, url) => {
-    if (!gamePage(url)) event.preventDefault();
+    if (!gamePage(url)) {event.preventDefault();if(external(url))shell.openExternal(url).catch(()=>{});}
   });
   window.on('closed', () => { window = null; });
   if (smoke) {

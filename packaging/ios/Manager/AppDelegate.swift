@@ -51,6 +51,7 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  }
  func webView(_ webView:WKWebView,decidePolicyFor navigationAction:WKNavigationAction,decisionHandler:@escaping(WKNavigationActionPolicy)->Void){
   guard let url=navigationAction.request.url else{decisionHandler(.cancel);return}
+  if navigationAction.navigationType == .linkActivated && ["https://github.com/zabbarov13-star/smaylokrut-v2.19", "https://github.com/zabbarov13-star/cat-and-differences"].contains(url.absoluteString) { UIApplication.shared.open(url); decisionHandler(.cancel); return }
   let allowed = webView === offline ? (url.isFileURL && url.path==gameURL?.path) : (url.scheme=="https" && url.host==onlineURL.host && url.path==onlineURL.path)
   decisionHandler(allowed ? .allow : .cancel)
  }
