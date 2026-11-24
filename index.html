@@ -208,6 +208,16 @@ body.modern-ui #board-stage #center-caption{opacity:1!important}
 body.modern-ui[data-theme] .sidebar .tabs button{flex:1 1 0;min-width:0;padding:10px 4px;font-size:11px}
 @media(min-width:1050px){body.modern-ui .layout{grid-template-columns:minmax(0,1fr) 320px}}
 
+body.modern-ui[data-theme] #board-stage>#roll-button{left:50%;transform:translateX(-50%)!important;min-width:120px!important;min-height:44px!important;padding:10px 8px!important}
+body.modern-ui[data-theme] #board-stage>#roll-button:disabled{display:none!important}
+@supports(font-size:1cqw){
+ .modern-ui #board-stage{container-type:inline-size}
+ body.modern-ui #center-caption>span{font-size:max(9px,3.6cqw)}
+ body.modern-ui #center-caption>small{font-size:max(5px,1cqw)}
+ body.modern-ui[data-theme] #board-stage>#roll-button{font-size:max(12px,1.6cqw)}
+ .modern-ui .deck strong{font-size:2.2cqw}
+}
+
 </style>
 <script>
 /* Shared presentation only. Commands, entitlement checks and saves stay in the game. */

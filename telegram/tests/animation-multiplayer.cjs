@@ -31,6 +31,7 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
   }
   assert.equal(server.store.db.prepare('SELECT count(*) AS n FROM orders').get().n,0);assert.equal(server.store.db.prepare('SELECT count(*) AS n FROM ads').get().n,0);
   await host.locator('.tg-dialog').getByRole('button',{name:'Закрыть',exact:true}).click();
+  for(const page of pages)await page.evaluate(()=>window.ManagerShell.enterGame());
   let code='mgr-'+'a'.repeat(40)+'.'+'b'.repeat(40);
   if(external){for(const page of pages)await page.evaluate(()=>{window.qaPeerStatus=[];window.qaNet=new QAEngine.P2PNetwork({storage:localStorage,saves:{async put(){},async get(){return null;}},timeout:12000,onStatus:text=>qaPeerStatus.push(text)});});}
   else{
