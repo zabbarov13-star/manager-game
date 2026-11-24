@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "checkedAt": "2026-11-24T11:46:17.350Z",
+  "checkedAt": "2026-11-24T15:12:59.166Z",
   "signaling": "manager-peer-server.onrender.com",
   "realExternalSignaling": true,
   "realWebRTC": true,
