@@ -1,0 +1,45 @@
+{
+  "htmlBytes": 474385,
+  "results": [
+    {
+      "platform": "desktop",
+      "runs": [
+        {
+          "interactiveMs": 276.89999997615814,
+          "domMs": 177.19999998807907,
+          "bytes": 5352383
+        },
+        {
+          "interactiveMs": 266.69999998807907,
+          "domMs": 219.5,
+          "bytes": 5352383
+        },
+        {
+          "interactiveMs": 249.39999997615814,
+          "domMs": 181,
+          "bytes": 4304499
+        }
+      ]
+    },
+    {
+      "platform": "mobile",
+      "runs": [
+        {
+          "interactiveMs": 241.60000002384186,
+          "domMs": 177.80000001192093,
+          "bytes": 4333321
+        },
+        {
+          "interactiveMs": 227.19999998807907,
+          "domMs": 170.80000001192093,
+          "bytes": 5352383
+        },
+        {
+          "interactiveMs": 227.80000001192093,
+          "domMs": 171.9000000357628,
+          "bytes": 5352383
+        }
+      ]
+    }
+  ]
+}

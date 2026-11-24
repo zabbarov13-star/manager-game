@@ -5,18 +5,18 @@
       "platform": "desktop",
       "runs": [
         {
-          "interactiveMs": 996.1999999284744,
-          "domMs": 799.1000000238419,
+          "interactiveMs": 1019.3999999761581,
+          "domMs": 880.2999999523163,
           "bytes": 14838790
         },
         {
-          "interactiveMs": 952.3000000715256,
-          "domMs": 817.8000000715256,
+          "interactiveMs": 922.5,
+          "domMs": 842,
           "bytes": 14838790
         },
         {
-          "interactiveMs": 917,
-          "domMs": 826.6000000238419,
+          "interactiveMs": 849.6999999880791,
+          "domMs": 783.5,
           "bytes": 14838790
         }
       ]
@@ -25,18 +25,18 @@
       "platform": "mobile",
       "runs": [
         {
-          "interactiveMs": 900.7999999523163,
-          "domMs": 836,
+          "interactiveMs": 943.4000000357628,
+          "domMs": 798.2000000476837,
           "bytes": 14838790
         },
         {
-          "interactiveMs": 890.7999999523163,
-          "domMs": 822.0999999046326,
+          "interactiveMs": 839.3999999761581,
+          "domMs": 769.5,
           "bytes": 14838790
         },
         {
-          "interactiveMs": 899.2000000476837,
-          "domMs": 835.8999999761581,
+          "interactiveMs": 837.4000000357628,
+          "domMs": 772.9000000357628,
           "bytes": 14838790
         }
       ]
