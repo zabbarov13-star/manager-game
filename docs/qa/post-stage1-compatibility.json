@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-24T16:12:16.483500+00:00",
-  "reviewedGamePrHead": "9b1b795ad903a0a04837773c7fa76d6348cb28e3",
+  "reviewedGamePrHead": "9bd566c8d43a534f068409070622080cfcd66ea5",
   "testedExecutableCode": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
   "reviewedPeerPrHead": "536009173cf47ba47687777548d7dc161d7de30e",
   "runtimeChangesSinceTestedCode": [],
@@ -21,13 +21,37 @@
     "uiaTreeAvailable": true,
     "miniAppGameScenariosExecuted": false,
     "physicalDevicesTested": false,
-    "adbFoundInPathOrCheckedDefaultSdkPaths": false
+    "adbFoundInPathOrCheckedDefaultSdkPaths": false,
+    "temporaryIsolatedHttpsStand": true,
+    "anonymousAccessStatus": 403,
+    "gatedHealthStatus": 200,
+    "testBotPersonalMenuUpdatedWithAuthorization": true,
+    "globalBotMenuChanged": false,
+    "desktopClickBlockedByMissingGeometry": true,
+    "telegramWebAuthenticatedSession": "NOT_CONFIRMED",
+    "adbPortableVendorChecksum": "PASS",
+    "adbConnectedDevices": 0
   },
   "sideEffects": {
     "newCiRetries": 0,
     "merge": false,
     "deployment": false,
     "vpsChanged": false,
-    "realPayments": false
-  }
+    "realPayments": false,
+    "productionDeployment": false,
+    "localTestStandStarted": true,
+    "testBotPersonalMenuChanged": true,
+    "webhookChanged": false,
+    "pollingChanged": false
+  },
+  "candidate": {
+    "ciMergeCommit": "92bced50a6c533e6773343f8aef053eaecc218f7",
+    "treeMatchesTestedCode": true,
+    "archiveSha256": {
+      "rooms": "0d77e73c4845cd7e54b397bfe7ea697a756783c674ad43b5cc2d39efc1fa07b6",
+      "adapter": "d54df3cdb5d5640a448c259b3a14c75679bbfd2c7577260d66500e5e9d2154a2",
+      "combinedZip": "49473025215ec2489813bb3118efcbdd7210ef5da76e5e993319530a75baa908"
+    }
+  },
+  "finalAcceptanceObservedAt": "2026-11-24T17:15:05.869753+00:00"
 }
