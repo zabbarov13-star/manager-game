@@ -10,6 +10,16 @@ const {chromium}=require('../../telegram/node_modules/playwright'),catalog=requi
   await page.addScriptTag({path:require.resolve('../motion.js')});await page.addScriptTag({path:require.resolve('../../telegram/animation/renderer.js')});
   await page.addScriptTag({content:require('../../telegram/animation/build.cjs').bundle()});
   await page.addScriptTag({path:require.resolve('../../telegram/animation/controller.js')});
+  // Exercise the actual dice selectors: changing the viewer theme cannot recolor
+  // or replace the animation selected for the actor.
+  const source=fs.readFileSync(require.resolve('../../index.html'),'utf8');
+  const css=source.match(/<style[^>]*>([\s\S]*?)<\/style>/g).join('\n');
+  const diceRules=[...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(m=>/\.die\b|\.pip\b/.test(m[1])).map(m=>m[0]).join('\n');
+  await page.addStyleTag({content:diceRules});
+  assert(await page.evaluate(()=>{
+   const tray=document.createElement('div');tray.id='dice-tray';tray.className='rolling';tray.innerHTML='<div class="die"><span class="pip"></span></div>';document.body.append(tray);const die=tray.firstChild,themes=['heritage','arcade','studio','velvet','aurora'];
+   const signatures=new Set();for(const actor of themes){const variants=new Set();for(const viewer of themes){document.body.dataset.theme=viewer;ManagerMotion.dice(tray,{theme:actor});const s=getComputedStyle(die);variants.add(JSON.stringify([s.background,s.border,s.borderRadius,s.animationName]));}if(variants.size!==1)return false;signatures.add([...variants][0]);}tray.remove();return signatures.size===5;
+  }),'all five actor skins must remain independent of the viewing theme');
   let count=0;
   for(const character of catalog.characters.filter(c=>!c.free)){
    const inline=p=>'data:image/webp;base64,'+fs.readFileSync(path.resolve(__dirname,'../../telegram',p.slice(1))).toString('base64');

@@ -119,19 +119,19 @@ body[data-theme=velvet] :is(.turn-panel,.inspector){outline:1px solid var(--ui-b
 body[data-theme=velvet] .turn-panel h2{font-weight:normal;font-size:clamp(24px,2.4vw,36px)}
 body[data-theme=aurora] :is(.turn-panel,.inspector){background-image:radial-gradient(at 0 0,#54d9d522,transparent 70%)}
 /* Dice shells, pips and physical movement differ, with the same fair dice result. */
-body[data-theme=arcade] .die{background:#322055;border:3px solid #79ffda;border-radius:7px;box-shadow:0 0 18px #76ffdb88,7px 8px 0 #120d27}
-body[data-theme=arcade] .pip{background:#9bffcf;box-shadow:0 0 8px #7dffd8}
-body[data-theme=studio] .die{background:#fff;border:3px solid #164bdb;border-radius:8px;box-shadow:8px 8px 0 #164bdb55}
-body[data-theme=studio] .pip{background:#164bdb;box-shadow:none;border-radius:2px}
-body[data-theme=velvet] .die{background:linear-gradient(145deg,#fff4ce,#d8b66d);border:2px solid #a77b35;border-radius:18px;box-shadow:inset 0 0 0 3px #ffedb0,0 9px 14px #27101c77}
-body[data-theme=velvet] .pip{background:#6c233d;box-shadow:inset 0 1px 2px #361021}
-body[data-theme=aurora] .die{background:linear-gradient(145deg,#eaffff,#82ddd8);border:2px solid #ebfffc;border-radius:25%;box-shadow:inset 0 2px 7px #fff,0 10px 24px #33bfc577}
-body[data-theme=aurora] .pip{background:#14576e;box-shadow:0 1px 2px #fff}
-body[data-theme=arcade] .rolling .die{animation:arcade-roll .54s steps(4,end) infinite}
-body[data-theme=studio] .rolling .die{animation:studio-roll .65s ease-in-out infinite}
-body[data-theme=velvet] .rolling .die{animation:velvet-roll .95s ease-in-out infinite}
-body[data-theme=aurora] .rolling .die{animation:aurora-roll 1.15s ease-in-out infinite}
-body[data-theme] .rolling .die:nth-child(2){animation-delay:-.2s}
+#dice-tray[data-look=arcade] .die{background:#322055;border:3px solid #79ffda;border-radius:7px;box-shadow:0 0 18px #76ffdb88,7px 8px 0 #120d27}
+#dice-tray[data-look=arcade] .pip{background:#9bffcf;box-shadow:0 0 8px #7dffd8}
+#dice-tray[data-look=studio] .die{background:#fff;border:3px solid #164bdb;border-radius:8px;box-shadow:8px 8px 0 #164bdb55}
+#dice-tray[data-look=studio] .pip{background:#164bdb;box-shadow:none;border-radius:2px}
+#dice-tray[data-look=velvet] .die{background:linear-gradient(145deg,#fff4ce,#d8b66d);border:2px solid #a77b35;border-radius:18px;box-shadow:inset 0 0 0 3px #ffedb0,0 9px 14px #27101c77}
+#dice-tray[data-look=velvet] .pip{background:#6c233d;box-shadow:inset 0 1px 2px #361021}
+#dice-tray[data-look=aurora] .die{background:linear-gradient(145deg,#eaffff,#82ddd8);border:2px solid #ebfffc;border-radius:25%;box-shadow:inset 0 2px 7px #fff,0 10px 24px #33bfc577}
+#dice-tray[data-look=aurora] .pip{background:#14576e;box-shadow:0 1px 2px #fff}
+#dice-tray[data-look=arcade].rolling .die{animation:arcade-roll .54s steps(4,end) infinite}
+#dice-tray[data-look=studio].rolling .die{animation:studio-roll .65s ease-in-out infinite}
+#dice-tray[data-look=velvet].rolling .die{animation:velvet-roll .95s ease-in-out infinite}
+#dice-tray[data-look=aurora].rolling .die{animation:aurora-roll 1.15s ease-in-out infinite}
+#dice-tray[data-look].rolling .die:nth-child(2){animation-delay:-.2s}
 @keyframes arcade-roll{0%,100%{transform:translate(-14px,0) rotate(0)}25%{transform:translate(12px,-24px) rotate(90deg)}50%{transform:translate(-6px,5px) rotate(180deg)}75%{transform:translate(14px,-16px) rotate(270deg)}}
 @keyframes studio-roll{0%,100%{transform:translate(-12px,0) rotate(-12deg)}50%{transform:translate(16px,-24px) rotate(180deg)}}
 @keyframes velvet-roll{0%,100%{transform:translate(-10px,0) rotate(-14deg)}35%{transform:translate(14px,-18px) rotate(110deg)}70%{transform:translate(5px,2px) rotate(235deg)}}
@@ -227,15 +227,7 @@ body.modern-ui #panel-game .turn-panel{min-height:0;margin:0}.modern-ui .player-
 .modern-ui.no-motion [role=tabpanel]{animation:none!important}
 
 /* Exactly one actor-specific toss style is active. Faces remain engine results. */
-@keyframes manager-dice-arcade{0%{transform:rotate(-22deg) translateY(-12px)}50%{transform:rotate(160deg) translateY(8px)}100%{transform:rotate(338deg) translateY(-12px)}}
-@keyframes manager-dice-studio{0%,100%{transform:translateX(-12px) rotate(-12deg)}50%{transform:translateX(12px) rotate(12deg)}}
-@keyframes manager-dice-velvet{0%,100%{transform:rotate(-16deg) scale(.95)}50%{transform:rotate(16deg) scale(1.03)}}
-@keyframes manager-dice-aurora{0%,100%{transform:translateY(5px) rotate(-8deg)}50%{transform:translateY(-14px) rotate(8deg)}}
 @keyframes manager-dice-jade{0%,100%{transform:rotate(-20deg) translateY(-6px);filter:drop-shadow(0 0 2px #a5ffdf)}50%{transform:rotate(20deg) translateY(6px);filter:drop-shadow(0 0 9px #a5ffdf)}}
-.modern-ui #dice-tray[data-look=arcade].rolling .die{animation:manager-dice-arcade .75s linear infinite}
-.modern-ui #dice-tray[data-look=studio].rolling .die{animation:manager-dice-studio .48s ease-in-out infinite}
-.modern-ui #dice-tray[data-look=velvet].rolling .die{animation:manager-dice-velvet 1.1s ease-in-out infinite}
-.modern-ui #dice-tray[data-look=aurora].rolling .die{animation:manager-dice-aurora 1.25s ease-in-out infinite}
 .modern-ui #dice-tray[data-dice=jade].rolling .die{animation:manager-dice-jade .85s ease-in-out infinite}
 .modern-ui.no-motion #dice-tray .die{animation:none!important}
 @media(prefers-reduced-motion:reduce){.modern-ui #dice-tray .die{animation:none!important}}
