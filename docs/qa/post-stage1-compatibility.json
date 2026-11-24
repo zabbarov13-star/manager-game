@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-11-24T16:12:16.483500+00:00",
+  "reviewedGamePrHead": "9b1b795ad903a0a04837773c7fa76d6348cb28e3",
+  "testedExecutableCode": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
+  "reviewedPeerPrHead": "536009173cf47ba47687777548d7dc161d7de30e",
+  "runtimeChangesSinceTestedCode": [],
+  "matchingGameBlobs": {
+    "index.html": "b666b8aed1a3d889655154e2c0b38a369e6ec579",
+    "ui/motion.js": "1102630d3f33d77864f805974d3dba418cf2e9a4",
+    "telegram/client.js": "7fd2fed48949978561d354fc108d204ff17f77b0",
+    "telegram/build.cjs": "5fbceddff862b3e6fc4fff5ab4b1429f87b6442f",
+    "telegram/animation/build.cjs": "8404c20b24b4826dea1c7420c3ffb3a373655361",
+    "telegram/shared/room-extension.cjs": "2d4ea18d536253980b53d2fa7902731bc5a12128",
+    "telegram/shared/verification.cjs": "8eb15ef6b0ae88d43e2f3046649f0232d8bc424f",
+    "online/server.cjs": "3d3fd377e1ebcf27a179e2346f95ad9d24b67982"
+  },
+  "peerRuntimeDelta": "Factory and require.main guard; unchanged ExpressPeerServer settings, CLI start and signaling routes. package.json adds test only.",
+  "contractChecks": "Successful CI at matching peer SHA reused. No tests/builds rerun.",
+  "automationObservation": {
+    "actualWindowsTelegramWindow": true,
+    "uiaTreeAvailable": true,
+    "miniAppGameScenariosExecuted": false,
+    "physicalDevicesTested": false,
+    "adbFoundInPathOrCheckedDefaultSdkPaths": false
+  },
+  "sideEffects": {
+    "newCiRetries": 0,
+    "merge": false,
+    "deployment": false,
+    "vpsChanged": false,
+    "realPayments": false
+  }
+}

@@ -1,71 +1,71 @@
 {
   "codeCommit": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
-  "recordedAt": "2026-11-24T15:51:33.035460+00:00",
+  "recordedAt": "2026-11-24T16:12:16.483500+00:00",
   "checks": [
     {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571180868",
-      "name": "ios",
-      "state": "QUEUED"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571185396",
-      "name": "desktop (macos-15)",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571269077",
-      "name": "android",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571184263",
-      "name": "desktop (windows-2025)",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571291911",
       "name": "qa",
-      "state": "SUCCESS"
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571291911"
     },
     {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055634/job/138555022736",
+      "name": "android",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571269077"
+    },
+    {
+      "name": "desktop (macos-15)",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571185396"
+    },
+    {
+      "name": "desktop (windows-2025)",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571184263"
+    },
+    {
+      "name": "ios",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571180868"
+    },
+    {
       "name": "deploy",
-      "state": "SKIPPED"
+      "state": "SKIPPED",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055634/job/138555022736"
     },
     {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425056125/job/138554663941",
-      "name": "rooms",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425056125/job/138554664543",
-      "name": "johnny",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554664063",
-      "name": "preflight-isolation",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554664872",
-      "name": "deployment-tools-node18",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055634/job/138554663049",
-      "name": "package",
-      "state": "SUCCESS"
-    },
-    {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554665354",
       "name": "verify",
-      "state": "SUCCESS"
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554665354"
     },
     {
-      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055685/job/138554663540",
+      "name": "deployment-tools-node18",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554664872"
+    },
+    {
+      "name": "johnny",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425056125/job/138554664543"
+    },
+    {
+      "name": "preflight-isolation",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055777/job/138554664063"
+    },
+    {
+      "name": "rooms",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425056125/job/138554663941"
+    },
+    {
       "name": "routing",
-      "state": "SUCCESS"
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055685/job/138554663540"
+    },
+    {
+      "name": "package",
+      "state": "SUCCESS",
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055634/job/138554663049"
     }
   ],
   "peerCommit": "536009173cf47ba47687777548d7dc161d7de30e",
@@ -93,9 +93,20 @@
     "singleTargetedRetry": {
       "attempt": 2,
       "job": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784/job/138571180868",
-      "observedStatus": "QUEUED",
-      "successfulJobsRerun": false
+      "observedStatus": "PASS",
+      "successfulJobsRerun": false,
+      "conclusion": "success",
+      "runnerAssigned": true,
+      "startedAt": "2026-11-24T15:58:06Z",
+      "completedAt": "2026-11-24T16:07:51Z",
+      "simulatorEvidence": {
+        "launches": 2,
+        "native": true,
+        "menu": true,
+        "storagePersistedAcrossLaunches": true,
+        "physicalDevice": false
+      }
     },
-    "acceptance": "BLOCKED: current iOS Simulator test has not run."
+    "acceptance": "PASS: existing iOS Simulator smoke only; not a physical iPhone or Telegram iOS test."
   }
 }
