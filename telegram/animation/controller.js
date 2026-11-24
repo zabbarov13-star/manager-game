@@ -9,9 +9,9 @@
       this.dispatcher=new Core.AnimationEventDispatcher({registry:catalog.characters.map(c=>({...c,theme:c.theme??'classic'})),context:{gameId:'unbound',players:{}},render:(event,signal)=>this.render(event,signal)});
       this.active=document.body.dataset.screen!=='menu';this.lastEvents=new Map();this.onVisibility=()=>this.setActive(!document.hidden&&document.body.dataset.tgActive!=='false'&&document.body.dataset.screen!=='menu');
       this.onActivity=event=>this.setActive(event.detail===true&&!document.hidden&&document.body.dataset.screen!=='menu');
-      document.addEventListener('manager:screen',this.onVisibility);document.addEventListener('visibilitychange',this.onVisibility);document.addEventListener('manager:activity',this.onActivity);
+      this.onMotion=event=>this.motion(event.detail);document.addEventListener('manager:motion',this.onMotion);document.addEventListener('manager:screen',this.onVisibility);document.addEventListener('visibilitychange',this.onVisibility);document.addEventListener('manager:activity',this.onActivity);
     }
-    setActive(active){this.active=active;if(!active){this.dispatcher.cancelAll();this.stopIdle();}else{this.startIdle();for(const [id,event]of this.lastEvents)if(this.dispatcher.terminal.has(id)){const record=this.renderers.get(id);record?.renderer.load().then(()=>{if(this.active&&this.renderers.get(id)===record)record.renderer.renderFrame(event,1);}).catch(()=>{});}}}
+    setActive(active){this.active=active;if(!active){for(const r of this.renderers.values())r.localAbort?.abort();this.dispatcher.cancelAll();this.stopIdle();}else{this.startIdle();for(const [id,event]of this.lastEvents)if(this.dispatcher.terminal.has(id)){const record=this.renderers.get(id);record?.renderer.load().then(()=>{if(this.active&&this.renderers.get(id)===record)record.renderer.renderFrame(event,1);}).catch(()=>{});}}}
     definition(id){return this.catalog.characters.find(c=>c.id===id);}
     characterForEngineId(id){return this.definition(this.engineBindings.get(id));}
     ensureView(){
@@ -30,15 +30,15 @@
       this.ensureView();const live=new Set();
       for(const player of state.players){const character=this.definition(this.bindings[player.id]);if(!character||character.free)continue;live.add(player.id);
         let record=this.renderers.get(player.id);
-        if(record?.characterId!==character.id){record?.renderer.cancel();record?.element.remove();clearTimeout(this.idleTimers.get(player.id));this.idleTimers.delete(player.id);this.renderers.delete(player.id);record=null;}
+        if(record?.characterId!==character.id){record?.localAbort?.abort();record?.renderer.cancel();record?.element.remove();clearTimeout(this.idleTimers.get(player.id));this.idleTimers.delete(player.id);this.renderers.delete(player.id);record=null;}
         if(!record){const element=document.createElement('article'),name=document.createElement('strong'),caption=document.createElement('small'),canvas=document.createElement('canvas');
           name.textContent=player.name+' · '+character.name;caption.textContent='Ожидание';element.append(name,canvas,caption);this.view.append(element);
-          const renderer=new window.ManagerCharacterAnimation.CharacterCanvasRenderer(canvas,character);record={characterId:character.id,element,caption,renderer};this.renderers.set(player.id,record);
+          const renderer=new window.ManagerCharacterAnimation.CharacterCanvasRenderer(canvas,character,{showDice:false,onMotion:m=>{for(const marker of document.querySelectorAll('.player-token'))if(marker.dataset.playerId===player.id){const image=marker.querySelector('image[data-tg-body]');if(image)image.setAttribute('transform',`translate(${40+m.x/4.5} ${120+m.y/4}) rotate(${m.r*180/Math.PI}) scale(${m.sx} ${m.sy}) translate(-40 -120)`);}}});record={characterId:character.id,element,caption,renderer};this.renderers.set(player.id,record);
           renderer.load().then(()=>{if(this.renderers.get(player.id)!==record)return;renderer.renderFrame(this.localEvent('character.idle',player.id),.5);}).catch(()=>{caption.textContent='Изображение временно недоступно';});
         }
         this.spawn(player.id);
       }
-      for(const [id,record]of this.renderers)if(!live.has(id)){record.renderer.cancel();record.element.remove();this.renderers.delete(id);clearTimeout(this.idleTimers.get(id));this.idleTimers.delete(id);}
+      for(const [id,record]of this.renderers)if(!live.has(id)){record.localAbort?.abort();record.renderer.cancel();record.element.remove();this.renderers.delete(id);clearTimeout(this.idleTimers.get(id));this.idleTimers.delete(id);}
       this.view.hidden=this.renderers.size===0;
       this.startIdle();
     }
@@ -49,16 +49,29 @@
       if(document.hidden||!this.active)return;
       for(const [playerId,record]of this.renderers)if(!this.idleTimers.has(playerId)&&!this.dispatcher.terminal.has(playerId)){
         const tick=()=>{this.idleTimers.delete(playerId);if(document.hidden||!this.active||!record.element.isConnected||this.dispatcher.terminal.has(playerId))return;
-          if(!this.dispatcher.active.has(playerId))this.dispatcher.dispatchLocal(this.localEvent('character.idle',playerId));
+          if(!this.dispatcher.active.has(playerId)&&!record.localPlaying)this.dispatcher.dispatchLocal(this.localEvent('character.idle',playerId));
           this.scheduleIdle(playerId,tick);
         };this.scheduleIdle(playerId,tick);
       }
     }
     scheduleIdle(playerId,tick){this.idleTimers.set(playerId,setTimeout(tick,3000+Math.random()*3000));}
+    motion(detail){
+      const record=this.renderers.get(detail?.playerId);
+      if(!record||!this.active||document.hidden||this.dispatcher.terminal.has(detail.playerId)||!window.ManagerMotion?.phases[detail.phase])return;
+      const previous=this.dispatcher.active.get(detail.playerId);
+      // Locally observed movement may replace idle, but never an accepted game event.
+      if(previous&&previous.event.type!=='character.idle')return;
+      if(previous){previous.controller.abort();this.dispatcher.active.delete(detail.playerId);}
+      record.localAbort?.abort();const abort=new AbortController();record.localAbort=abort;record.localPlaying=true;
+      record.caption.textContent={walk:'Движение',stop:'Остановка',land:'Прибытие',card:'Карточка'}[detail.phase];
+      record.renderer.play({type:'visual.'+detail.phase},abort.signal).then(async()=>{
+        if(!abort.signal.aborted&&detail.phase==='stop')await record.renderer.play({type:'visual.land'},abort.signal);
+      }).catch(()=>{}).finally(()=>{if(record.localAbort===abort)record.localPlaying=false;});
+    }
     async render(event,signal){
       this.lastEvents.set(event.playerId,event);
       if(document.hidden||!this.active)return;
-      const record=this.renderers.get(event.playerId);if(!record)return;
+      const record=this.renderers.get(event.playerId);if(!record)return;record.localAbort?.abort();record.localPlaying=false;
       record.caption.textContent=window.ManagerCharacterAnimation.labels[event.type];
       const character=this.definition(event.characterId),pose=window.ManagerCharacterAnimation.poseFor(event.type);
       if(character)document.querySelectorAll(`svg[data-tg-premium="${character.id}"] image[data-tg-body]`).forEach(image=>image.setAttribute('href',character.poses[pose]));
@@ -100,7 +113,7 @@
       const envelope=room.animation;
       if(!envelope||envelope.schemaVersion!==1||envelope.revision!==room.gameRevision||typeof envelope.gameId!=='string'||!envelope.players||typeof envelope.players!=='object'||!Number.isSafeInteger(envelope.throughSequence)){
         this.dispatcher.cancelAll();this.stopIdle();this.engineBindings.clear();
-        for(const record of this.renderers.values()){record.renderer.cancel();record.element.remove();}this.renderers.clear();if(this.view)this.view.hidden=true;return;
+        for(const record of this.renderers.values()){record.localAbort?.abort();record.renderer.cancel();record.element.remove();}this.renderers.clear();if(this.view)this.view.hidden=true;return;
       }
       const bindings=Object.fromEntries(state.players.map(player=>[player.id,envelope.players[player.id]??player.character]));
       this.context(envelope.gameId,state,bindings);
@@ -111,7 +124,7 @@
         for(const event of payload.events??[])this.dispatcher.dispatchGame(event);
       }
     }
-    destroy(){document.removeEventListener('manager:screen',this.onVisibility);document.removeEventListener('visibilitychange',this.onVisibility);document.removeEventListener('manager:activity',this.onActivity);this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values())record.renderer.cancel();this.renderers.clear();this.view?.remove();}
+    destroy(){document.removeEventListener('manager:motion',this.onMotion);document.removeEventListener('manager:screen',this.onVisibility);document.removeEventListener('visibilitychange',this.onVisibility);document.removeEventListener('manager:activity',this.onActivity);this.stopIdle();this.dispatcher.cancelAll();for(const record of this.renderers.values()){record.localAbort?.abort();record.renderer.cancel();}this.renderers.clear();this.view?.remove();}
   }
   window.CharacterAnimationController=CharacterAnimationController;
 })();

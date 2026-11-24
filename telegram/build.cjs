@@ -29,8 +29,8 @@ replace("b.onclick=()=>{state.settings.uiTheme=theme.id;", "b.onclick=()=>{if(!w
 replace('state.settings.uiTheme=theme.id;settingsUI();persist();','state.settings.uiTheme=theme.id;settingsUI();persist();window.ManagerTelegram.saveStyle(theme.id);');
 replace('function render(){if(!s)return;', 'function render(){if(!s)return;window.ManagerTelegram.react(s);');
 replace("async request(op='',body,credentials){const controller", "async request(op='',body,credentials){if(body?.character)body=await window.ManagerTelegram.decorateRoomBody(body);const controller");
-replace("const creating=!this.db.row&&m.body&&m.op==='';", "if(m?.body?.character){const verified=await window.ManagerTelegram.verifyCosmetic(m.body.telegramCosmeticTicket,m.body.telegramCharacterId);m={...m,body:{...m.body,telegramCharacterVerified:verified}};}const creating=!this.db.row&&m.body&&m.op==='';");
-replace('}),{DB:this.db});','}),{DB:this.db,verifyCosmetic:(ticket,id)=>window.ManagerTelegram.verifyCosmetic(ticket,id,true)});');
+replace("const creating=!this.db.row&&m.body&&m.op==='';", "if(m?.body?.character){const verified=await window.ManagerTelegram.verifyCosmetic(m.body.telegramCosmeticTicket,m.body.telegramCharacterId,false,{styleId:m.body.telegramStyleId,diceId:m.body.telegramDiceId});m={...m,body:{...m.body,telegramCharacterVerified:verified}};}const creating=!this.db.row&&m.body&&m.op==='';");
+replace('}),{DB:this.db});','}),{DB:this.db,verifyCosmetic:(ticket,id,look)=>window.ManagerTelegram.verifyCosmetic(ticket,id,true,look)});');
 replace('s=draft;save();busy=true;', 's=draft;window.ManagerTelegram.commitLocal(s);save();busy=true;');
 replace('s=next;epoch++;busy=false;shownEvent=null;displayPositions=null;save();','s=next;window.ManagerTelegram.restoreLocal(s);epoch++;busy=false;shownEvent=null;displayPositions=null;save();');
 replace('async function acceptOnline(next,effects,room){onlineQueue.push', 'async function acceptOnline(next,effects,room){window.ManagerTelegram.acceptNetwork(next,room);onlineQueue.push');

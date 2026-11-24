@@ -25,7 +25,7 @@ function createApp(config={}){
  const file=configuredFile===':memory:'?configuredFile:resolve(__dirname,configuredFile);
  if(file!==':memory:')mkdirSync(dirname(file),{recursive:true});
  const store=config.store??new Store(file,Date.now,{ownerTelegramId:config.ownerTelegramId??process.env.OWNER_TELEGRAM_ID}),sessions=new Map(),rates=new Map();
- const rooms=modeKind==='adapter'?null:require('./rooms.cjs').createRooms({database:config.roomsDatabase??(file===':memory:'?':memory:':resolve(dirname(file),'rooms.sqlite')),allowedOrigins:[origin],trustProxy:false,verifyCosmetic:(ticket,id)=>store.verifyCosmetic(ticket,id,{existingSeat:true})});
+ const rooms=modeKind==='adapter'?null:require('./rooms.cjs').createRooms({database:config.roomsDatabase??(file===':memory:'?':memory:':resolve(dirname(file),'rooms.sqlite')),allowedOrigins:[origin],trustProxy:false,verifyCosmetic:(ticket,id,look)=>store.verifyCosmetic(ticket,id,{...look,existingSeat:true})});
  const verifier=modeKind==='adapter'?require('./shared/verification.cjs').createVerificationServer(store,config.rpcSecret??process.env.COSMETIC_RPC_SECRET):null;
  const root=config.dist??resolve(__dirname,'dist');
  const bot=config.bot??createBotApi(token,{mode}),starsReady=!!(starsEnabled&&support.trim());
@@ -52,12 +52,12 @@ function createApp(config={}){
     if(req.method==='POST'){
      const raw=await body(req),data=JSON.parse(raw);
      const replacement=Readable.from([Buffer.from(raw)]);replacement.method=req.method;replacement.url=req.url;replacement.headers=req.headers;replacement.socket=req.socket;
-     replacement.managerCosmeticVerified=!!data&&typeof data==='object'&&!Array.isArray(data)&&store.verifyCosmetic(data.telegramCosmeticTicket,data.telegramCharacterId);
+     replacement.managerCosmeticVerified=!!data&&typeof data==='object'&&!Array.isArray(data)&&store.verifyCosmetic(data.telegramCosmeticTicket,data.telegramCharacterId,{styleId:data.telegramStyleId,diceId:data.telegramDiceId});
      rooms.emit('request',replacement,res);return;
     }
     rooms.emit('request',req,res);return;
    }
-   if(url.pathname==='/api/cosmetics/verify'&&req.method==='POST'){const data=JSON.parse(await body(req));return send(res,200,{valid:store.verifyCosmetic(data.ticket,data.characterId,{existingSeat:data.existingSeat===true})});}
+   if(url.pathname==='/api/cosmetics/verify'&&req.method==='POST'){const data=JSON.parse(await body(req));return send(res,200,{valid:store.verifyCosmetic(data.ticket,data.characterId,{existingSeat:data.existingSeat===true,styleId:data.styleId,diceId:data.diceId})});}
    if(url.pathname==='/telegram/webhook'&&req.method==='POST'){
     if(!equal(req.headers['x-telegram-bot-api-secret-token']??'',webhookSecret))return send(res,403,{error:'Forbidden'});
     const update=JSON.parse(await body(req));if(!Number.isSafeInteger(update.update_id))return send(res,400,{error:'Invalid update'});

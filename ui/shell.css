@@ -57,3 +57,17 @@ body.modern-ui #panel-game .turn-panel{min-height:0;margin:0}.modern-ui .player-
 .modern-ui [role=tabpanel]:not([hidden]){animation:manager-panel-enter .16s ease-out}
 @media(prefers-reduced-motion:reduce){.modern-ui [role=tabpanel]{animation:none!important}}
 .modern-ui.no-motion [role=tabpanel]{animation:none!important}
+
+/* Exactly one actor-specific toss style is active. Faces remain engine results. */
+@keyframes manager-dice-arcade{0%{transform:rotate(-22deg) translateY(-12px)}50%{transform:rotate(160deg) translateY(8px)}100%{transform:rotate(338deg) translateY(-12px)}}
+@keyframes manager-dice-studio{0%,100%{transform:translateX(-12px) rotate(-12deg)}50%{transform:translateX(12px) rotate(12deg)}}
+@keyframes manager-dice-velvet{0%,100%{transform:rotate(-16deg) scale(.95)}50%{transform:rotate(16deg) scale(1.03)}}
+@keyframes manager-dice-aurora{0%,100%{transform:translateY(5px) rotate(-8deg)}50%{transform:translateY(-14px) rotate(8deg)}}
+@keyframes manager-dice-jade{0%,100%{transform:rotate(-20deg) translateY(-6px);filter:drop-shadow(0 0 2px #a5ffdf)}50%{transform:rotate(20deg) translateY(6px);filter:drop-shadow(0 0 9px #a5ffdf)}}
+.modern-ui #dice-tray[data-look=arcade].rolling .die{animation:manager-dice-arcade .75s linear infinite}
+.modern-ui #dice-tray[data-look=studio].rolling .die{animation:manager-dice-studio .48s ease-in-out infinite}
+.modern-ui #dice-tray[data-look=velvet].rolling .die{animation:manager-dice-velvet 1.1s ease-in-out infinite}
+.modern-ui #dice-tray[data-look=aurora].rolling .die{animation:manager-dice-aurora 1.25s ease-in-out infinite}
+.modern-ui #dice-tray[data-dice=jade].rolling .die{animation:manager-dice-jade .85s ease-in-out infinite}
+.modern-ui.no-motion #dice-tray .die{animation:none!important}
+@media(prefers-reduced-motion:reduce){.modern-ui #dice-tray .die{animation:none!important}}

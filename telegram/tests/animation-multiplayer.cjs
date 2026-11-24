@@ -11,10 +11,10 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
  const server=createApp({botToken,webhookSecret:'multiplayer-test-secret-at-least-32characters',origin:'http://127.0.0.1:'+port,allowHttp:true,database:':memory:',ownerTelegramId:String(owner),bot:async()=>{throw Error('No live payments allowed');}}).listen(port,'127.0.0.1');await once(server,'listening');let browser;
  try{
   for(const id of [owner,guest])server.store.user({id:String(id),name:'QA'});
-  server.store.select(String(owner),{character:'mira'});
+  server.store.select(String(owner),{character:'mira',style:'arcade',dice:'jade'});
   server.store.db.prepare("INSERT INTO grants(user,item,source,expires) VALUES(?,'character:asya','qa-fixture',NULL)").run(String(guest));server.store.select(String(guest),{character:'asya'});
   browser=await chromium.launch({headless:true,args:['--disable-features=WebRtcHideLocalIpsWithMdns','--force-webrtc-ip-handling-policy=default_public_and_private_interfaces'],...(process.env.QA_CHROME?{executablePath:process.env.QA_CHROME}:{})});const pages=[];const errors=[];
-  const game=fs.readFileSync(path.resolve(__dirname,'../dist/game.js'),'utf8').replace('function mountOnline(', 'window.QAEngine={P2PNetwork,P2PAuthority,transitionSync,BOARD};function mountOnline(');
+  const game=fs.readFileSync(path.resolve(__dirname,'../dist/game.js'),'utf8').replace('function mountOnline(', 'window.QAEngine={P2PNetwork,P2PAuthority,transitionSync,BOARD,decisionActor,chooseBotAction};function mountOnline(');
   for(const id of [owner,guest]){
    const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();pages.push(page);page.on('pageerror',e=>errors.push(e.message));
    await page.route('https://telegram.org/js/telegram-web-app.js',route=>route.fulfill({contentType:'text/javascript',body:`window.Telegram={WebApp:{initData:${JSON.stringify(signed(id))},ready(){},expand(){},onEvent(){},BackButton:{show(){},hide(){},onClick(){}},showPopup(o,cb){cb('cancel')}}};`}));
@@ -47,7 +47,7 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
   const answer=await member.evaluate(async offer=>{await qaRtc.setRemoteDescription(offer);await qaRtc.setLocalDescription(await qaRtc.createAnswer());await new Promise(resolve=>{if(qaRtc.iceGatheringState==='complete')return resolve();qaRtc.onicegatheringstatechange=()=>{if(qaRtc.iceGatheringState==='complete')resolve();};});return qaRtc.localDescription.toJSON();},offer);
   await host.evaluate(answer=>qaRtc.setRemoteDescription(answer),answer);for(const page of pages)try{await page.waitForFunction(()=>window.qaChannel?.open,{},{timeout:12000});}catch(e){console.error('Local RTC channel failed to open.');throw e;}
   }
-  const created=await host.evaluate(async external=>{const body=await ManagerTelegram.decorateRoomBody({mode:'code',capacity:2,name:'Host',character:'cassette',color:'#1976ed'});return external?qaNet.create(body):qaNet.call('',body,null);},external);code=external?await host.evaluate(()=>qaNet.code):code;assert.equal(created.status,201);assert.equal(created.data.room.seats[0].cosmeticCharacter,'mira');
+  const created=await host.evaluate(async external=>{const body=await ManagerTelegram.decorateRoomBody({mode:'code',capacity:2,name:'Host',character:'cassette',color:'#1976ed'});return external?qaNet.create(body):qaNet.call('',body,null);},external);code=external?await host.evaluate(()=>qaNet.code):code;assert.equal(created.status,201);assert.equal(created.data.room.seats[0].cosmeticCharacter,'mira');assert.equal(created.data.room.seats[0].cosmeticStyle,'arcade');assert.equal(created.data.room.seats[0].cosmeticDice,'jade');
   const joined=await member.evaluate(async code=>qaNet.call('join',await ManagerTelegram.decorateRoomBody({name:'Guest',character:'roller',color:'#ffd000'}),{code}),code);assert.equal(joined.status,200);assert.equal(joined.data.room.seats[1].cosmeticCharacter,'asya');
   const hc={code,token:created.data.token,seatId:created.data.seatId},gc={code,token:joined.data.token,seatId:joined.data.seatId};
   // Invalid/stolen-looking proof and client verification flags do not bind a premium costume.
@@ -56,7 +56,7 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
   await member.evaluate(c=>qaNet.call('ready',{ready:true},c),gc);const started=await host.evaluate(c=>qaNet.call('start',{},c),hc);assert.equal(started.status,200);
   const before=started.data.room,actor=before.game.players[before.game.current].id===hc.seatId?host:member,credentials=actor===host?hc:gc;
   assert.deepEqual(Object.values(before.animation.players).sort(),['asya','mira']);
-  const action={method:'roll',args:[],requestId:'qa-action-00000001',gameRevision:before.gameRevision};const rolled=await actor.evaluate(({c,action})=>qaNet.call('action',action,c),{c:credentials,action});assert.equal(rolled.status,200);
+  const action={method:'roll',args:[],requestId:'qa-action-00000001',gameRevision:before.gameRevision};const rolled=await actor.evaluate(({c,action})=>qaNet.call('action',action,c),{c:credentials,action});assert.equal(rolled.status,200);assert.equal(rolled.data.room.transitions.at(-1).actorId,credentials.seatId);const looks=await host.evaluate(room=>[ManagerMotion.actorLook(room.seats[0].id,room),ManagerMotion.actorLook(room.seats[1].id,room),ManagerMotion.actorLook('old-peer',room)],rolled.data.room);assert.deepEqual(looks,[{theme:'arcade',dice:'jade'},{theme:'heritage',dice:''},{theme:'heritage',dice:''}]);
   const duplicate=await actor.evaluate(({c,action})=>qaNet.call('action',action,c),{c:credentials,action});assert.equal(duplicate.data.room.game.rolls,1);
   const a=await host.evaluate(c=>qaNet.call('',undefined,c),hc),b=await member.evaluate(c=>qaNet.call('',undefined,c),gc);assert.deepEqual(a.data.room.animation,b.data.room.animation);const dice=a.data.room.animation.events.find(e=>e.type==='dice.rolled');assert(dice);assert.deepEqual(dice.diceValues,a.data.room.game.lastDice);
   // Both controllers consume the same confirmed transition, then a resumed page skips it.
@@ -66,9 +66,9 @@ function signed(id){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
   // Confirm purchases by both participants through the unchanged random engine.
   const purchased=new Set();let room=a.data.room,step=0;
   while(purchased.size<2&&step++<70){
-   const player=room.game.players[room.game.current],c=player.id===hc.seatId?hc:gc,page=player.id===hc.seatId?host:member;
-   const methods={ready:'roll',purchase:'buy',end:'endTurn',event:'confirmCard',debt:'payDebt'};let method=methods[room.game.phase];if(room.game.phase==='purchase'){const price=await page.evaluate(cell=>QAEngine.BOARD[cell].price,room.game.purchase);if(purchased.has(player.id)||player.balance<price)method='decline';}assert(method,'Unexpected phase '+room.game.phase);
-   const result=await page.evaluate(({c,method,revision,step})=>qaNet.call('action',{method,args:[],requestId:'purchase-qa-'+String(step).padStart(8,'0'),gameRevision:revision},c),{c,method,revision:room.gameRevision,step});assert.equal(result.status,200,result.data.error);room=result.data.room;if(method==='buy')purchased.add(player.id);
+   const actorId=await host.evaluate(game=>QAEngine.decisionActor(game),room.game),player=room.game.players.find(p=>p.id===actorId),c=actorId===hc.seatId?hc:gc,page=actorId===hc.seatId?host:member;
+   const methods={ready:'roll',purchase:'buy',end:'endTurn',event:'confirmCard'};const plan=room.game.phase==='debt'?await page.evaluate(game=>QAEngine.chooseBotAction(game,'normal'),room.game):null;let method=plan?.method??methods[room.game.phase];const args=plan?.args??[];if(room.game.phase==='purchase'){const price=await page.evaluate(cell=>QAEngine.BOARD[cell].price,room.game.purchase);if(purchased.has(player.id)||player.balance<price)method='decline';}assert(method,'Unexpected phase '+room.game.phase);
+   const result=await page.evaluate(({c,method,args,revision,step})=>qaNet.call('action',{method,args,requestId:'purchase-qa-'+String(step).padStart(8,'0'),gameRevision:revision},c),{c,method,args,revision:room.gameRevision,step});assert.equal(result.status,200,result.data.error);room=result.data.room;if(method==='buy')purchased.add(player.id);
    if(step%12===0)await page.waitForTimeout(1100);
   }
   assert.equal(purchased.size,2,'Both participants must purchase property');
