@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-24T16:12:16.483500+00:00",
-  "reviewedGamePrHead": "9bd566c8d43a534f068409070622080cfcd66ea5",
+  "reviewedGamePrHead": "4c893f0abe94aa93df773f16d101d27de723f07f",
   "testedExecutableCode": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
   "reviewedPeerPrHead": "536009173cf47ba47687777548d7dc161d7de30e",
   "runtimeChangesSinceTestedCode": [],
@@ -15,7 +15,7 @@
     "online/server.cjs": "3d3fd377e1ebcf27a179e2346f95ad9d24b67982"
   },
   "peerRuntimeDelta": "Factory and require.main guard; unchanged ExpressPeerServer settings, CLI start and signaling routes. package.json adds test only.",
-  "contractChecks": "Successful CI at matching peer SHA reused. No tests/builds rerun.",
+  "contractChecks": "Existing successful CI reused; only incremental packaged-candidate E2E added. No builds or CI retries.",
   "automationObservation": {
     "actualWindowsTelegramWindow": true,
     "uiaTreeAvailable": true,
@@ -54,7 +54,7 @@
       "combinedZip": "49473025215ec2489813bb3118efcbdd7210ef5da76e5e993319530a75baa908"
     }
   },
-  "finalAcceptanceObservedAt": "2026-11-24T17:15:05.869753+00:00",
+  "finalAcceptanceObservedAt": "2026-11-24T23:11:27.554680+00:00",
   "desktopRealClientAcceptance": {
     "observedAt": "2026-11-24T17:26:16.640296+00:00",
     "userOpenedMiniApp": true,
@@ -68,9 +68,104 @@
       "Магазин"
     ],
     "serverAuthentication": "NOT_CONFIRMED",
-    "gameActions": "BLOCKED",
+    "gameActions": "PASS_ONE_OBSERVED_LOCAL_ROLL",
     "clickError": "coordinate input geometry is unavailable",
     "keyboardFallback": "Panel focus unchanged after Tab and F6",
-    "physicalDevice": false
-  }
+    "physicalDevice": false,
+    "userConfirmedTurn": true,
+    "observedDice": [
+      2,
+      3
+    ],
+    "observedTotal": 5,
+    "observedPhase": "purchase",
+    "restoreInRealClient": "BLOCKED",
+    "cdpDebuggingAvailable": false
+  },
+  "packagedAcceptance": {
+    "scope": "Packaged adapter-only + shared rooms; Chromium with synthetic Telegram SDK, not real Telegram/physical devices",
+    "code": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
+    "checks": [
+      {
+        "name": "packaged-navigation",
+        "status": "PASS",
+        "reused": true
+      },
+      {
+        "name": "packaged-local-roll-close-reopen",
+        "status": "PASS",
+        "reused": true
+      },
+      {
+        "name": "packaged-two-client-online",
+        "status": "PASS"
+      },
+      {
+        "name": "packaged-chat-notification-read",
+        "status": "PASS"
+      },
+      {
+        "name": "packaged-reload-recovery",
+        "status": "PASS"
+      },
+      {
+        "name": "packaged-offline-reconnect-sync",
+        "status": "PASS"
+      },
+      {
+        "name": "packaged-no-payments-errors",
+        "status": "PASS"
+      }
+    ],
+    "errors": [],
+    "timing": {
+      "menuReadyMs": 835,
+      "navigationMs": 470.80000001192093,
+      "scope": "Local packaged Chromium fixture, not Telegram startup or WAN"
+    },
+    "finishedAt": "2026-11-24T23:09:33.165Z",
+    "counts": {
+      "PASS": 7,
+      "FAIL": 0,
+      "reusedLocal": 2,
+      "newNetworkChecks": 5
+    }
+  },
+  "externalAcceptance": [
+    {
+      "name": "full-real-Telegram-Desktop-WebView",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "authorized-Telegram-Web",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "physical-Android",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "physical-iPhone",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "second-real-account-and-mobile-networks",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "live-Stars-AdsGram-acceptance",
+      "status": "BLOCKED"
+    },
+    {
+      "name": "installed-VPS-release-acceptance",
+      "status": "BLOCKED"
+    }
+  ],
+  "qaFixes": [
+    "chat Origin equals fixture proxy origin",
+    "UUID v4 idempotency key; malformed key still rejected with HTTP 400",
+    "await lobby transition before accessing board",
+    "observe connected state inside hidden dialog",
+    "catch response and click failures together"
+  ]
 }
