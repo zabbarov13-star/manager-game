@@ -739,5 +739,32 @@
     "secretKeyContentsRead": false,
     "testsRerun": false,
     "buildsRerun": false
+  },
+  "latestSshProfileAttempt": {
+    "observedAt": "2026-11-25T05:16:53.153411+00:00",
+    "profile": "manager-vps",
+    "target": "root@95.181.169.84:22",
+    "identityFile": "~/.ssh/manager_codex",
+    "identityFileExists": true,
+    "identitiesOnly": true,
+    "attempts": 2,
+    "publicKeyOffered": true,
+    "serverAcceptedKey": true,
+    "authenticated": false,
+    "exitCode": 255,
+    "agentStatus": "Stopped",
+    "agentSocketConfigured": false,
+    "agentQueryExit": 2,
+    "passphraseRequirement": "NOT_PROVEN_WITHOUT_READING_KEY",
+    "privateKeyContentsRead": false,
+    "privateKeyCopied": false,
+    "remoteCommandsExecuted": false,
+    "vpsInventory": "BLOCKED",
+    "runtime": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "go": "NO_GO",
+    "productionChanged": false,
+    "clientAgentChanged": false,
+    "testsRerun": false,
+    "buildsRerun": false
   }
 }
