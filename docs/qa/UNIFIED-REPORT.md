@@ -1,5 +1,7 @@
 # Продолжение единого ТЗ: 24 ноября 2026
 
+Заключительный read-only аудит: Prestige и runtime f6c84f2 подтверждены в обоих tar, финальный ZIP/SHA256SUMS совпали; сборки/тесты не повторялись. Исправлены только устаревший счётчик 17→18 и промежуточная ZIP-ссылка. **Peer merge: технический GO; Game merge: NO-GO по полной приёмке; тестовый VPS-выпуск и production: NO-GO** до подтверждения actual env/health OFF, installed code и нового VPS GO. [Доказательное решение и минимальные действия](POST-STAGE1-ACCEPTANCE.md#заключительный-read-only-аудит-перед-выпуском--25-ноября-2026).
+
 ## Актуальный RC и выпуск — 25 ноября
 
 Подготовлен точный runtime-кандидат **f6c84f2** с Prestige UI: новые rooms/adapter-архивы из ранее проверенных ресурсов, без повторной сборки. **7 packaged E2E PASS + 11 synthetic release-tools PASS, 0 FAIL**. Прежние 19 UI PASS и 12 CI относятся к своим SHA/модулям и не объявлены новым CI f6c84f2. Пакет имеет SHA-256 и содержит read-only-by-default сценарий обновления трёх существующих Manager-служб с verified SQLite/WAL backup, isolated restore и code-only rollback. На VPS не применялся. **7 групп внешних BLOCKED** и действия до merge/deployment перечислены в [едином отчёте](POST-STAGE1-ACCEPTANCE.md). PeerServer 5360091 технически готов; реальный release игры пока BLOCKED. Ни production, ни bot polling/webhook, ни деньги не менялись.

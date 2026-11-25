@@ -532,5 +532,47 @@
     "deployment": false,
     "releaseVerdict": "BLOCKED_PENDING_REAL_ACCEPTANCE_AND_NEW_VPS_GO",
     "sqliteHandleClosure": "PASS: source/destination/integrity connections explicitly closed"
+  },
+  "finalReadOnlyAudit": {
+    "observedAt": "2026-11-25T03:06:59.949042+00:00",
+    "reviewedGameHead": "f379d278773afb6cce637c93730dfd50347ea19f",
+    "runtime": "f6c84f2e06e59893202c2702c4cb5f5287509cb7",
+    "peer": "536009173cf47ba47687777548d7dc161d7de30e",
+    "packageAudit": {
+      "packetSha256": "096dbf002f8ee772400e5009c0712374cab96698aba2553e6f9aa16bf1226675",
+      "packetBytes": 44911049,
+      "runtimeCommit": "f6c84f2e06e59893202c2702c4cb5f5287509cb7",
+      "archiveAudit": [
+        {
+          "kind": "rooms",
+          "sha256": "2314c6d9ecd3dc3121437c08e10ef2f92fdc61894e44c8db8aaa696c4271f5fb",
+          "prestigePresent": true,
+          "sourceMatchesRuntimeCommit": true,
+          "fileCount": 31
+        },
+        {
+          "kind": "adapter",
+          "sha256": "ba3d99bb24781f4eb29d3733e10eb3251a647ac83877b786ff3c84b1d6a7d6fe",
+          "prestigePresent": true,
+          "sourceMatchesRuntimeCommit": true,
+          "fileCount": 129
+        }
+      ],
+      "secretsAbsent": true,
+      "backupRollbackStaticReview": "PASS; real VPS execution BLOCKED",
+      "rebuilt": false,
+      "testsRerun": false
+    },
+    "sshAttempts": 0,
+    "vps": "BLOCKED_NO_CONFIRMED_AUTH_METHOD",
+    "currentVpsMonetizationOff": "NOT_CONFIRMED",
+    "peerMerge": "GO_TECHNICAL_REQUIRES_OWNER_PERMISSION",
+    "gameMerge": "NO_GO_PENDING_REAL_ACCEPTANCE_OR_EXPLICIT_REDUCED_SCOPE",
+    "testReleaseOnExistingInfrastructure": "NO_GO_UNVERIFIED_EFFECTIVE_OFF_AND_ISOLATION",
+    "productionRelease": "NO_GO",
+    "changes": "Documentation only: stale count and intermediate packet identity corrected",
+    "testsRerun": false,
+    "buildsRerun": false,
+    "productionChanged": false
   }
 }

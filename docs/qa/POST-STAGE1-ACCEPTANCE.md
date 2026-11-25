@@ -1,5 +1,26 @@
 # Приёмка после Stage 1 — обновлено 25 ноября 2026
 
+## Заключительный read-only аудит перед выпуском — 25 ноября 2026
+
+Проверенный GitHub HEAD игры **f379d278773afb6cce637c93730dfd50347ea19f**, runtime **f6c84f2e06e59893202c2702c4cb5f5287509cb7**; PeerServer **536009173cf47ba47687777548d7dc161d7de30e**. Оба PR OPEN/Draft/MERGEABLE. Peer: оба contract SUCCESS; игра: checks на текущем HEAD отсутствуют, прежние 12 CI не приписаны новому UI. В этом аудите не запускались сборки, CI, unit/E2E или новые приложения.
+
+**Prestige внедрён и входит в f6c84f2:** ui/menu.html, ui/shell.css, ui/shell.js и два embedded shell-блока index.html; сопутствующие ui/tests/browser.cjs, ui/tests/prestige-menu.cjs и QA-артефакты. В обоих tar проверены prestige-scene/play-card-grid/reduced-motion и RELEASE.json f6c84f2. Server/auth/store/catalog/poller/entitlements и room-extension источники соответствуют этому Git-коммиту (нормализованы только CRLF/LF). Старые маршруты действий и guard bridge.hasMatch сохранены; прежние 19 целевых PASS адаптивности/кнопок/reduced motion применимы, повторов нет.
+
+**Пакет цел:** повторная проверка SHA-256 ZIP/sidecar, всех SHA256SUMS и обоих tar совпала; allowlist/members без ссылок/опасных путей, 31 room-файл и 129 adapter-файлов. Release-helper/plan/extractor/runbook в ZIP соответствуют текущим исходникам. Принят только `manager-release-f6c84f2-final.zip` с указанным ниже SHA. Backup/rollback статически сверены; 11 предыдущих синтетических PASS сохранены. Реальный root/systemd recovery не выполнен.
+
+**VPS BLOCKED:** разрешённый рабочий способ доступа не предоставлен; локальный ssh-agent остановлен, подтверждённого ключа/config нет. Новых SSH-попыток — 0. Наличие rooms/adapter/poller известно от владельца, но текущий deployed SHA, active states, 8080/8443/8444, RAM/диск, фактические SQLite/WAL, domain/routes и polling/webhook не установлены этим аудитом. Конфигурации/секреты/содержимое БД VPS не читались. Старые сведения Node 24.22.2 и WAL — историческое сообщение владельца, не текущий PASS. Изменение production PeerServer для UI не требуется; нынешняя установленная ревизия внешнего сигналинга здесь неизвестна.
+
+| Решение | Статус сейчас | Основание / условие пересмотра |
+|---|---|---|
+| Слияние PeerServer №1 | **GO технически, без выполнения merge** | SHA неизменён, два CI SUCCESS, контракт сохранён, конфликтов нет; отдельное разрешение владельца обязательно |
+| Слияние игры №7 по полным критериям приёмки | **NO-GO** | Полная реальная платформенная приёмка не завершена; возможен пересмотр только после её закрытия либо явного согласования владельцем ограниченного scope/остаточных рисков. MERGEABLE не означает release-ready |
+| Тестовый выпуск без монетизации на существующей инфраструктуре | **NO-GO** | OFF предусмотрен кодом и проверен в изолированном fixture, но effective env/health OFF и изоляция текущей VPS-установки не подтверждены. Это конкретный блокирующий риск; ограниченный fixture PASS не назван GO развёртывания |
+| Production-выпуск | **NO-GO** | Нет свежего GO exact f6c84f2 + фактического installed code/config, verified recovery на его копии и решения по внешней приёмке; нет разрешения deployment |
+
+Минимум до выпуска: (1) разрешённый SSH/операторская консоль и приватная инвентаризация трёх units/env/current/ресурсов/SQLite metadata, без вывода секретов/пользовательских строк; (2) закрепить реальные pins и получить изолированный GO обоих exact f6c84f2-архивов, подтвердить Stars/Ads OFF; (3) закрыть реальные платформенные BLOCKED либо письменно принять ограниченный выпуск, отдельно разрешить merge Peer→Game и проверить совпадение merged runtime; (4) в отдельно разрешённое окно выполнить проверенный backup/isolated restore и guarded code-only update, после health — согласованный живой smoke. Без новых условий повторный поиск устройств/аккаунтов и неработающий ввод WebView не выполняются.
+
+В этом продолжении исправлены только две несогласованности документации: 17→18 проверок и устаревшая строка промежуточного ZIP. Runtime, пакет, release-tools, бот, VPS, Caddy/Docker, polling/webhook и данные не изменены.
+
 ## Итог подготовки безопасного выпуска — 25 ноября 2026
 
 При начале продолжения фактический HEAD игры был **f6c84f2e06e59893202c2702c4cb5f5287509cb7**, а не прежний 8707a5f из задания. Оба PR OPEN/Draft/MERGEABLE. У игры на f6c84f2 нет новых GitHub checks (skip ci); предыдущие 12 PASS на a3279b0 не названы CI нового интерфейса. Новый Prestige UI отдельно имеет 19 целевых PASS, его исходники не изменились в этом продолжении. PeerServer остаётся **536009173cf47ba47687777548d7dc161d7de30e**, два существующих contract CI SUCCESS, без повторов.
@@ -12,18 +33,17 @@
 - Новый release-tools QA **11 PASS / 0 FAIL** на синтетических данных: WAL backup/restore без изменения исходного main/WAL, запрет перезаписи restore, отказ повреждённой копии/GO чужого SHA, порядок службы/backup/switch, откат после ошибки кандидата/poller с сохранением новых SQLite-записей, read-only default без lock/write, немедленное закрытие всех SQLite handles, выбор effective EnvironmentFile и отказ неприкреплённой/Unset конфигурации. Реальные Linux/systemd/права/откат на VPS **не выполнялись**.
 - Просмотрены существующие `telegram/qa-poses-0.png`, `-1.png`, `-2.png`: 12 героев × 5 поз, силуэты, костюмы и эмоции различимы; критического обрезания/наложения в этих статических атласах не обнаружено. Это статический художественный review, не повтор 108 событий/48 локальных фаз и не доказательство плавности на физическом телефоне. Меню/поле/камера/застройка опираются на прежние проверенные артефакты и неизменённые соответствующие модули.
 
-Итого **17 новых автоматических PASS / 0 FAIL** (7 packaged + 10 release-tools); прежние 19 Prestige UI и 12 CI сохранены отдельно, без сложения перекрывающихся наборов. Подтверждённых новых дефектов runtime не найдено. Исправления этого продолжения ограничены QA-параметром expected SHA и новым операционным сценарием; setup-проблема Python 3.10 extractall(filter=...) устранена использованием прежнего проверенного Node allowlist-extractor, не ослаблением tar-проверки. Новый сценарий выпуска не запускался на VPS.
+Итого **18 новых автоматических PASS / 0 FAIL** (7 packaged + 11 release-tools); прежние 19 Prestige UI и 12 CI сохранены отдельно, без сложения перекрывающихся наборов. Подтверждённых новых дефектов runtime не найдено. Исправления этого продолжения ограничены QA-параметром expected SHA и новым операционным сценарием; setup-проблема Python 3.10 extractall(filter=...) устранена использованием прежнего проверенного Node allowlist-extractor, не ослаблением tar-проверки. Новый сценарий выпуска не запускался на VPS.
 
 ### Готовый пакет
 
-Локальный `release-output/release-f6c84f2/manager-release-f6c84f2.zip`, **44,911,049 байт**; SHA-256 **048970d82bf7130aebe759ec6ba90f00db698bc195de779e985532f5a4c2e430**. Рядом `.sha256`; внутри `SHA256SUMS`, `shared-release.json`, `release-candidate.json`, два runtime-архива, release-update.py, allowlist-extractor, непригодный к apply шаблон приватного плана и актуальная SHARED-DEPLOYMENT.md. Секретов, реальных БД, токенов, actual unit/env нет.
+Единственный принятый пакет: `release-output/release-f6c84f2/manager-release-f6c84f2-final.zip`, **44,911,049 байт**, SHA-256 **096dbf002f8ee772400e5009c0712374cab96698aba2553e6f9aa16bf1226675**. Рядом внешний `.sha256`; внутри SHA256SUMS, shared-release.json, release-candidate.json, оба runtime, release-update.py, allowlist-extractor, fail-closed шаблон приватного плана и инструкция. Промежуточный ZIP без `-final` не использовать. Секретов/реальных БД/actual unit/env в пакете нет.
 
 - rooms SHA-256: `2314c6d9ecd3dc3121437c08e10ef2f92fdc61894e44c8db8aaa696c4271f5fb`.
 - adapter SHA-256: `ba3d99bb24781f4eb29d3733e10eb3251a647ac83877b786ff3c84b1d6a7d6fe`.
 
 Runtime — Node >=24.22.1 <25 с node:sqlite, без npm production install. Операторский сценарий требует существующий Debian/systemd, Python >=3.10 stdlib sqlite3, GNU tar, fuser и Linux fcntl. Не устанавливает Docker/Caddy/Node глобально. Подробный порядок и границы отката — [SHARED-DEPLOYMENT.md](../../telegram/deploy/SHARED-DEPLOYMENT.md), новый раздел от 25 ноября.
 
-Финальный локальный пакет: `release-output/release-f6c84f2/manager-release-f6c84f2-final.zip`, 44,911,049 байт, SHA-256 `096dbf002f8ee772400e5009c0712374cab96698aba2553e6f9aa16bf1226675`; рядом внешний `.sha256`, внутри SHA256SUMS, два runtime tar, manifest/dependencies, fail-closed updater и runbook. Секретов/БД нет. Предыдущий промежуточный ZIP не является кандидатом; использовать только этот `-final.zip`.
 
 ### Внешние BLOCKED (7 групп)
 
