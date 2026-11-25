@@ -70,14 +70,29 @@ async function purchase(product){if(!account.features.stars)throw Error('Маг�
  if(result==='paid'||result==='pending'){status('Ожидаем серверное подтверждение оплаты…');for(let i=0;i<15;i++){await new Promise(r=>setTimeout(r,1200));sync(await api('profile'));if(info.items.every(id=>access(id).permanent))break;}}
  else{await api('invoice/cancel',{orderId});status(result==='cancelled'?'Оплата отменена.':'Оплата не завершена.');}render();
 }
-async function watch(item){if(!account.features.ads)throw Error('Рекламные награды ещё не подключены.');const intent=await api('ads/begin',{item});let watched=false;
- try{if(!window.Adsgram)await new Promise((resolve,reject)=>{const script=node('script');script.src='https://sad.adsgram.ai/js/sad.min.js';script.onload=resolve;script.onerror=()=>reject(Error('Не удалось загрузить рекламу.'));document.head.append(script);});
+async function loadRewardSdk(){
+ if(typeof window.Adsgram?.init==='function')return;
+ await new Promise((resolve,reject)=>{
+  const script=node('script');let settled=false;
+  const finish=error=>{if(settled)return;settled=true;clearTimeout(timer);script.onload=script.onerror=null;if(error){script.remove();reject(error);}else resolve();};
+  const timer=setTimeout(()=>finish(Error('Не удалось загрузить рекламу вовремя. Повторите попытку.')),20000);
+  script.src='https://sad.adsgram.ai/js/sad.min.js';
+  script.onload=()=>finish(typeof window.Adsgram?.init==='function'?null:Error('Рекламный SDK недоступен.'));
+  script.onerror=()=>finish(Error('Не удалось загрузить рекламу.'));
+  document.head.append(script);
+ });
+}
+async function watch(item){if(!account.features.ads)throw Error('Рекламные награды ещё не подключены.');
+ // refresh() may receive the verified grant while the video is still playing.
+ const previous=access(item).expires??0,intent=await api('ads/begin',{item});let watched=false;
+ try{await loadRewardSdk();
   controller??=window.Adsgram.init({blockId:account.features.blockId});const result=await controller.show();if(!result?.done||result.error)throw Error('Просмотр рекламы не завершён. Награда не выдана.');watched=true;
-  status('Проверяем просмотр на сервере…');const old=access(item).expires;
-  for(let i=0;i<30;i++){await new Promise(r=>setTimeout(r,1500));sync(await api('profile'));if(access(item).expires!==old||access(item).permanent){render();status('Награда подтверждена.');return;}}
+  status('Проверяем просмотр на сервере…');
+  for(let i=0;i<30;i++){await new Promise(r=>setTimeout(r,1500));sync(await api('profile'));const current=access(item);if(current.permanent||(current.expires>previous&&current.expires>now())){render();status('Доступ подтверждён сервером.');return;}}
   throw Error('Подтверждение ещё не получено. Награда появится после проверки сервером.');
  }catch(e){if(!watched)await api('ads/cancel',{id:intent.id}).catch(()=>{});throw e;}
 }
+
 function open(value='characters'){detailId=null;tab=value;render();dialog.showModal();tg.BackButton?.show();refresh();}
 function attach(value){bridge=value;bridge.settings.uiTheme=account.profile.style;
  dialog=node('dialog',null,'tg-dialog');dialog.setAttribute('aria-label','Персонажи, награды и магазин');const head=node('header'),title=node('h2','Коллекция «Менеджера»');head.append(title,button('Закрыть',()=>dialog.close()));
