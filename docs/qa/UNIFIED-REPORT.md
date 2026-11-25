@@ -1,5 +1,8 @@
 # Продолжение единого ТЗ: 24 ноября 2026
 
+Актуальное дополнение от 25 ноября: **Manager Prestige Edition**, только два меню и шапка. **19 целевых PASS / 0 FAIL** (10 визуальных + 6 Web/Telegram-fixture + 3 presentation). Старые 12 CI относятся к прежнему исполняемому коду, не повторялись и не выдаются за CI нового UI. [Оформление, скриншоты и границы проверки](POST-STAGE1-ACCEPTANCE.md#актуальное-изменение-manager-prestige-edition). Игровые блоки исходного HTML вне shell-представления идентичны прежним. Реальные устройства и новый Telegram WebView BLOCKED.
+
+
 PR игры: [№7](https://github.com/zabbarov13-star/manager-game/pull/7), существующая ветка `feature/all-platform-ui-stage1`.
 Сигналинг: [отдельный PR второго репозитория №1](https://github.com/zabbarov13-star/manager-peer-server/pull/1).
 Слияния, обновления VPS, реальные платежи и изменения Caddy/Docker не выполнялись.

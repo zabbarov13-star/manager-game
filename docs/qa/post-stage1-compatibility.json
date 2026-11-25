@@ -167,5 +167,239 @@
     "await lobby transition before accessing board",
     "observe connected state inside hidden dialog",
     "catch response and click failures together"
-  ]
+  ],
+  "prestigeMenu": {
+    "observedAt": "2026-11-25T00:06:30.804817+00:00",
+    "baseCommit": "8707a5fbadcb3abef0c066243c788dfe1dec2ecd",
+    "scope": "Shared main menu + play menu + menu header only",
+    "visual": {
+      "scope": "Chromium viewport simulation, not physical Telegram",
+      "results": [
+        {
+          "screen": "home",
+          "width": 320,
+          "height": 568,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "play",
+          "width": 320,
+          "height": 568,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "home",
+          "width": 390,
+          "height": 844,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "play",
+          "width": 390,
+          "height": 844,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "home",
+          "width": 430,
+          "height": 932,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "play",
+          "width": 430,
+          "height": 932,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "home",
+          "width": 768,
+          "height": 1024,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "play",
+          "width": 768,
+          "height": 1024,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "home",
+          "width": 1440,
+          "height": 1000,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        },
+        {
+          "screen": "play",
+          "width": 1440,
+          "height": 1000,
+          "status": "PASS",
+          "buttons": 8,
+          "safeAreaSimulation": true,
+          "reducedMotion": true
+        }
+      ],
+      "errors": []
+    },
+    "browserRegression": [
+      {
+        "edition": "web",
+        "device": "desktop",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 344.7000000476837,
+          "domMs": 170.60000002384186,
+          "bytes": 5334255
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      },
+      {
+        "edition": "web",
+        "device": "android-emulated",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 317.0999999642372,
+          "domMs": 168,
+          "bytes": 5334255
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      },
+      {
+        "edition": "web",
+        "device": "ios-viewport",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 316.7000000476837,
+          "domMs": 162.60000002384186,
+          "bytes": 5334255
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      },
+      {
+        "edition": "telegram-fixture",
+        "device": "desktop",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 235,
+          "domMs": 114.40000003576279,
+          "bytes": 1904450
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      },
+      {
+        "edition": "telegram-fixture",
+        "device": "android-emulated",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 205.5,
+          "domMs": 94.19999998807907,
+          "bytes": 1904450
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      },
+      {
+        "edition": "telegram-fixture",
+        "device": "ios-viewport",
+        "status": "PASS",
+        "timing": {
+          "interactiveMs": 306,
+          "domMs": 32.59999996423721,
+          "bytes": 5443126
+        },
+        "zoom": [
+          50,
+          75,
+          100,
+          150,
+          200,
+          250
+        ],
+        "savedMatchRestored": true
+      }
+    ],
+    "presentationTests": {
+      "PASS": 3,
+      "FAIL": 0
+    },
+    "counts": {
+      "PASS": 19,
+      "FAIL": 0
+    },
+    "engineOutsideShellBlocksUnchanged": true,
+    "gamePresentationHelpersUnchanged": true,
+    "newDependencies": false,
+    "newCanvasLoops": false,
+    "physicalDevices": "BLOCKED",
+    "realTelegramNewUi": "BLOCKED",
+    "priorCiReusedOnlyForUnchangedModules": true,
+    "productionChanged": false,
+    "peerServerChanged": false
+  }
 }

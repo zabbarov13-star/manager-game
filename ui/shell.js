@@ -7,8 +7,8 @@ const shell=window.ManagerShell={
   if(window.ManagerAndroid||window.ManagerNative)document.querySelectorAll('.menu-game-card').forEach(a=>a.target='_self');
   document.addEventListener('click',e=>{const b=e.target.closest('[data-menu]');if(b){e.preventDefault();action(b.dataset.menu);}});
  },
- mount(value){document.body.prepend(document.querySelector('.topbar'));bridge=value;tradeMenu=$('trade-menu');document.body.classList.add('modern-ui');try{const value=JSON.parse(bridge.storage?.getItem('manager.camera.v1'));if(value&&Number.isFinite(value.zoom)&&value.zoom>=.5&&value.zoom<=2.5&&['left','top'].every(k=>Number.isFinite(value[k])&&value[k]>=0))savedCamera=value;}catch{}window.addEventListener('pagehide',saveCamera);const menu=document.createElement('button');menu.type='button';menu.className='icon-button menu-open';menu.dataset.menu='home';menu.textContent='Меню';document.querySelector('.header-actions').prepend(menu);
-  $('rules-open').textContent='▤';$('rules-open').setAttribute('aria-label','Все правила игры');
+ mount(value){document.body.prepend(document.querySelector('.topbar'));bridge=value;tradeMenu=$('trade-menu');document.body.classList.add('modern-ui');try{const value=JSON.parse(bridge.storage?.getItem('manager.camera.v1'));if(value&&Number.isFinite(value.zoom)&&value.zoom>=.5&&value.zoom<=2.5&&['left','top'].every(k=>Number.isFinite(value[k])&&value[k]>=0))savedCamera=value;}catch{}window.addEventListener('pagehide',saveCamera);const menu=document.createElement('button');menu.type='button';menu.className='icon-button menu-open';menu.dataset.menu='home';menu.innerHTML='<svg aria-hidden="true"><use href="#prestige-menu"/></svg>';menu.setAttribute('aria-label','Главное меню');document.querySelector('.header-actions').prepend(menu);
+  $('settings-open').innerHTML='<svg aria-hidden="true"><use href="#prestige-settings"/></svg>';$('rules-open').innerHTML='<svg aria-hidden="true"><use href="#prestige-rules"/></svg>';$('rules-open').setAttribute('aria-label','Все правила игры');
   const tab=document.createElement('button');Object.assign(tab,{id:'tab-game',type:'button',textContent:'Игра'});tab.dataset.tab='game';tab.setAttribute('role','tab');tab.setAttribute('aria-controls','panel-game');tab.setAttribute('aria-selected','false');tab.onclick=()=>bridge.showTab('game');
   const panel=document.createElement('div');panel.id='panel-game';panel.hidden=true;panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-game');document.querySelector('.tabs').prepend(tab);$('panel-cell').before(panel);panel.append(document.querySelector('.turn-panel'));
   $('roll-button').append($('roll-button-label'));$('board-stage').append($('roll-button'));document.querySelector('.turn-tools').hidden=true;
@@ -35,12 +35,12 @@ const shell=window.ManagerShell={
  refresh
 };
 function restLabel(){const inner=document.querySelector('.tile[data-id="20"] .tile-content');if(!inner)return;const ns='http://www.w3.org/2000/svg',g=document.createElementNS(ns,'g'),bg=document.createElementNS(ns,'rect'),text=document.createElementNS(ns,'text');g.setAttribute('pointer-events','none');for(const [k,v]of Object.entries({x:18,y:106,width:104,height:22,rx:5,fill:'#fff7db',stroke:'#18384b'}))bg.setAttribute(k,v);for(const [k,v]of Object.entries({x:70,y:122,'text-anchor':'middle','font-family':'Arial,sans-serif','font-size':15,'font-weight':700,fill:'#17384b'}))text.setAttribute(k,v);text.textContent='ОТДЫХ';g.append(bg,text);inner.append(g);}
-function refresh(){const b=document.querySelector('[data-menu=continue]');if(b)b.hidden=!bridge?.hasMatch();}
+function refresh(){const b=document.querySelector('[data-menu=continue]');if(b){const available=!!bridge?.hasMatch();b.hidden=false;b.disabled=!available;b.querySelector('small').textContent=available?'Вернитесь к сохранённой партии':'Сохранённой партии пока нет';b.querySelector('.save-marker').hidden=!available;}}
 function saveCamera(){if(!bridge||shell.inMenu)return;try{bridge.storage?.setItem('manager.camera.v1',JSON.stringify(bridge.camera.snapshot()));}catch{}}
-function home(){saveCamera();document.body.dataset.screen='menu';document.querySelector('.menu-actions').hidden=false;$('menu-play-options').hidden=true;refresh();document.querySelector('[data-menu=play]')?.focus();}
+function home(){saveCamera();document.body.dataset.screen='menu';document.querySelector('.menu-actions').hidden=false;$('menu-play-options').hidden=true;$('main-menu').dataset.view='home';refresh();document.querySelector('[data-menu=play]')?.focus();}
 function action(id){
- if(id==='play'){document.querySelector('.menu-actions').hidden=true;$('menu-play-options').hidden=false;refresh();document.querySelector('[data-menu=new]').focus();return;}
- if(id==='back'){document.querySelector('.menu-actions').hidden=false;$('menu-play-options').hidden=true;return;}
+ if(id==='play'){document.querySelector('.menu-actions').hidden=true;$('menu-play-options').hidden=false;$('main-menu').dataset.view='play';refresh();document.querySelector('[data-menu=new]').focus();return;}
+ if(id==='back'){document.querySelector('.menu-actions').hidden=false;$('menu-play-options').hidden=true;$('main-menu').dataset.view='home';return;}
  if(id==='home'){home();return;}
  if(!bridge){pending=id;$('menu-status').textContent='Подготавливаем игру и проверяем доступ. Раздел откроется автоматически.';return;}
  if(id==='continue'){if(bridge.hasMatch()){shell.enterGame();bridge.showTab('game');}return;}
