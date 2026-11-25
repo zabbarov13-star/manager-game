@@ -61,7 +61,8 @@ class Store{
    if(typeof value!=='string'||!this.access(user,`${field}:${value}`).available)fail('Предмет недоступен.',403);
    this.db.prepare(`UPDATE profiles SET ${field}=? WHERE user=?`).run(value,user);
   }return this.profile(user);});}
- beginAd(user,item){return this.tx(()=>{const now=this.now(),known=catalog.items.find(i=>i.id===item);
+ beginAd(user,item){return this.tx(()=>this.beginAdInTransaction(user,item));}
+ beginAdInTransaction(user,item){const now=this.now(),known=catalog.items.find(i=>i.id===item);
   if(!known||known.free||this.access(user,item).permanent)fail('Награда не требует рекламы.');
   const status=this.profile(user);if(status.ads.remaining<=0)fail('Сегодня все три награды получены.');
   if(this.access(user,item).expires>=now+3*DAY)fail('Уже накоплены 72 часа.');
@@ -69,20 +70,21 @@ class Store{
   if(this.db.prepare("SELECT id FROM ads WHERE user=? AND status='pending'").get(user))fail('Завершите предыдущий просмотр.');
   const id=randomUUID();this.db.prepare("INSERT INTO ads(id,user,item,created,expires,status) VALUES(?,?,?,?,?,'pending')").run(id,user,item,now,now+15*60000);
   return {id,item,expires:now+15*60000};
- });}
+ }
  cancelAd(user,id){this.db.prepare("UPDATE ads SET status='cancelled' WHERE user=? AND id=? AND status='pending'").run(user,id);}
- reward({receiptId,intentId,userId,itemId,completedAt}){return this.tx(()=>{
+ reward(receipt){return this.tx(()=>this.rewardInTransaction(receipt));}
+ rewardInTransaction({receiptId,intentId,userId,itemId,completedAt},allowDelayed=false){
   const now=this.now();if(typeof receiptId!=='string'||receiptId.length<8||receiptId.length>200)fail('Неверный receipt.',400);
   if(this.db.prepare('SELECT id FROM receipts WHERE id=?').get(receiptId))return {duplicate:true};
   const ad=this.db.prepare('SELECT * FROM ads WHERE id=? AND user=? AND item=?').get(intentId,String(userId),itemId);
-  if(!ad||ad.status!=='pending'||ad.expires<=now||!Number.isSafeInteger(completedAt)||completedAt<ad.created||completedAt>now+30000)fail('Нет действующего подтверждённого просмотра.');
+  if(!ad||!(allowDelayed?['pending','expired'].includes(ad.status):ad.status==='pending')||(!allowDelayed&&ad.expires<=now)||!Number.isSafeInteger(completedAt)||completedAt<ad.created||completedAt>now+30000||(allowDelayed&&completedAt>=ad.expires))fail('Нет действующего подтверждённого просмотра.');
   if(this.profile(ad.user).ads.remaining<=0||this.access(ad.user,ad.item).permanent)fail('Награда уже недоступна.');
   const old=this.access(ad.user,ad.item).expires??0,expires=Math.max(old,Math.min(Math.max(now,old)+DAY,now+3*DAY));
   this.db.prepare('INSERT INTO receipts VALUES(?,?,?)').run(receiptId,now,JSON.stringify({intentId,userId,itemId,completedAt}));
   this.db.prepare("INSERT INTO grants(user,item,source,expires) VALUES(?,?,'ads',?) ON CONFLICT(user,item,source) DO UPDATE SET expires=excluded.expires,revoked=0").run(ad.user,ad.item,expires);
   this.db.prepare("UPDATE ads SET status='issued',receipt=?,day=?,issued=? WHERE id=?").run(receiptId,dayKey(now),now,ad.id);
   return {expires};
- });}
+ }
  order(user,productId){return this.tx(()=>{const product=catalog.products.find(p=>p.id===productId);if(!product)fail('Товар не найден.',404);
   const overlap=product.items.filter(item=>this.access(user,item).permanent);if(overlap.length)fail('Часть набора уже куплена: '+overlap.join(', '));
   const now=this.now();const pending=this.db.prepare("SELECT items FROM orders WHERE user=? AND status IN ('created','checkout') AND created>?").all(user,now-30*60000);

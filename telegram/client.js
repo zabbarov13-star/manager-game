@@ -25,7 +25,7 @@ async function select(field,id){await updateProfile({[field]:id});render();statu
 function picture(c,details=false){const box=node('div',null,'tg-portrait');if(c.free){renderingFree=true;try{box.innerHTML=bridge.avatarSVG(c.id);}finally{renderingFree=false;}}else{const img=node('img');img.src=details?c.portraitLarge:c.portrait;img.alt=c.name;img.loading='lazy';box.append(img);}return box;}
 function actions(item,host){const owned=canUse(item.id),a=access(item.id);host.append(node('p',remaining(item.id),'tg-access'));
  if(owned){const field=item.id.split(':')[0],id=item.id.split(':')[1];host.append(button('Выбрать',()=>select(field,id)));}
- if(!a.permanent&&!item.free){const ad=button(owned?'Смотреть рекламу · ещё 24 часа':'Смотреть рекламу · 24 часа',()=>watch(item.id));ad.disabled=!account.features.ads||account.ads.remaining===0||a.expires>=now()+72*3600000;host.append(ad);
+ if(!a.permanent&&!item.free){const ad=button(owned?'Смотреть рекламу · ещё 24 часа':'Смотреть рекламу · 24 часа',()=>watch(item.id));ad.disabled=!(account.features.ads||account.features.liteBits)||account.ads.remaining===0||a.expires>=now()+72*3600000;host.append(ad);
   if(item.price&&account.features.stars){const buy=button('Навсегда · '+money(item.price),()=>purchase(item.id));buy.disabled=!account.features.stars;host.append(buy);}}
 }
 function characterCard(c,details=false){const card=node('article',null,'tg-card');card.append(picture(c,details),node('small',c.collection),node('h3',c.name),node('p',c.role));
@@ -47,7 +47,7 @@ function render(){if(!bridge||!dialog)return;if(detailId&&tab==='characters'){re
  if(account.role==='owner')header.append(node('strong','Все косметические товары доступны владельцу бесплатно','tg-owner-note'));else header.append(node('strong',`Доступно просмотров: ${account.ads.remaining} из 3`),node('span',`Обновление через ${h} ч ${m} мин · 00:00 МСК`));host.append(header);
  if(!account.features.stars)host.append(node('p','Покупки Stars пока недоступны: ожидается настройка магазина.','tg-note'));
  if(account.features.supportContact)host.append(node('p','Поддержка покупок: '+account.features.supportContact,'tg-note'));
- if(!account.features.ads)host.append(node('p','Рекламные награды пока недоступны: ожидается подключение серверного подтверждения AdsGram.','tg-note'));
+ if(!account.features.ads&&!account.features.liteBits)host.append(node('p','Рекламные награды пока недоступны: настройки или серверное подтверждение провайдера не готовы.','tg-note'));
  if(account.ads.remaining===0)host.append(node('p','Сегодня все рекламные награды получены. Новые просмотры будут доступны завтра в 00:00 МСК.'));
  host.append(node('p','Косметика не влияет на кубики, очки и правила.','tg-note'));
  const grid=node('div',null,'tg-grid');host.append(grid);
@@ -82,7 +82,7 @@ async function loadRewardSdk(){
   document.head.append(script);
  });
 }
-async function watch(item){if(!account.features.ads)throw Error('Рекламные награды ещё не подключены.');
+async function watch(item){if(account.features.liteBits)return window.ManagerLiteBits.watch(item,{enabled:true,api,status,confirmed:async()=>{sync(await api('profile'));render();}});if(!account.features.ads)throw Error('Рекламные награды ещё не подключены.');
  // refresh() may receive the verified grant while the video is still playing.
  const previous=access(item).expires??0,intent=await api('ads/begin',{item});let watched=false;
  try{await loadRewardSdk();

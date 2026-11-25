@@ -99,3 +99,8 @@ node telegram/backup-set.cjs restore /PRIVATE/BACKUPS/snapshot-XXXX /PRIVATE/NEW
 ### AdsGram: независимые форматы (PR9)
 
 По умолчанию `STARS_ENABLED=0`, `ADS_VERIFIED_GATEWAY_ENABLED=0`, `ADSGRAM_INTERSTITIAL_ENABLED=0`, `ADSGRAM_INTERSTITIAL_BLOCK_ID=`. Reward `1788` не подходит для Interstitial. Отдельный Interstitial допускает только `int-…`, живой конец партии, одноразовую попытку и локальный cooldown 15 минут. Нет Web Locks/storage — нет показа. Серверная выдача Reward в adapter закрыта до официального доверенного контракта AdsGram. Включение/отключение и ограничения открытых сессий: [ADSGRAM-INTEGRATION.md](ADSGRAM-INTEGRATION.md#финальная-схема-reward--interstitial-25112026). Для остановки рекламных показов выключить оба рекламных флага с отдельным разрешением, переоткрыть Mini App; Stars оставить OFF. SQLite и финансовую историю при откате не заменять.
+
+
+### LiteBits: готовить отдельно, по умолчанию OFF
+
+Текущая схема и блокеры: [раздел LiteBits](ADSGRAM-INTEGRATION.md#актуальная-интеграция-litebits-25112026-pr9). Требуются оба флага `LITEBITS_ENABLED`/`LITEBITS_REWARDS_ENABLED`, publisher API key и отдельный callback secret, правильные Bot/Placement. Stars/AdsGram должны оставаться OFF. При отключении LiteBits callback возвращает 503, наград нет; учесть повторную доставку и сверку отложенных событий. Нужны реальная тестовая приёмка провайдера, backup и отдельное разрешение до production. Добавочные таблицы совместимы с прежним кодом; откат не удаляет их и не заменяет актуальные базы. Издательский API key передаётся только авторизованному клиенту для SDK; callback secret остаётся на сервере. Публичные архивы проверяются также на утечку обоих LiteBits-параметров.

@@ -46,9 +46,9 @@ const scripts=[];html=html.replace(/<script>([\s\S]*?)<\/script>/g,(_,code)=>{sc
 // Diagnostics is a separate script and remains available, behind the original interface.
 html=html.replace(/<script id="manager-p2p-diagnostics">([\s\S]*?)<\/script>/g,(_,code)=>{scripts.push(code);return '';});
 fs.writeFileSync(path.join(out,'game.js'),scripts.join('\n'));
-replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/animation-core.js"></script><script src="/animation-renderer.js"></script><script src="/animation-controller.js"></script><script src="/interstitial.js"></script><script src="/client.js"></script></body>');
+replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/animation-core.js"></script><script src="/animation-renderer.js"></script><script src="/animation-controller.js"></script><script src="/interstitial.js"></script><script src="/litebits-client.js"></script><script src="/client.js"></script></body>');
 fs.writeFileSync(path.join(out,'index.html'),html);
-for(const name of ['client.js','interstitial.js','telegram.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
+for(const name of ['client.js','interstitial.js','litebits-client.js','telegram.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
 fs.writeFileSync(path.join(out,'animation-core.js'),animations.bundle());
 fs.copyFileSync(path.join(__dirname,'animation/renderer.js'),path.join(out,'animation-renderer.js'));
 fs.copyFileSync(path.join(__dirname,'animation/controller.js'),path.join(out,'animation-controller.js'));

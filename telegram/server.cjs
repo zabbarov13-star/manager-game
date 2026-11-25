@@ -8,6 +8,7 @@ const {Store}=require('./store.cjs');
 const {validateInitData,equal}=require('./auth.cjs');
 const catalog=require('./catalog.cjs');
 const {environment,createBotApi}=require('./bot-api.cjs');
+const LiteBits=require('./litebits.cjs');
 function createApp(config={}){
  const modeKind=config.mode??process.env.TELEGRAM_MODE??'standalone';if(!['adapter','standalone'].includes(modeKind))throw Error('Invalid TELEGRAM_MODE.');
  const mode=environment(config.environment),support=config.supportContact??process.env.SUPPORT_CONTACT??'',starsEnabled=config.starsEnabled??process.env.STARS_ENABLED==='1';
@@ -31,15 +32,20 @@ function createApp(config={}){
  const verifier=modeKind==='adapter'?require('./shared/verification.cjs').createVerificationServer(store,config.rpcSecret??process.env.COSMETIC_RPC_SECRET):null;
  const root=config.dist??resolve(__dirname,'dist');
  const bot=config.bot??createBotApi(token,{mode}),starsReady=!!(starsEnabled&&support.trim());
+ const liteBitsKey=config.liteBitsApiKey??process.env.LITEBITS_API_KEY??'',liteBitsSecret=config.liteBitsCallbackSecret??process.env.LITEBITS_CALLBACK_SECRET??'';
+ const liteBitsPlacement=config.liteBitsPlacementId??process.env.LITEBITS_PLACEMENT_ID??LiteBits.PLACEMENT;
+ const liteBitsReady=!!((config.liteBitsEnabled??process.env.LITEBITS_ENABLED==='1')&&(config.liteBitsRewardsEnabled??process.env.LITEBITS_REWARDS_ENABLED==='1')&&liteBitsKey&&liteBitsSecret.length>=32&&liteBitsPlacement===LiteBits.PLACEMENT&&token.split(':')[0]===LiteBits.BOT_ID&&!starsEnabled&&!gatewayEnabled&&!interstitialReady);
+ const liteBits=liteBitsReady?LiteBits.create(store,{secret:liteBitsSecret,placement:liteBitsPlacement}):null;
+
  const send=(res,status,value)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));};
- const body=async req=>{let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>65536)throw Object.assign(Error('Слишком большой запрос.'),{status:413});chunks.push(chunk);}return Buffer.concat(chunks).toString('utf8');};
+ const body=async(req,raw=false)=>{let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>65536)throw Object.assign(Error('Слишком большой запрос.'),{status:413});chunks.push(chunk);}return raw?Buffer.concat(chunks):Buffer.concat(chunks).toString('utf8');};
  const server=createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const url=new URL(req.url,'http://localhost');
   try{
    if(/^\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||/^\/api\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||modeKind==='adapter'&&url.pathname==='/ads/verified-receipt')return send(res,404,{error:'Не найдено.'});
-   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady,interstitialConfigured:interstitialReady});
+   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady,interstitialConfigured:interstitialReady,liteBitsConfigured:liteBitsReady});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);
    // Image/pose downloads must not exhaust the mutation/API request budget.
@@ -76,6 +82,10 @@ function createApp(config={}){
     if(msg?.refunded_payment)store.refunded(String(msg.from.id),msg.refunded_payment);
     store.db.prepare('INSERT OR IGNORE INTO updates VALUES(?,?)').run(update.update_id,now);return send(res,200,{ok:true});
    }
+   if(url.pathname==='/ads/litebits/callback'&&req.method==='POST'){
+    if(!liteBits)return send(res,503,{error:'LiteBits is disabled.'});
+    return send(res,200,liteBits.callback(await body(req,true),req.headers));
+   }
    // This is an INTERNAL authenticated receipt-gateway contract, not a native AdsGram signature.
    // Native Reward URL only supplies userId and cannot prove a unique event. Never grant from it.
    if(url.pathname==='/ads/verified-receipt'&&req.method==='POST'){
@@ -91,7 +101,7 @@ function createApp(config={}){
      for(const [key,value]of sessions)if(value.expires<now)sessions.delete(key);
      if(sessions.size>=10000)return send(res,503,{error:'Сервер занят.'});
      const session=randomBytes(32).toString('hex');sessions.set(session,{user:user.id,expires:now+12*3600000});
-     const profile=store.profile(user.id);return send(res,200,{token:session,user,...profile,cosmeticTicket:store.cosmeticTicket(user.id),catalog,features:{ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,interstitial:interstitialReady,interstitialBlockId:interstitialReady?interstitialBlockId:null,stars:starsReady,supportContact:support,environment:mode}});
+     const profile=store.profile(user.id);return send(res,200,{token:session,user,...profile,cosmeticTicket:store.cosmeticTicket(user.id),catalog,features:{liteBits:liteBitsReady,liteBitsPlacementId:liteBitsReady?liteBitsPlacement:null,ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,interstitial:interstitialReady,interstitialBlockId:interstitialReady?interstitialBlockId:null,stars:starsReady,supportContact:support,environment:mode}});
     }
     const session=sessions.get((req.headers.authorization??'').replace(/^Bearer /,''));
     if(!session||session.expires<=now)return send(res,401,{error:'Откройте приложение заново в Telegram.'});
@@ -99,6 +109,18 @@ function createApp(config={}){
     if(url.pathname==='/api/profile'&&req.method==='GET')return send(res,200,{...store.profile(user),cosmeticTicket:store.cosmeticTicket(user)});
     const data=req.method==='POST'?JSON.parse(await body(req)):{};
     if(url.pathname==='/api/profile'&&req.method==='POST')return send(res,200,{...store.select(user,data),cosmeticTicket:store.cosmeticTicket(user)});
+    if(url.pathname==='/api/litebits/config'&&req.method==='POST'){
+     if(!liteBits)return send(res,503,{error:'LiteBits is disabled.'});
+     return send(res,200,{apiKey:liteBitsKey,placementId:liteBitsPlacement,baseUrl:'https://ads.litebits.io'});
+    }
+    if(url.pathname==='/api/litebits/begin'&&req.method==='POST'){
+     if(!liteBits)return send(res,503,{error:'LiteBits is disabled.'});
+     return send(res,200,liteBits.begin(user,data.item));
+    }
+    if(url.pathname==='/api/litebits/status'&&req.method==='POST'){
+     const intent=store.db.prepare('SELECT status FROM ads WHERE id=? AND user=?').get(typeof data.id==='string'?data.id:'',String(user));
+     return intent?send(res,200,{status:intent.status}):send(res,404,{error:'Намерение не найдено.'});
+    }
     if(url.pathname==='/api/ads/begin'&&req.method==='POST'){
      if(!gatewayEnabled||!blockId)return send(res,503,{error:'Серверное подтверждение AdsGram ещё не подключено.'});
      return send(res,200,store.beginAd(user,data.item));

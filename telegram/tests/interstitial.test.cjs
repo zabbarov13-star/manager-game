@@ -44,7 +44,7 @@ test('build hooks exist exactly once in original UI and bundle the independent c
  const build=fs.readFileSync(path.join(__dirname,'../build.cjs'),'utf8'),html=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');
  for(const anchor of ["if(method==='endTurn')camera?.finish();","if(previousTurn!==s.turn)camera?.finish();"]){assert.equal(html.split(anchor).length-1,1);assert(build.includes(anchor));}
  assert(build.includes('if(!onlineQueue.length)window.ManagerTelegram.adsComplete(s)'));
- assert(build.includes("['client.js','interstitial.js','telegram.css']"));assert(build.includes('src="/interstitial.js"'));
+ assert(build.includes("['client.js','interstitial.js','litebits-client.js','telegram.css']"));assert(build.includes('src="/interstitial.js"'));
  for(const file of ['client.js','interstitial.js','build.cjs','server.cjs'])assert(!/monetag|onclckvd|otieu/i.test(fs.readFileSync(path.join(__dirname,'..',file),'utf8')));
 });
 
