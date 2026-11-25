@@ -26,7 +26,11 @@ public final class MainActivity extends Activity {
   settings.setMediaPlaybackRequiresUserGesture(true);settings.setSupportMultipleWindows(false);settings.setTextZoom(100);
   web.addJavascriptInterface(new Bridge(),"ManagerAndroid");
   web.setWebViewClient(new WebViewClient(){
-   @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){return !local(request.getUrl());}
+   @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
+    String external=request.getUrl().toString();
+    if(request.isForMainFrame()&&request.hasGesture()&&("https://github.com/zabbarov13-star/smaylokrut-v2.19".equals(external)||"https://github.com/zabbarov13-star/cat-and-differences".equals(external))){try{startActivity(new Intent(Intent.ACTION_VIEW,request.getUrl()));}catch(RuntimeException e){toast("Браузер недоступен");}return true;}
+    return !local(request.getUrl());
+   }
    @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request){
     Uri u=request.getUrl();
     if (trusted(u) && "GET".equals(request.getMethod())) {
@@ -48,7 +52,7 @@ public final class MainActivity extends Activity {
     return null; // HTTPS room requests use the same origin as the bundled page.
 
    }
-   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'));console.log('MANAGER_READY '+JSON.stringify({secure:isSecureContext,title:document.title,buttons:document.querySelectorAll('button').length,rtc:typeof RTCPeerConnection,native:!!window.ManagerNative}))",null);}
+   @Override public void onPageFinished(WebView view,String url){if(local(Uri.parse(url)))web.evaluateJavascript("window.dispatchEvent(new Event('resize'));console.log('MANAGER_READY '+JSON.stringify({secure:isSecureContext,title:document.title,buttons:document.querySelectorAll('button').length,rtc:typeof RTCPeerConnection,native:!!window.ManagerAndroid,menu:!!document.querySelector('#main-menu'),screen:document.body.dataset.screen}))",null);}
   });
   web.setWebChromeClient(new WebChromeClient(){
    @Override public void onPermissionRequest(PermissionRequest r){r.deny();} // Data-channel WebRTC needs no camera/microphone permission.

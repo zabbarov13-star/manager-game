@@ -7,12 +7,6 @@ module.exports = function polish(replace) {
   replace('<link rel="apple-touch-icon" href="./manager-icon.png">',
     '<link rel="apple-touch-icon" sizes="512x512" href="./manager-icon.png">\n<link rel="icon" sizes="32x32" type="image/png" href="data:image/png;base64,' +
     fs.readFileSync(path.join(__dirname, 'ui-icons', 'favicon.png')).toString('base64') + '">');
-  replace('function mountOnline(', asset('table-ui.js') + '\nfunction mountOnline(');
-  replace("chatKey='',appearanceDirty", "appearanceDirty");
-  replace("lobbyKey='';chatKey='';browsing", "lobbyKey='';chatView.reset();browsing");
-  replace("function renderChat(){tab.hidden=!active;const key=JSON.stringify(room?.chat??[]);if(key===chatKey)return;chatKey=key;messages.replaceChildren();for(const m of room?.chat??[]){const p=el('p'),who=el('strong',m.name+': ');p.append(who,document.createTextNode(m.text));messages.append(p);}}",
-    "const chatView=mountChatView({tab,panel,messages});\n function renderChat(){tab.hidden=!active;chatView.render(room,session?.seatId);}");
-  replace('<label class="range-row">Громкость эффектов', '<label class="toggle-row"><span>Звук уведомлений чата</span><input type="checkbox" id="chat-sound" checked></label><label class="range-row">Громкость эффектов');
   replace('<p>Два кубика. Сорок клеток.', '<p id="turn-description">Два кубика. Сорок клеток.');
   replace("document.querySelector('.turn-panel>p:not(.audio-hint)').textContent", "$('turn-description').textContent");
   replace('<div class="roll-summary"><span', '<div class="roll-summary"><div class="panel-dice" aria-hidden="true"><div class="die"></div><div class="die"></div></div><span');

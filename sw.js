@@ -30,5 +30,14 @@ self.addEventListener('fetch', event => {
       const cached = await (await caches.open(cacheName)).match(request);
       return cached ?? Response.error();
     }));
+  } else if (url.pathname.startsWith(scope.pathname + 'assets/runtime/')) {
+    // Only resources actually used by this client are cached; no music/shop preload.
+    event.respondWith(caches.open(cacheName).then(async cache => {
+      const cached = await cache.match(request);
+      if (cached) return cached;
+      const response = await fetch(request);
+      if (response.ok) await cache.put(request, response.clone());
+      return response;
+    }));
   }
 });

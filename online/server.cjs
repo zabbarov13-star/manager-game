@@ -200,11 +200,13 @@ function createRoomServer({ database, allowedOrigins = [], journal = 'wal', rele
         res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true, ...(release && { release }) }));
         return;
       }
-      const asset = Object.hasOwn(allowedAssets, pathname) && allowedAssets[pathname];
+      const match=/^\/assets\/runtime\/[a-f0-9]{64}\.(webp|png|jpg|mp3|woff2|woff|ttf|svg)$/.exec(pathname);
+      const runtimeTypes={webp:'image/webp',png:'image/png',jpg:'image/jpeg',mp3:'audio/mpeg',woff2:'font/woff2',woff:'font/woff',ttf:'font/ttf',svg:'image/svg+xml'};
+      const asset = Object.hasOwn(allowedAssets, pathname) ? allowedAssets[pathname] : match && [pathname.slice(1),runtimeTypes[match[1]]];
       if (!asset) { res.writeHead(404).end(); return; }
       const stream = createReadStream(resolve(__dirname, 'dist', asset[0]));
       stream.once('open', () => {
-        res.writeHead(200, { 'Content-Type': asset[1] });
+        res.writeHead(200, { 'Content-Type': asset[1], 'X-Content-Type-Options':'nosniff', 'Cache-Control':match?'public, max-age=31536000, immutable':'no-cache' });
         stream.pipe(res);
       });
       stream.once('error', () => {

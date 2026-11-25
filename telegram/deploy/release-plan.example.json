@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "candidateCommit": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+  "approvedCommit": null,
+  "manifest": "/root/manager-release/shared-release.json",
+  "manifestSha256": "b11a4117e602fa41b36b7fd53ff1b9bce4a82f5cab303f0bdef5bf5653b51c24",
+  "goReport": "/root/manager-preflight/REQUIRED-NEW-GO/report.json",
+  "goReportSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "installed": {
+    "rooms": {
+      "target": "REQUIRED_PRIVATE_INVENTORY",
+      "treeSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "adapter": {
+      "target": "REQUIRED_PRIVATE_INVENTORY",
+      "treeSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "databases": {
+    "rooms": "/var/lib/manager-online/rooms.sqlite",
+    "telegram": "/var/lib/manager-telegram/telegram.sqlite"
+  },
+  "unitSha256": {
+    "manager-online.service": "0000000000000000000000000000000000000000000000000000000000000000",
+    "manager-telegram.service": "0000000000000000000000000000000000000000000000000000000000000000",
+    "manager-telegram-poller.service": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "configSha256": {
+    "/etc/caddy/Caddyfile": "0000000000000000000000000000000000000000000000000000000000000000",
+    "/etc/manager-telegram/adapter.env": "0000000000000000000000000000000000000000000000000000000000000000",
+    "/etc/manager-online/cosmetics.env": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

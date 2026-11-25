@@ -1,4 +1,4 @@
-const { app, BrowserWindow, net, protocol, session } = require('electron');
+const { app, BrowserWindow, net, protocol, session, shell } = require('electron');
 const { readFile } = require('node:fs/promises');
 const { join } = require('node:path');
 
@@ -19,12 +19,14 @@ const gamePage = value => {
 let window;
 function open() {
   window = new BrowserWindow({
+    show: !smoke,
     width: 1370, height: 920, minWidth: 390, minHeight: 520,
     webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false },
   });
-  window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  const external = url => ['https://github.com/zabbarov13-star/smaylokrut-v2.19','https://github.com/zabbarov13-star/cat-and-differences'].includes(url);
+  window.webContents.setWindowOpenHandler(({url}) => {if(external(url))shell.openExternal(url).catch(()=>{});return { action: 'deny' };});
   window.webContents.on('will-navigate', (event, url) => {
-    if (!gamePage(url)) event.preventDefault();
+    if (!gamePage(url)) {event.preventDefault();if(external(url))shell.openExternal(url).catch(()=>{});}
   });
   window.on('closed', () => { window = null; });
   if (smoke) {
@@ -34,9 +36,9 @@ function open() {
         const state = await window.webContents.executeJavaScript(`(() => {
           const saved = localStorage.getItem('manager.qa-desktop');
           localStorage.setItem('manager.qa-desktop','saved');
-          return {saved, dice:!!document.querySelector('.panel-dice'), board:!!document.querySelector('#board')};
+          return {saved, dice:!!document.querySelector('.panel-dice'), board:!!document.querySelector('#board'),menu:!!document.querySelector('#main-menu'),screen:document.body.dataset.screen};
         })()`);
-        if (!state.dice || !state.board || (process.env.MANAGER_SMOKE_REOPEN === '1' && state.saved !== 'saved')) {
+        if (!state.dice || !state.board || !state.menu || state.screen !== 'menu' || (process.env.MANAGER_SMOKE_REOPEN === '1' && state.saved !== 'saved')) {
           throw Error(JSON.stringify(state));
         }
         clearTimeout(timer);

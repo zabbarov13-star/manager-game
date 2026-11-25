@@ -2,11 +2,12 @@
 from pathlib import Path
 import shutil
 import sys
+from runtime_assets import inline_runtime
 
 root = Path(__file__).resolve().parent.parent
 dist = root / "online/dist"
 platform = sys.argv[1]
-html = (dist / "index.html").read_text(encoding="utf-8")
+html = inline_runtime((dist / "index.html").read_text(encoding="utf-8"), dist)
 html = html.replace('if ("serviceWorker" in navigator && window.isSecureContext) {',
                     'if (false) {', 1)
 if platform == "android":

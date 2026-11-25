@@ -1,0 +1,4 @@
+[Service]
+# Only after separate approval: install the private file and append it LAST.
+# Existing token/webhook/owner configuration remains in its original env file.
+EnvironmentFile=/etc/manager-telegram/monetization-off.env

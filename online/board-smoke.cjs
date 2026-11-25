@@ -9,7 +9,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
   await once(server, 'listening');
   let browser;
   try {
-    browser = await chromium.launch();
+    browser = await chromium.launch({executablePath:process.env.QA_BROWSER||undefined});
     const url = 'http://127.0.0.1:' + server.address().port;
     const desktop = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     const errors = [];
@@ -25,7 +25,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
         localStorage.setItem('manager.match.v2', JSON.stringify(snapshot));
       }
     }, { snapshot });
-    await desktop.goto(url);
+    await desktop.goto(url);await desktop.locator('[data-menu=play]').click();await desktop.locator('[data-menu=continue]').click();
     const view = desktop.locator('#board-viewport');
     const center = async () => {
       const box = await view.boundingBox();
@@ -49,7 +49,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
     const mobile = await browser.newContext(devices['Pixel 7']);
     const phone = await mobile.newPage();
     phone.on('pageerror', error => errors.push(error.message));
-    await phone.goto(url);
+    await phone.goto(url);await phone.locator('[data-menu=play]').click();await phone.locator('[data-menu=explore]').click();
     const box = await phone.locator('#board-viewport').boundingBox();
     const x = Math.round(box.x + box.width / 2), y = Math.round(box.y + 100);
     const session = await mobile.newCDPSession(phone);
@@ -73,15 +73,15 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       await desktop.evaluate(state => {
         sessionStorage.setItem('qa-next-match', JSON.stringify(state));
       }, state);
-      await desktop.reload();
+      await desktop.reload();await desktop.locator('[data-menu=play]').click();await desktop.locator('[data-menu=continue]').click();
       const follow = level !== 2;
       await desktop.locator('#settings-open').click();
       await desktop.locator('#camera-follow').setChecked(follow);
       await desktop.locator('#reduced-motion').setChecked(true);
       await desktop.getByRole('button', { name: 'Закрыть настройки' }).click();
-      await desktop.reload();
+      await desktop.reload();await desktop.locator('[data-menu=play]').click();await desktop.locator('[data-menu=continue]').click();
       assert.equal(await desktop.locator('#camera-follow').isChecked(), follow);
-      for (let i = 0; i < 4; i++) await desktop.locator('#zoom-in').click();
+      while(await zoom(desktop)<200)await desktop.locator('#zoom-in').click();while(await zoom(desktop)>200)await desktop.locator('#zoom-out').click();
       await view.evaluate(node => node.scrollTo(0, 0));
       await desktop.locator('#tab-log').click();
       await desktop.evaluate(() => {
@@ -95,6 +95,7 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
           return original(array);
         };
       });
+      await desktop.locator('#roll-button').scrollIntoViewIfNeeded();const origin=await view.evaluate(node=>({top:node.scrollTop,left:node.scrollLeft}));
       await desktop.locator('#roll-button').click();
       const build = desktop.locator('#property-card').getByRole('button', { name: level === 4 ? /Построить предприятие/ : /Построить филиал/ });
       try {
@@ -112,13 +113,14 @@ const { game, beforeLanding } = require('./construction-fixture.cjs');
       }
       assert.equal(await desktop.locator('.tile.selected').getAttribute('data-id'), '2');
       const boardScroll = await view.evaluate(node => node.scrollTop);
-      assert.equal(boardScroll > 0, follow);
+      if(follow)assert(boardScroll>0);else assert.equal(boardScroll,origin.top);
       await build.click();
-      await desktop.getByRole('button', { name: /Передать ход/ }).waitFor();
+      await desktop.locator('#tab-game').click();await desktop.getByRole('button', { name: /Передать ход/ }).waitFor();
       await desktop.waitForFunction(level => JSON.parse(localStorage.getItem('manager.match.v2')).properties[2].level === level, level);
       assert.match(await desktop.locator('#property-card .building-level').textContent(), level === 4 ? /ПРЕДПРИЯТИЕ/ : new RegExp(level + ' / 3'));
       assert.equal(await desktop.locator('.tile.selected').getAttribute('data-id'), '2');
       await desktop.getByRole('button', { name: /Передать ход/ }).click();
+      await desktop.waitForFunction(origin=>{const v=document.querySelector('#board-viewport');return v.scrollTop===origin.top&&v.scrollLeft===origin.left;},origin);
       assert.equal(await desktop.locator('.tile.selected').getAttribute('data-id'), '2');
     }
     assert.deepEqual(errors, []);

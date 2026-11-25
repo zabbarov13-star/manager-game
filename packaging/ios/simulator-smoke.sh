@@ -14,6 +14,6 @@ for pass in 1 2; do
   xcrun simctl launch "$sim" "$bundle" -manager-smoke
   for i in {1..45}; do [[ -s "$probe" ]] && break; sleep 1; done
   cat "$probe"
-  python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); assert data["native"] and data["body"]>100 and data["storage"]=="persisted"; assert sys.argv[2]=="1" or data["previous"]=="persisted"' "$probe" "$pass"
+  python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); assert data["native"] and data["menu"] and data["screen"]=="menu" and data["body"]>100 and data["storage"]=="persisted"; assert sys.argv[2]=="1" or data["previous"]=="persisted"' "$probe" "$pass"
   xcrun simctl terminate "$sim" "$bundle"
 done

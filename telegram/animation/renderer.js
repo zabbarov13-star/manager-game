@@ -1,6 +1,7 @@
 /* Character rigs and effects use Canvas 2D exclusively. No game input is read or mutated. */
 (() => {
   'use strict';
+  const visualEvent=event=>event.type.startsWith('visual.');
   const TAU=Math.PI*2,clamp=value=>Math.max(0,Math.min(1,value));
   const labels={'character.spawn':'Появление','character.idle':'Ожидание','turn.started':'Начало хода','dice.rolled':'Бросок','property.purchased':'Покупка','money.received':'Доход','money.lost':'Расход','game.won':'Победа','game.lost':'Поражение'};
   const palettes={blueprint:'#45bca9',deal:'#edb95f',crown:'#e3c05f',hologram:'#53d8ff',garden:'#77c976',robot:'#c6a2fa',crypto:'#58f090',pirate:'#efc066',cash:'#e6b642',phone:'#f5c841',restaurant:'#ed7c6c',matrix:'#43f997'};
@@ -80,19 +81,19 @@
     load(){return this.ready??=(async()=>{for(const state of ['idle','joy','failure','win','loss']){const image=new Image();image.src=this.character.poses?.[state]??this.character.sprite;await image.decode();this.images.set(state,image);}})();}
     renderFrame(event,p){
       const started=performance.now(),ctx=this.ctx,theme=this.character.theme,color=palettes[theme]??'#d6bd77';ctx.clearRect(0,0,360,480);p=clamp(p);
-      let state=poseFor(event.type);const focus=event.type==='character.idle'&&theme==='blueprint';if(focus)state='failure';
+      const visual=event.type.startsWith('visual.'),phase=event.type.slice(7);let state=poseFor(event.type);const focus=event.type==='character.idle'&&theme==='blueprint';if(focus)state='failure';
       const image=this.images.get(state)??this.images.get('idle');if(!image)return;
       const maxWidth=270,maxHeight=405,scale=Math.min(maxWidth/image.width,maxHeight/image.height),w=image.width*scale,h=image.height*scale,x=(360-w)/2,y=442-h;
       // Keep approved anatomy intact. Blend separately drawn poses instead of
       // cutting an arbitrary line through the face/neck; props remain independent.
       const [direction,lift,angle]=motions[theme]??motions.blueprint,spawn=event.type==='character.spawn',idle=event.type==='character.idle',final=event.type.startsWith('game.'),wave=Math.sin(p*Math.PI),ease=1-Math.pow(1-p,3);
-      ctx.save();ctx.translate(direction*(spawn?(1-ease)*55:Math.sin(p*TAU)*(idle?1:3)),spawn?(1-ease)*25:-wave*lift*(final?1.35:idle?.25:.6));ctx.translate(180,430);ctx.rotate(Math.sin(p*TAU)*angle*(idle?.3:1));ctx.translate(-180,-430);ctx.globalAlpha=spawn?ease:1;
+      const motion=visual?window.ManagerMotion.gait(theme,phase,p):{x:0,y:0,r:0,sx:1,sy:1};this.options.onMotion?.(motion);ctx.save();ctx.translate(motion.x,motion.y);ctx.translate(180,442);ctx.rotate(motion.r);ctx.scale(motion.sx,motion.sy);ctx.translate(-180,-442);ctx.translate(direction*(spawn?(1-ease)*55:Math.sin(p*TAU)*(idle?1:3)),spawn?(1-ease)*25:-wave*lift*(final?1.35:idle?.25:.6));ctx.translate(180,430);ctx.rotate(Math.sin(p*TAU)*angle*(idle?.3:1));ctx.translate(-180,-430);ctx.globalAlpha=spawn?ease:1;
       const blend=focus?Math.pow(Math.sin(p*Math.PI),8):state==='idle'?1:clamp(p*5),base=this.images.get('idle');
       if(blend<1&&base){ctx.save();ctx.globalAlpha*=1-blend;ctx.drawImage(base,x,y,w,h);ctx.restore();}
       ctx.globalAlpha*=blend;ctx.drawImage(image,x,y,w,h);ctx.restore();
       ctx.save();if(spawn)ctx.globalAlpha=ease;motif(ctx,theme,p,event.type,color);ctx.restore();
       if(event.type==='turn.started'){ctx.globalAlpha=Math.sin(p*Math.PI);circle(ctx,180,427,100,color);ctx.globalAlpha=1;}
-      if(event.type==='dice.rolled')event.diceValues.forEach((value,index)=>{const dx=125+index*75,dy=365-Math.sin(p*Math.PI)*20;ctx.save();ctx.translate(dx,dy);ctx.rotate(Math.sin(p*TAU)*.3);ctx.fillStyle='#fff3d4';ctx.beginPath();ctx.roundRect(-23,-23,46,46,8);ctx.fill();text(ctx,String(value),0,8,'#17384d',25);ctx.restore();});
+      if(event.type==='dice.rolled'&&this.options.showDice!==false)event.diceValues.forEach((value,index)=>{const dx=125+index*75,dy=365-Math.sin(p*Math.PI)*20;ctx.save();ctx.translate(dx,dy);ctx.rotate(Math.sin(p*TAU)*.3);ctx.fillStyle='#fff3d4';ctx.beginPath();ctx.roundRect(-23,-23,46,46,8);ctx.fill();text(ctx,String(value),0,8,'#17384d',25);ctx.restore();});
       if(event.type==='money.received'||event.type==='money.lost'){const income=event.type==='money.received';text(ctx,(income?'+':'−')+event.amount,180,56+(income?-20:20)*p,income?'#75da9b':'#ef9e8e',26);for(let i=0;i<5;i++)coin(ctx,60+i*60,100+(income?-1:1)*60*p+(i%2)*15,7,color);}
       if(event.type==='game.won'){for(let i=0;i<22;i++){const a=i*2.4,r=35+115*p;coin(ctx,180+Math.cos(a)*r,210+Math.sin(a)*r-50*p,3+(i%4),i%2?color:'#f4d26d');}}
       if(event.type==='game.lost'){ctx.fillStyle='#203b5140';ctx.fillRect(0,0,360,480);text(ctx,'Ещё одна история впереди',180,463,'#d1dce0',15);}
@@ -100,17 +101,17 @@
     }
     async play(event,signal){
       await this.load();if(signal.aborted)return;
-      return new Promise(resolve=>{const duration=window.ManagerAnimationCore.durations[event.type],start=performance.now(),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;let last=-Infinity,done=false;
+      return new Promise(resolve=>{const duration=window.ManagerAnimationCore.durations[event.type]??window.ManagerMotion.phases[event.type.slice(7)],start=performance.now(),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;let last=-Infinity,done=false;
         let timer;const finish=()=>{if(done)return;done=true;clearTimeout(timer);cancelAnimationFrame(this.frame);signal.removeEventListener('abort',abort);resolve();};
-        const abort=()=>{this.ctx.clearRect(0,0,360,480);finish();};signal.addEventListener('abort',abort,{once:true});
-        if(reduce){this.renderFrame(event,1);timer=setTimeout(finish,duration);return;}
+        const abort=()=>{this.options.onMotion?.({x:0,y:0,r:0,sx:1,sy:1});this.ctx.clearRect(0,0,360,480);finish();};signal.addEventListener('abort',abort,{once:true});
+        if(reduce){this.renderFrame(visualEvent(event)?{type:'character.idle'}:event,1);timer=setTimeout(finish,duration);return;}
         // rAF timestamps can be a fraction below 33.333 ms. A small tolerance
         // prevents accidentally skipping a third refresh and dropping to ~23 fps.
         const tick=now=>{if(signal.aborted)return abort();const progress=clamp((now-start)/duration);if(now-last>=1000/30-.25||progress===1){this.renderFrame(event,progress);last=now;}if(progress<1)this.frame=requestAnimationFrame(tick);else finish();};
         this.frame=requestAnimationFrame(tick);
       });
     }
-    cancel(){cancelAnimationFrame(this.frame);this.ctx.clearRect(0,0,360,480);}
+    cancel(){this.options.onMotion?.({x:0,y:0,r:0,sx:1,sy:1});cancelAnimationFrame(this.frame);this.ctx.clearRect(0,0,360,480);}
   }
   window.ManagerCharacterAnimation={CharacterCanvasRenderer,labels,poseFor};
 })();

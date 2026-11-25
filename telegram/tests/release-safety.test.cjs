@@ -21,7 +21,7 @@ test('unconfigured Stars refuse new invoices, health reports reality, paysupport
 });
 
 test('local staging TLS validates against its certificate and has no unauthenticated profile access',async t=>{
- const folder=path.resolve(__dirname,'../data/staging/tls'),cert=fs.readFileSync(path.join(folder,'localhost-cert.pem')),key=fs.readFileSync(path.join(folder,'localhost-key.pem'));
+ const folder=process.env.QA_TLS_DIR??path.resolve(__dirname,'../data/staging/tls'),cert=fs.readFileSync(path.join(folder,'localhost-cert.pem')),key=fs.readFileSync(path.join(folder,'localhost-key.pem'));
  const app=createApp({environment:'test',botToken:'tls-fixture-only',webhookSecret:'s'.repeat(32),origin:'https://localhost:8443',database:':memory:'});const server=https.createServer({key,cert},(req,res)=>app.emit('request',req,res)).listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(resolve=>server.close(()=>{app.emit('close');resolve();})));
  const get=url=>new Promise((resolve,reject)=>https.get({hostname:'127.0.0.1',port:server.address().port,path:url,ca:cert},r=>{let text='';r.on('data',part=>text+=part);r.on('end',()=>resolve({status:r.statusCode,data:JSON.parse(text)}));}).on('error',reject));
  assert.equal((await get('/health')).data.environment,'test');assert.equal((await get('/api/profile')).status,401);

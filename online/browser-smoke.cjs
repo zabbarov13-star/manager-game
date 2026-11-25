@@ -55,7 +55,8 @@ const { createRoomServer } = require('./server.cjs');
     const iconBytes = await icon.body();
     assert.equal(iconBytes.readUInt32BE(16), 512);
     assert.equal(iconBytes.readUInt32BE(20), 512);
-    assert.match(await a.locator('link[rel=icon]').getAttribute('href'), /^data:image\/png;base64,/);
+    const favicon=await (await a.request.get(new URL(await a.locator('link[rel=icon]').first().getAttribute('href'),url).href)).body();
+    assert.equal(favicon.readUInt32BE(16),32);assert.equal(favicon.readUInt32BE(20),32);
     assert.equal(await a.locator('link[rel=apple-touch-icon]').getAttribute('href'), './manager-icon.png');
     await button(a, 'Настройки').click();
     await button(a, 'Начать партию · 2–6 игроков').click();
@@ -100,9 +101,15 @@ const { createRoomServer } = require('./server.cjs');
     if (screenshotDir) await a.screenshot({ path: join(screenshotDir, 'desktop-table.png') });
 
     await a.locator('#tab-chat').click();
+    const lastSent = new WeakMap();
     const sendMessage = async (page, message) => {
+      const remaining = 850 - (Date.now() - (lastSent.get(page) ?? 0));
+      if (remaining > 0) await page.waitForTimeout(remaining);
+      const response = page.waitForResponse(r => r.url().endsWith('/chat') && r.request().method() === 'POST');
       await page.getByRole('textbox', { name: 'Сообщение в чат' }).fill(message);
       await button(page, 'Отправить').click();
+      assert.equal((await response).status(), 200, 'Chat submission must be accepted');
+      lastSent.set(page, Date.now());
     };
     const long = 'Проверка переноса: ' + 'я'.repeat(275);
     await sendMessage(a, long);
@@ -124,6 +131,8 @@ const { createRoomServer } = require('./server.cjs');
     assert.equal(await b.locator('.chat-avatar svg').count(), 3);
     assert.equal(await b.locator('.chat-message').evaluateAll(rows => rows.every(row => row.scrollWidth <= row.clientWidth)), true);
     if (screenshotDir) await b.locator('.sidebar').screenshot({ path: join(screenshotDir, 'mobile-chat.png') });
+    await a.locator('#settings-open').click();await sendMessage(b,'Сообщение под модальным окном');await a.locator('.chat-unread').getByText('1',{exact:true}).waitFor({state:'attached'});assert.equal(await a.locator('#tab-chat').getAttribute('aria-label'),'Чат · непрочитанных 1');await a.locator('#settings-dialog .close-button').click();await a.waitForFunction(()=>document.querySelector('.chat-unread').hidden);
+
 
     await button(b, 'Настройки').click();
     const settings = b.locator('#settings-dialog');
@@ -181,7 +190,7 @@ const { createRoomServer } = require('./server.cjs');
     const finder = await browser.newContext();
     const c = await creator.newPage(), d = await finder.newPage();
     await Promise.all([c.goto(url), d.goto(url)]);
-    for (const page of [c, d]) await button(page, 'Играть онлайн').click();
+    for (const page of [c, d]) {await page.locator('[data-menu=play]').click();await page.locator('[data-menu=online]').click();}
     await c.getByRole('textbox', { name: 'Ваше имя' }).fill('Хозяин');
     await c.getByRole('combobox', { name: 'Тип комнаты' }).selectOption('public');
     await c.getByRole('textbox', { name: 'Название комнаты' }).fill('Открытая QA');

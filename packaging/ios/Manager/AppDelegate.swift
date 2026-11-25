@@ -51,6 +51,7 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  }
  func webView(_ webView:WKWebView,decidePolicyFor navigationAction:WKNavigationAction,decisionHandler:@escaping(WKNavigationActionPolicy)->Void){
   guard let url=navigationAction.request.url else{decisionHandler(.cancel);return}
+  if navigationAction.navigationType == .linkActivated && ["https://github.com/zabbarov13-star/smaylokrut-v2.19", "https://github.com/zabbarov13-star/cat-and-differences"].contains(url.absoluteString) { UIApplication.shared.open(url); decisionHandler(.cancel); return }
   let allowed = webView === offline ? (url.isFileURL && url.path==gameURL?.path) : (url.scheme=="https" && url.host==onlineURL.host && url.path==onlineURL.path)
   decisionHandler(allowed ? .allow : .cancel)
  }
@@ -58,7 +59,7 @@ final class GameController: UIViewController, WKNavigationDelegate, WKScriptMess
  func webView(_ webView:WKWebView,didFinish navigation:WKNavigation!){
   if webView === online {webView.evaluateJavaScript("(()=>{const mode=document.getElementById('party-mode');if(mode){mode.value='online';mode.dispatchEvent(new Event('change'));}})()",completionHandler:nil)}
   if ProcessInfo.processInfo.arguments.contains("-manager-smoke") && webView === offline {
-   webView.evaluateJavaScript("(()=>{const previous=localStorage.getItem('manager.qa-probe');localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({previous,title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative});})()") { result,error in if let text=result as? String { self.qaRecord(text); NSLog("MANAGER_SMOKE %@",text) } else { self.qaRecord("{\"error\":\"JavaScript evaluation failed\"}"); NSLog("MANAGER_SMOKE_ERROR %@",String(describing:error)) } }
+   webView.evaluateJavaScript("(()=>{const previous=localStorage.getItem('manager.qa-probe');localStorage.setItem('manager.qa-probe','persisted');return JSON.stringify({previous,title:document.title,body:document.body.innerText.length,buttons:document.querySelectorAll('button').length,svg:document.querySelectorAll('svg').length,storage:localStorage.getItem('manager.qa-probe'),native:!!window.ManagerNative,menu:!!document.querySelector('#main-menu'),screen:document.body.dataset.screen});})()") { result,error in if let text=result as? String { self.qaRecord(text); NSLog("MANAGER_SMOKE %@",text) } else { self.qaRecord("{\"error\":\"JavaScript evaluation failed\"}"); NSLog("MANAGER_SMOKE_ERROR %@",String(describing:error)) } }
   }
  }
  func userContentController(_ controller:WKUserContentController,didReceive message:WKScriptMessage){

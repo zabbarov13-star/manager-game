@@ -14,7 +14,7 @@ function createVerificationServer(store,key){
    if(!/^\d{13}$/.test(stamp??'')||Math.abs(now-Number(stamp))>30000||!/^[a-f0-9]{32}$/.test(nonce??'')||!equal(req.headers['x-rpc-signature']??'',sign(key,`${stamp}.${nonce}.${raw}`))){res.writeHead(403).end();return;}
    if(seen.has(nonce)||seen.size>=4096){res.writeHead(409).end();return;}seen.set(nonce,now+60000);
    const body=JSON.parse(raw);if(!Array.isArray(body.checks)||body.checks.length>6||!['admit','start'].includes(body.purpose))return send(400,{error:'Invalid contract'});
-   return send(200,{valid:body.checks.map(c=>!!c&&store.verifyCosmetic(c.ticket,c.characterId,{existingSeat:body.purpose==='start'}))});
+   return send(200,{valid:body.checks.map(c=>!!c&&store.verifyCosmetic(c.ticket,c.characterId,{existingSeat:body.purpose==='start',styleId:c.styleId,diceId:c.diceId}))});
   }catch{if(!res.headersSent)res.writeHead(400).end();}
  });
 }
