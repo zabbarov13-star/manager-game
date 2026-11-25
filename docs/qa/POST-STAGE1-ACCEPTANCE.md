@@ -1,5 +1,58 @@
 # Приёмка после Stage 1 — обновлено 25 ноября 2026
 
+
+## Актуальный итог: первый выпуск с монетизацией OFF
+
+25 ноября. Начальный HEAD этого продолжения был **004646bc682490908ffc9d0ef2c41ce06a002963**. После подтверждённого runtime-исправления новый принятый кандидат — **cae45deece158ed41c30d3c9d7a49a1a0c4f237d**; PeerServer по-прежнему **536009173cf47ba47687777548d7dc161d7de30e**. Документационный HEAD после этого кандидата не меняет runtime. Game: `feature/all-platform-ui-stage1` → `fix/telegram-start-20261119`; Peer: `test/signaling-contract` → `main`. Оба PR остаются Draft/MERGEABLE. Прежние разделы о f6c84f2 ниже — история аудита, не текущий кандидат.
+
+### Исправленный обязательный дефект OFF
+
+Воспроизведено локально: при Stars OFF старый неоплаченный invoice получал `answerPreCheckoutQuery(ok=true)`, поскольку обработчик webhook не проверял starsReady. Новые invoice были закрыты, но pre-checkout оставался открытым. Минимальное исправление только в telegram/server.cjs: при !starsReady вернуть отказ до store.checkout. На исходном коде новый тест FAIL (true вместо false), после исправления PASS. Игровой движок, RNG, экономика, профили, схема и формат сохранений не изменены.
+
+**OFF фактически PASS в изолированном тесте** с process.env из подготовленного monetization-off.example: features.stars/ads=false; новые invoice/ads begin → 503; старый pending checkout отклонён без выдачи права; чужой webhook → 403. Прежняя постоянная покупка пережила рестарт; подтверждённый ранее in-flight successful_payment доставляется/сохраняется даже после OFF; refund отзывает только соответствующее право. Все платежные данные синтетические, Bot API заменён mock, реальных списаний/возвратов/рекламных наград нет. Подтверждённые финансовые события нельзя терять из-за OFF; это не разрешение новой оплаты.
+
+Подготовлены, но НЕ применены `monetization-off.example` и `monetization-off.conf.example`: дополнительный env только с двумя OFF-флагами добавляется последним EnvironmentFile существующего adapter unit. Environment=0 само по себе может быть перекрыто EnvironmentFile; порядок и SHA всех фактических env контролирует существующий release-update.py. Если production уже OFF — патч не нужен. Если ON — установка патча/изменение unit/перезапуск только после отдельного разрешения; токены/webhook/polling не меняются. Этот шаблон проверен в изолированном server fixture, не в настоящем systemd на VPS.
+
+Первый выпуск OFF уже выбран владельцем этим заданием, повторного согласования варианта не требуется. Реальные коммерческие Stars/AdsGram-сценарии **вне scope первого OFF-выпуска**, а не обязательная незакрытая коммерческая интеграция. Однако фактические production OFF/health и сохранность реальных старых покупок после обновления остаются BLOCKED вместе с отсутствующей инвентаризацией/GO VPS.
+
+### Новый пакет и единственный заключительный прогон изменённого runtime
+
+Упакованы два точных cae45de-архива из существующих ресурсов; UI/нативные сборки и npm install не запускались. Сравнение всех tar members с f6c84f2: rooms отличается только RELEASE.json; adapter — только RELEASE.json и telegram/server.cjs. Prestige, все функции меню, поле/анимации, poller, Store/catalog и сетевой код byte-identical прежнему кандидату.
+
+**8 актуальных PASS / 0 FAIL:** 1 новый целевой OFF-тест и один финальный packaged E2E-прогон 7/7 нового cae45de (меню, локальная партия/reopen, два синтетических клиента, чат/unread/read, reload, offline/reconnect/state sync, без двойного хода и платежных записей). Прежние 18/19/11 и 12 CI повторно не запускались; их область применимости сохранена для неизменённых модулей. Новый GitHub CI на текущем HEAD не объявлен зелёным: commits используют skip ci.
+
+Единственный текущий пакет: `release-output/release-cae45de/manager-release-cae45de.zip`, **44,913,121 байт**, SHA-256 **3424eca6ca9b9156c872befa316b2b08d28c3b02cdbadcdc2a8b17864437e537**. Рядом внешний .sha256; внутри SHA256SUMS, shared-release/release-candidate manifests, оба tar, проверенные существующие release tools, новый pinned plan и неактивные OFF-шаблоны/инструкция. Рабочих env/БД/секретов нет. Старые f6c84f2 ZIP сохранены только исторически: **не использовать для первого OFF-выпуска**. Любой прежний VPS GO относится к старым SHA; нужен новый GO cae45de.
+
+- Rooms SHA-256: `24e5973f9909b4ad683a8b5c51a5cbbb07bbd479d4c06bfe9b437beabcac4dcc`.
+- Adapter SHA-256: `00fbc3d25fe1fc46c4056c9b4503d411ab49f03a3b06163bdbe577961b76f491`.
+
+### Read-only инвентаризация и реальные среды
+
+Новых SSH-попыток 0: подтверждённых auth-файлов/SSH config нет, ssh-agent остановлен. Новых разрешённых альтернатив доступа не предоставлено. Секреты/содержимое игровых БД VPS не читались. Локальная PnP-инвентаризация не обнаружила Android/ADB/iPhone, adb не запущен; настройки устройств не менялись. Прежние неработающие geometry/keyboard/CDP способы Telegram-ввода не повторялись; разрешённые Web/второй аккаунт не подтверждены, новые логины/коды не запрашивались. Реальное наблюдение Desktop меню/броска 2+3=5 относится к старому a3279b0, не новому cae45de.
+
+| Параметр | Текущее состояние | Требуемое | Действие |
+|---|---|---|---|
+| Installed SHA/current directories | BLOCKED | Фактические targets/hashes и совместимость с cae45de | Приватная read-only инвентаризация через разрешённый доступ |
+| rooms/adapter/poller и зависимости units | Известны со слов владельца; сейчас BLOCKED | Active, прежний single poller, точные unit/drop-in/env pins | Чтение systemctl metadata, без restart/изменений |
+| Node/порты/RAM/диск | Раньше сообщён Node 24.22.2; сейчас BLOCKED | Node >=24.22.1 <25; 8080/8443/8444, headroom по release guard | Только чтение состояния |
+| SQLite paths/WAL/сохранения | Ожидаются /var/lib/manager-online и /var/lib/manager-telegram; BLOCKED | Подтверждённые пути/WAL, свежий согласованный backup и isolated restore | Metadata без пользовательских строк; backup только в разрешённое окно |
+| Domain/routes/Caddy/Docker/Смайлокрут | Сейчас не проверены | Прежняя маршрутизация/health, без изменений общих служб | Разрешённое read-only наблюдение |
+| Production Stars/Ads OFF | BLOCKED | Effective env + health OFF, отсутствие разрешённых новых оплат/наград | При необходимости согласованный минимальный OFF-патч; сам не применён |
+| WebView/телефоны/два аккаунта/мобильные сети | BLOCKED | Реальная платформенная приёмка либо явное согласование ограниченного scope | Без бесполезных повторов ввода/поиска/новой авторизации |
+| PeerServer production update | Не требуется ради этого исправления | Прежний совместимый signaling-контракт | Ничего на PeerServer/VPS не менять |
+
+### Backup, решение и минимальные дальнейшие шаги
+
+11 предыдущих synthetic backup/rollback PASS применимы: release-update.py не менялся; source/destination/integrity handles закрываются, Online Backup включает committed WAL, restore только в новом каталоге, code rollback не затирает новые ходы/покупки. Шаблон плана обновлён на cae45de и новый manifest SHA, approvedCommit всё ещё null. Реальные root/systemd/DB-compatibility/recovery на VPS BLOCKED; флаги/units/БД не изменены.
+
+- **PeerServer merge: технический GO**, SHA/два прежних CI/контракт/отсутствие конфликтов сохранены, но merge без отдельного разрешения не выполняется.
+- **Game merge по полной приёмке: NO-GO**, реальные платформенные критерии/остаточные риски ещё не приняты.
+- **Тестовый выпуск на существующей инфраструктуре: NO-GO**, production effective OFF/изоляция/установленная версия не подтверждены. Локальный fixture PASS не заменяет это.
+- **Production: NO-GO** до приватной инвентаризации, свежего изолированного GO exact cae45de и решения по реальной приёмке. Запрос разрешения merge/deployment не выдаётся при этом NO-GO; оба PR оставлены Draft.
+
+Минимум: получить уже разрешённый SSH/операторскую консоль и приватные pins; подтвердить фактический OFF (либо отдельно разрешить нужный конфигурационный патч); новый preflight обоих exact cae45de и реальной согласованной копии; закрыть реальные клиентские BLOCKED либо явно принять ограниченный scope; затем отдельно разрешить merge точных веток/SHA и отдельно guarded backup/update. Существующие Caddy/Docker/Смайлокрут/пользовательские данные/polling/webhook не менять. При обновлении сначала verified backup/isolated restore, потом только Manager code switch и health/согласованная тестовая комната; при ошибке — code-only rollback.
+
+
 ## Заключительный read-only аудит перед выпуском — 25 ноября 2026
 
 Проверенный GitHub HEAD игры **f379d278773afb6cce637c93730dfd50347ea19f**, runtime **f6c84f2e06e59893202c2702c4cb5f5287509cb7**; PeerServer **536009173cf47ba47687777548d7dc161d7de30e**. Оба PR OPEN/Draft/MERGEABLE. Peer: оба contract SUCCESS; игра: checks на текущем HEAD отсутствуют, прежние 12 CI не приписаны новому UI. В этом аудите не запускались сборки, CI, unit/E2E или новые приложения.

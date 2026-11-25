@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "candidateCommit": "f6c84f2e06e59893202c2702c4cb5f5287509cb7",
+  "candidateCommit": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
   "approvedCommit": null,
   "manifest": "/root/manager-release/shared-release.json",
-  "manifestSha256": "db1db87212113fb309dc43b57544e7c03ba9b9bdc6f19f30b3763429d670f14a",
+  "manifestSha256": "b11a4117e602fa41b36b7fd53ff1b9bce4a82f5cab303f0bdef5bf5653b51c24",
   "goReport": "/root/manager-preflight/REQUIRED-NEW-GO/report.json",
   "goReportSha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "installed": {

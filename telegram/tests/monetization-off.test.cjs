@@ -7,9 +7,16 @@ const {createApp}=require('../server.cjs');
 test('monetization OFF rejects pending pre-checkout but preserves purchases and in-flight receipts',async t=>{
  const token='off-fixture-only',secret='s'.repeat(32),user=925001,calls=[];
  const folder=fs.mkdtempSync(path.join(os.tmpdir(),'manager-off-fixture-'));
- const config={mode:'adapter',rpcSecret:'r'.repeat(32),environment:'test',starsEnabled:false,gatewayEnabled:false,blockId:'fixture-block',supportContact:'@fixture_support',botToken:token,webhookSecret:secret,origin:'https://off.fixture',database:path.join(folder,'telegram.sqlite'),bot:async(method,body)=>{calls.push({method,body});return true;}};
+ const off=Object.fromEntries(fs.readFileSync(path.join(__dirname,'../deploy/monetization-off.example'),'utf8').trim().split(/\r?\n/).map(line=>line.split('=')));
+ assert.deepEqual(off,{STARS_ENABLED:'0',ADS_VERIFIED_GATEWAY_ENABLED:'0'});
+ const config={mode:'adapter',rpcSecret:'r'.repeat(32),environment:'test',ownerTelegramId:'',blockId:'fixture-block',supportContact:'@fixture_support',botToken:token,webhookSecret:secret,origin:'https://off.fixture',database:path.join(folder,'telegram.sqlite'),bot:async(method,body)=>{calls.push({method,body});return true;}};
  let app,base;
- async function open(){app=createApp(config).listen(0,'127.0.0.1');await once(app,'listening');base='http://127.0.0.1:'+app.address().port;}
+ async function open(){
+  const before=Object.fromEntries(Object.keys(off).map(k=>[k,process.env[k]]));
+  try{Object.assign(process.env,off);app=createApp(config);}
+  finally{for(const [k,v]of Object.entries(before)){if(v===undefined)delete process.env[k];else process.env[k]=v;}}
+  app.listen(0,'127.0.0.1');await once(app,'listening');base='http://127.0.0.1:'+app.address().port;
+ }
  async function close(){if(app?.listening)await new Promise(r=>app.close(r));}
  t.after(close);await open();
  const post=async(route,data,bearer,signature)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',...(bearer?{Authorization:'Bearer '+bearer}:{}),...(signature?{'X-Telegram-Bot-Api-Secret-Token':signature}:{})},body:JSON.stringify(data)});

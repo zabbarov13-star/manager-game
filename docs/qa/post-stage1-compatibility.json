@@ -574,5 +574,145 @@
     "testsRerun": false,
     "buildsRerun": false,
     "productionChanged": false
+  },
+  "firstReleaseOffCompletion": {
+    "observedAt": "2026-11-25T03:20:55.320992+00:00",
+    "startHead": "004646bc682490908ffc9d0ef2c41ce06a002963",
+    "runtime": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "peer": "536009173cf47ba47687777548d7dc161d7de30e",
+    "confirmedDefect": "Stars OFF accepted pending unpaid invoice pre-checkout",
+    "reproducedBeforeFix": true,
+    "fixed": "Check starsReady before store.checkout; do not drop verified payments/refunds",
+    "candidate": {
+      "schema": 1,
+      "runtimeCommit": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+      "peerCommit": "536009173cf47ba47687777548d7dc161d7de30e",
+      "createdAt": "2026-11-25T03:18:35.125936+00:00",
+      "supersedesRuntime": "f6c84f2e06e59893202c2702c4cb5f5287509cb7",
+      "reason": "OFF must also reject pending unpaid invoice pre-checkout",
+      "runtimes": [
+        {
+          "kind": "rooms",
+          "file": "manager-rooms-cae45deece158ed41c30d3c9d7a49a1a0c4f237d.tar",
+          "sha256": "24e5973f9909b4ad683a8b5c51a5cbbb07bbd479d4c06bfe9b437beabcac4dcc"
+        },
+        {
+          "kind": "adapter",
+          "file": "manager-adapter-cae45deece158ed41c30d3c9d7a49a1a0c4f237d.tar",
+          "sha256": "00fbc3d25fe1fc46c4056c9b4503d411ab49f03a3b06163bdbe577961b76f491"
+        }
+      ],
+      "tests": {
+        "monetizationOffTarget": {
+          "PASS": 1,
+          "FAIL": 0,
+          "scope": "isolated process.env OFF, mock Bot API, synthetic SQLite; no live payments"
+        },
+        "newCandidatePackagedE2E": {
+          "PASS": 7,
+          "FAIL": 0
+        },
+        "releaseToolsReused": {
+          "PASS": 11,
+          "FAIL": 0
+        },
+        "prestigeUiReused": {
+          "PASS": 19,
+          "FAIL": 0
+        }
+      },
+      "dependencies": {
+        "runtime": [
+          "Node.js >=24.22.1 <25 with node:sqlite",
+          "No npm production install"
+        ],
+        "operator": [
+          "Python >=3.10 stdlib sqlite3",
+          "systemd",
+          "GNU tar",
+          "fuser (psmisc)",
+          "Linux fcntl/flock"
+        ]
+      },
+      "monetization": "OFF first release selected; production effective OFF remains BLOCKED",
+      "deployment": "NOT RUN; exact new VPS GO, private pins and separate owner approval required",
+      "packagedAcceptance": {
+        "scope": "Packaged adapter-only + shared rooms; Chromium with synthetic Telegram SDK, not real Telegram/physical devices",
+        "code": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+        "checks": [
+          {
+            "name": "packaged-navigation",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-local-roll-close-reopen",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-two-client-online",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-chat-notification-read",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-reload-recovery",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-offline-reconnect-sync",
+            "status": "PASS"
+          },
+          {
+            "name": "packaged-no-payments-errors",
+            "status": "PASS"
+          }
+        ],
+        "errors": [],
+        "timing": {
+          "menuReadyMs": 642,
+          "navigationMs": 211.4000000357628,
+          "scope": "Local packaged Chromium fixture, not Telegram startup or WAN"
+        },
+        "finishedAt": "2026-11-25T03:15:12.063Z"
+      },
+      "deltaFromPrior": {
+        "rooms": [
+          "RELEASE.json"
+        ],
+        "adapter": [
+          "RELEASE.json",
+          "telegram/server.cjs"
+        ]
+      },
+      "packet": "manager-release-cae45de.zip",
+      "packetSha256": "3424eca6ca9b9156c872befa316b2b08d28c3b02cdbadcdc2a8b17864437e537",
+      "packetBytes": 44913121
+    },
+    "newChecks": {
+      "PASS": 8,
+      "FAIL": 0
+    },
+    "reused": {
+      "prestigeUiPass": 19,
+      "releaseToolsPass": 11,
+      "baselineCiPass": 12
+    },
+    "monetizationOffIsolated": "PASS_ENV_PATCH_AND_PENDING_INVOICE_GUARD",
+    "productionOff": "BLOCKED_NO_ACCESS",
+    "liveStarsAds": "DEFERRED_NOT_IN_FIRST_OFF_RELEASE",
+    "sshAttempts": 0,
+    "newAuthorizedAccess": false,
+    "devicesPnpFound": 0,
+    "realWebViewInputRetried": false,
+    "newLogins": false,
+    "productionChanged": false,
+    "botSettingsChanged": false,
+    "go": "NO_GO",
+    "gameBase": "fix/telegram-start-20261119",
+    "peerBase": "main",
+    "merge": false,
+    "deployment": false
   }
 }
