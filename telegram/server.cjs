@@ -63,7 +63,8 @@ function createApp(config={}){
     const update=JSON.parse(await body(req));if(!Number.isSafeInteger(update.update_id))return send(res,400,{error:'Invalid update'});
     if(store.db.prepare('SELECT id FROM updates WHERE id=?').get(update.update_id))return send(res,200,{ok:true});
     if(update.pre_checkout_query){const q=update.pre_checkout_query;let error;
-     try{store.checkout(String(q.from.id),q);}catch(e){error=e.message;}
+     if(!starsReady)error='Покупки временно отключены.';
+     else try{store.checkout(String(q.from.id),q);}catch(e){error=e.message;}
      await bot('answerPreCheckoutQuery',{pre_checkout_query_id:q.id,ok:!error,...(error?{error_message:error}:{})});
     }
     const msg=update.message;
