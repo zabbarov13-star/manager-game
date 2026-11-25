@@ -83,3 +83,77 @@ Existing output/destination отвергаются. Восстановленны
 CI дополнительно проверяет native archives, shared integration внутри read-only/no-network контейнера и **реальный** Caddy adapt/validate/маршрутизацию, включая недоступность private paths до upstream. Состояние последнего прогона указывается в PR, а не предполагается по наличию теста.
 
 BLOCKED перед безопасным развёртыванием: фактические хеши/unit/env/Caddy/порты и восстановление **реальной** копии VPS; отдельное разрешение на rollout/restart/reload; живой Telegram-клиент/бот/официальный тестовый Stars-поток; физический APK/WebView и iOS/мобильные сети. Существующий внешний PeerJS тест двух новых клиентов не заменяет физическую смешанную P2P-партию со старым APK. AdsGram OFF до доверенного provider event; реальные платежи не выполнялись.
+
+
+## Кандидат Prestige и обновление существующей установки — 25 ноября 2026
+
+Это актуальное дополнение к исторической инструкции выше. Владелец сообщил о наличии rooms, adapter и отдельного polling на VPS; их текущие ревизии/конфигурации здесь не подтверждены. Повторять прежний отказанный SSH не стали. Ничего на VPS не применено.
+
+Runtime-кандидат: `cae45deece158ed41c30d3c9d7a49a1a0c4f237d`. После a3279b0 изменилось меню, поэтому старые архивы не подходят для Prestige. Новые архивы упакованы из уже проверенных ресурсов без новой сборки/установки зависимостей. Полные SHA-256 — в `shared-release.json` релизного пакета. Тесты распакованного cae45de: 7 PASS, без реальных Telegram identities/платежей; это не VPS GO.
+
+### Узкий сценарий переключения только кода
+
+Подготовлен `release-update.py`; это **не установщик**. Он обслуживает только уже существующие `manager-online.service`, `manager-telegram.service`, `manager-telegram-poller.service` и symlink current в двух каталогах /opt/manager-*. Если реальная архитектура отличается, он откажет — автоматически создавать службы/пользователей/маршруты нельзя. Старые install/update/enable-poller-скрипты совместно с ним не запускать.
+
+1. Read-only инвентаризация владельцем/через разрешённый SSH: реальные current targets, tree_sha обоих каталогов, systemctl cat SHA-256 для трёх units, все EnvironmentFiles и их SHA-256, Caddyfile SHA-256. Приватный `release-plan.json` root:root 0600; заполнить `release-plan.example.json` фактическими pin-значениями. Вывод конфигураций/Environment не публиковать. Пример намеренно непригоден к apply: approvedCommit=null и нулевые хеши.
+2. Передать пакет приватно в /root/manager-release; проверить внешний SHA-256 ZIP и внутренние SHA256SUMS. Проверить новый изолированный preflight из PREFLIGHT.md для **обоих cae45de-архивов**, реальной согласованной копии и фактического старого кода; закрепить путь/SHA GO-отчёта. Старый GO для другого кандидата не принимается. `decision=GO`, все checks PASS, candidates/archives должны содержать обе точные пары commit+SHA256.
+3. Только проверка без применения: `python3 release-update.py --plan /root/manager-release/release-plan.json`. Проверяются Node 24.22.1–24.x, units, current/code/config hashes, действительные Environment/EnvironmentFiles для путей SQLite и портов, rooms extension, adapter-only, выключенная монетизация, доступность двух health, RAM/диск и наличие fuser. Команда без --apply не создаёт lock/backup/release и не останавливает службы.
+4. Только **после отдельного подтверждения владельца**, свежего GO и согласованного окна: `python3 release-update.py --plan /root/manager-release/release-plan.json --apply --approve-commit cae45deece158ed41c30d3c9d7a49a1a0c4f237d`. Эта команда здесь НЕ выполнялась. Файлы плана/архивов и код сценария должны находиться в root-owned каталоге, недоступном другим пользователям для записи.
+5. Сценарий ставит отдельный lock; безопасно распаковывает новые release directories существующим allowlist-extractor. Прежний poller и root-executable backup helper должны иметь тот же SHA, иначе NO-GO. Никаких изменений EnvironmentFile, units, drop-ins, Caddy, Docker, firewall и Bot API.
+6. До переключения сохраняются полные прежние release directories, приватные env/config и реальные unit/drop-in-файлы в новом /root/manager-release-*/ (0700; файлы 0600). Останавливаются только три Manager-службы: poller первым. Проверяется отсутствие открытых DB/WAL/SHM через fuser; при постороннем reader/writer — отказ и восстановление служб. SQLite Online Backup API копирует обе БД со всеми committed WAL-данными; проверяются integrity/foreign keys, SHA-256 и восстановление только в новом restore-check. Это согласованный recovery point при остановленных известных writers; нельзя подменять его cp живого .sqlite или удалять WAL/SHM.
+7. Атомарно меняются только два current symlink. Adapter запускается до rooms, poller — после успешных health и точного SHA отдаваемых HTML. Проверяются прежние units/env/Caddy hashes и активность poller. Контроль «Смайлокрута» — только read-only HTTP 127.0.0.1:18080 до/после; Docker-команд нет. Скрипт не создаёт тестовых действий в рабочих комнатах; живые игровые smoke требуют отдельно согласованной тестовой комнаты после инфраструктурного health.
+8. При ошибке транзакции выполняется best-effort откат обоих current на прежние каталоги и восстановление трёх Manager-служб в правильном порядке. **БД и env автоматически не восстанавливаются**: новые ходы/покупки не затираются. Если сам systemd/файловая система препятствует откату, автоматической гарантии восстановления нет: процесс завершится NO-GO, нужен оператор с приватным backup. Ошибка backup до переключения также возвращает прежние службы. Результат на реальном Linux/systemd пока BLOCKED, не выдан за PASS синтетических тестов.
+
+Новая процедура проверена на синтетических WAL-БД и mocked service operations: 11 PASS, включая сохранность новых SQLite-записей после отказа кандидата/проверки poller, запрет перезаписи restore destination и отказ GO для чужого SHA. Реальные root/systemd/права на VPS не имитированы как выполненное развёртывание.
+
+### Зависимости и выпуск без монетизации
+
+Production runtime: существующий Node >=24.22.1 <25 с node:sqlite; оба архива не требуют npm install. Для оператора: Debian/Python >=3.10 (stdlib sqlite3), systemd, GNU tar, fuser (psmisc), fcntl/flock ядра; диагностике нужны прежние namespace/bwrap-зависимости из PREFLIGHT.md. Новый Caddy/Docker не устанавливается.
+
+Технически возможен ограниченный выпуск с отключённой монетизацией: STARS_ENABLED=0, ADS_VERIFIED_GATEWAY_ENABLED=0, без доверенного AdsGram event/Block ID и без запуска платежных операций. Игра, бесплатные персонажи, существующие права/owner и сохранения от этого не отключаются. Скрипт требует эти OFF-состояния по выбранным environment-полям и health до/после. Если рабочая монетизация сейчас включена, **NO-GO**; сценарий сам её не выключает. Для коммерческого выпуска Stars/AdsGram нужна отдельная реальная приёмка; текущие fixtures её не заменяют.
+
+Безопасный порядок согласования: принять PeerServer PR №1 по неизменённому контракту (его deployment игре не требуется), принять доступный QA PR №7 и явно решить судьбу внешних BLOCKED; только затем отдельное разрешение merge. После merge убедиться в совпадении runtime-дерева с принятым cae45de, иначе новый кандидат/целевые проверки; затем свежий VPS GO, backup и отдельно разрешённый apply. Оба PR сейчас Draft, merge/deployment не выполнены.
+
+Дополнительный целевой тест подтвердил немедленное закрытие source/destination/integrity SQLite handles: context manager sqlite3 сам по себе соединения не закрывает, поэтому backup использует contextlib.closing. Подтверждено на синтетических файлах, не на рабочих БД.
+
+
+## Уточнение первого выпуска OFF: pending checkout — 25 ноября
+
+Актуальный RC **cae45deece158ed41c30d3c9d7a49a1a0c4f237d** заменяет f6c84f2. Выявлен и исправлен узкий дефект: старый созданный invoice раньше мог получить answerPreCheckoutQuery(ok=true) даже при Stars OFF. Теперь OFF запрещает и новые invoice, и pre-checkout старого неоплаченного invoice. Подтверждённые successful_payment/refunded_payment продолжают обрабатываться с прежними проверками: покупки, aliases и поздние оплаченные события не теряются. Уже одобренный ДО отключения платёж может доставить receipt после OFF; это расчёт прежней операции, а не разрешение новой оплаты.
+
+Первый выпуск без активной монетизации выбран владельцем текущим заданием. Повторное согласование этого варианта не требуется, но изменение production env/unit/restart по-прежнему требует отдельного разрешения. Stars/Ads OFF фактически подтверждены только в изолированном тесте, не на VPS.
+
+Если на VPS OFF уже действует — конфигурацию не менять. Если флаги включены, подготовлены **не применённые** monetization-off.example (две OFF-переменные) и monetization-off.conf.example (добавляет /etc/manager-telegram/monetization-off.env ПОСЛЕДНИМ EnvironmentFile только существующего adapter unit). Обычный Environment=0 может быть перекрыт прежним EnvironmentFile; поэтому порядок файлов и effective env должен быть подтверждён в приватной инвентаризации. В реальном плане закрепить SHA дополнительного env/изменённого drop-in и заново получить GO. Сценарий release-update.py сам эти файлы не устанавливает, systemd не reload-ит и конфигурацию не исправляет. В согласованном окне сохранить и вернуть активность существующего poller; не вызывать set/deleteWebhook и не запускать второй getUpdates.
+
+Обе OFF-переменные из шаблона проверены через настоящий createApp process.env в отдельном тестовом процессе (mock Bot API, синтетические SQLite, fake initData). PASS: feature flags false, invoice/ads begin 503, pre-checkout отказ, чужой webhook 403, сохранение прежней покупки/late successful receipt/refund после рестарта. На дефектном коде этот тест сначала воспроизвёл ok=true. После минимального исправления — PASS. Новый распакованный cae45de прошёл один финальный packaged-прогон 7/7; 19 Prestige UI, 11 release-tools и прежние 12 CI не повторялись. Подготовлено только новое упаковывание серверного исправления; UI/нативные сборки не запускались.
+# Проверка существующей установки (25 ноября 2026)
+
+`preflight-launch.cjs` остаётся режимом первичной установки: свободные 8443/8444
+и новый Telegram vhost. Его нельзя применять к уже работающему adapter как
+доказательство необходимости менять Caddy/освобождать порты.
+
+Для существующей установки предусмотрен `preflight-installed-launch.cjs`.
+Он требует приватный план с точными installed tree/unit/config pins,
+проверяет Stars/Ads OFF по running processes и health, использует прежние
+`preflight-source-fds.py`, `preflight-capture.py`, `outerArgs` и `sandboxArgs`.
+Две отдельные согласованные SQLite/WAL-копии создаются без SQL на источниках;
+Online Backup API и restore работают только внутри namespaces над копиями.
+Это не атомарный снимок между двумя БД. Nonblocking read-lock может привести
+к NO-GO при занятом writer; безопасность не ослаблять и службы не останавливать
+ради диагностики. Короткие read-lock могут задержать обычного writer.
+
+После проверки SHA диагностического пакета и безопасной распаковки в НОВЫЙ
+root-owned private-каталог (директории0700, файлы0600/0644) запуск:
+
+```bash
+env -i PATH=/usr/bin:/bin HOME=/root /opt/manager-node/bin/node \
+  /root/manager-preflight/cae45de-installed-20261125/tools/preflight-installed-launch.cjs \
+  /root/manager-preflight/cae45de-installed-20261125/plan.json
+```
+
+Это только диагностика, не deploy. Проверки старого/нового/старого server и
+Store выполняются во втором namespace без host mounts/network. Результат GO
+не означает принятия платформенных рисков или разрешения merge/deployment.
+До apply необходимы отдельное разрешение, актуальные pins и свежий backup/
+isolated restore с остановкой только Manager writers согласно release-update.py.
+При откате восстанавливается код, новые ходы/покупки не затираются старой БД.

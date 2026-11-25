@@ -29,7 +29,14 @@ class Store{
   const now=this.now(),id=randomBytes(32).toString('hex'),access=this.access(user,'character:'+profile.character),expires=Math.min(now+300000,access.expires??Infinity);
   this.db.prepare('DELETE FROM cosmetic_tickets WHERE expires<=?').run(now-7*DAY);this.db.prepare('INSERT INTO cosmetic_tickets VALUES(?,?,?,?)').run(id,user,profile.character,expires);return {ticket:id,characterId:profile.character,expires};
  }
- verifyCosmetic(ticket,characterId,{existingSeat=false}={}){if(typeof ticket!=='string'||!/^[a-f0-9]{64}$/.test(ticket)||typeof characterId!=='string')return false;const row=this.db.prepare('SELECT * FROM cosmetic_tickets WHERE id=? AND character=?').get(ticket,characterId);return !!row&&row.expires+(existingSeat?7*DAY:0)>this.now()&&this.access(row.user,'character:'+row.character).available;}
+ verifyCosmetic(ticket,characterId,{existingSeat=false,styleId,diceId}={}){
+  if(typeof ticket!=='string'||!/^[a-f0-9]{64}$/.test(ticket)||typeof characterId!=='string')return false;
+  const row=this.db.prepare('SELECT * FROM cosmetic_tickets WHERE id=? AND character=?').get(ticket,characterId);
+  if(!row||row.expires+(existingSeat?7*DAY:0)<=this.now())return false;
+  if(styleId!==undefined&&(typeof styleId!=='string'||!this.access(row.user,'style:'+styleId).available))return false;
+  if(diceId!=null&&(typeof diceId!=='string'||!this.access(row.user,'dice:'+diceId).available))return false;
+  return this.access(row.user,'character:'+row.character).available;
+ }
  access(user,item,now=this.now()){
   item=canonicalItem(item);
   const known=catalog.items.find(i=>i.id===item);

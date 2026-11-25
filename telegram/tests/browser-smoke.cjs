@@ -12,14 +12,14 @@ function initData(){const p=new URLSearchParams({auth_date:String(Math.floor(Dat
  try{browser=await chromium.launch({headless:true,...(process.env.QA_CHROME?{executablePath:process.env.QA_CHROME}:{})});
   for(const viewport of [{width:390,height:844},{width:1440,height:1000}]){
    const context=await browser.newContext({viewport,hasTouch:viewport.width<600});
-   const errors=[];const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+   const errors=[];const page=await context.newPage();page.setDefaultTimeout(15000);page.on('pageerror',e=>errors.push(e.message));
    await page.route('https://telegram.org/js/telegram-web-app.js',route=>route.fulfill({contentType:'text/javascript',body:`window.Telegram={WebApp:{initData:${JSON.stringify(initData())},ready(){},expand(){},onEvent(){},BackButton:{show(){},hide(){},onClick(){}},showPopup(o,cb){cb('cancel')}}};`}));
    await page.addInitScript(()=>localStorage.setItem('manager.field.v1','original-version-sentinel'));
    await page.goto(url);try{await page.locator('#telegram-loading').waitFor({state:'detached',timeout:10000});}catch(e){console.error('Bootstrap diagnostics:',errors,await page.locator('#telegram-loading').textContent());throw e;}
-   await page.locator('.tg-entry').getByRole('button',{name:'Персонажи',exact:true}).click();
+   await page.locator('[data-menu=shop]').click();
    assert.equal(await page.locator('.tg-card').count(),18);
    assert.equal(await page.locator('.tg-card img').count(),12);
-   const missing=await page.locator('.tg-card img').evaluateAll(images=>Promise.all(images.map(img=>img.decode().then(()=>null,()=>img.src))));assert(missing.every(v=>v===null),JSON.stringify(missing));
+   for(const img of await page.locator('.tg-card img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(img=>Promise.race([img.decode(),new Promise((_,reject)=>setTimeout(()=>reject(Error('Portrait decode timed out')),5000))]));}
    await page.locator('.tg-card').first().getByRole('button',{name:'Биография и характеристики'}).click();assert.equal(await page.locator('meter').count(),5);
    await page.locator('.tg-dialog').getByRole('button',{name:'Персонажи',exact:true}).click();await page.screenshot({path:require('node:path').resolve(__dirname,`../qa-collection-${viewport.width}.png`),fullPage:true});
    server.store.db.prepare("INSERT OR IGNORE INTO grants(user,item,source,expires) VALUES('123','character:mira','test-fixture',NULL)").run();

@@ -1,0 +1,45 @@
+{
+  "externalTestCommit": "fc8cd23f9d1a3e141b8cfb46118ce4d120242f79",
+  "finalCodeCommit": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
+  "unchangedNetworkFiles": [
+    {
+      "path": "telegram/client.js",
+      "sha256": "b0a66246460c6f40455b2abac227ab6b636d65f64756de375f3bd7a69a2d45da"
+    },
+    {
+      "path": "telegram/build.cjs",
+      "sha256": "f481f7459ad64f081ed82600dd03115843a25c00ccc3bb5e638d35e8570f2098"
+    },
+    {
+      "path": "telegram/server.cjs",
+      "sha256": "fe9a5fb77dcf0b4f2cbcd192e636839adf4d15d522330fd26c0aade343999ad6"
+    },
+    {
+      "path": "telegram/store.cjs",
+      "sha256": "e019b17a7b29c4f2faebd725852ccc38835bd6addd01d1f655a0d8fa04f89d1d"
+    },
+    {
+      "path": "telegram/rooms.cjs",
+      "sha256": "33a514147461d550c174481c0f75625aa66e68194898f894b72a0bd6040a9e0c"
+    },
+    {
+      "path": "telegram/shared/verification.cjs",
+      "sha256": "781fcbfc43383e092063dae1b31fd1bd64d16109d511f48ff00e6126be05e7c4"
+    },
+    {
+      "path": "telegram/shared/room-extension.cjs",
+      "sha256": "485734ba1c3175cd010e0adec308d443ee231ff5dea06ae927f2e1d5fc2dbf99"
+    },
+    {
+      "path": "telegram/animation/build.cjs",
+      "sha256": "c40c5377a54a4479956685174f2b672dcb414db907d6ecbb2ee3e0e8fdae4297"
+    },
+    {
+      "path": "telegram/tests/animation-multiplayer.cjs",
+      "sha256": "a892c636f7963c52e50d8ab2dffc1f00c4c2dc1cf87a5c47b5d2354c4d26a2a3"
+    }
+  ],
+  "unchangedRootP2PSectionSha256": "22ab87ca92b0805a05f1affbb43de68e650ddc923439fc34c99a6f396e7898de",
+  "externalResult": "../../telegram/qa-results/multiplayer-external.json",
+  "scope": "External signaling reused only for unchanged network implementation. Final local WebRTC and UI are checked by final CI. No physical network switch tested."
+}

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "startedAt": "2026-11-24T10:14:30.500Z",
+  "checks": [
+    {
+      "name": "shared-source",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "web-build",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-build",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "runtime-archives",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "unit-integration",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-android",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-desktop",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-ios",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "native-assets",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "browser-matrix",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "browser-network-regression",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "board-gestures-construction",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-browser-smoke",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-shared-browser",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-character-field",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "archive-extractor",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "performance",
+      "status": "PASS",
+      "exitCode": 0
+    }
+  ],
+  "external": {
+    "physicalAndroid": "BLOCKED",
+    "physicalIOS": "BLOCKED",
+    "telegramRealClients": "BLOCKED",
+    "macOSLinuxNative": "Electron macOS/Windows smoke PASS; Linux Chromium/WebKit PASS; physical/full UX acceptance BLOCKED",
+    "installedVpsRevision": "BLOCKED",
+    "linuxNamespaceIsolation": "PASS_ON_CI_SYNTHETIC_FIXTURES",
+    "peerJsScenario": {
+      "status": "FAIL",
+      "reason": "Signaling timeout after 20 seconds",
+      "host": "manager-peer-server.onrender.com",
+      "acceptance": "BLOCKED",
+      "causeConfirmed": false
+    },
+    "ssh": {
+      "status": "BLOCKED",
+      "reason": "root publickey/password authentication rejected"
+    }
+  },
+  "finishedAt": "2026-11-24T10:17:13.554Z",
+  "automatic": "PASS",
+  "release": "BLOCKED_PENDING_PLATFORM_ACCEPTANCE",
+  "testedCodeCommit": "ef714393f6d860a0bcdf76c188b97327c092fe1c",
+  "unit": {
+    "total": 79,
+    "pass": 78,
+    "fail": 0,
+    "skipped": 1
+  },
+  "notes": [
+    "Telegram host is a signed local fixture, not a real Telegram client.",
+    "iOS viewport uses Chromium, not Safari.",
+    "Native HTML staging is not a native binary/device test.",
+    "One Linux namespace test is skipped on Windows.",
+    "Existing November 18 external PeerJS PASS was not reused."
+  ],
+  "ciCodeCommit": "4a8c477a161c409e2a895392345efb8fae935994",
+  "ciSummary": "12 PASS, deploy SKIPPED"
+}

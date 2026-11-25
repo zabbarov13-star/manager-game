@@ -9,6 +9,7 @@ import subprocess
 import tarfile
 import tempfile
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile, ZipInfo
+from runtime_assets import inline_runtime
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION = "0.19.1"
@@ -67,6 +68,9 @@ def main():
     source = files_from_commit(commit)
     date = git("show", "-s", "--format=%cI", commit).decode().strip()
     dist = {name: (ROOT / "online/dist" / name).read_bytes() for name in RUNTIME}
+    runtime = {p.relative_to(ROOT / "online/dist").as_posix(): p.read_bytes()
+               for p in (ROOT / "online/dist/assets/runtime").glob("*") if p.is_file()}
+    dist.update(runtime)
     metadata = json.dumps({"version": VERSION, "tag": TAG, "commit": commit, "date": date,
                            "html_sha256": checksum(dist["index.html"])}, indent=2).encode() + b"\n"
     docs = {name: source[name] for name in ("README.md", "docs/recovery-preview-ru.md")}
@@ -83,10 +87,12 @@ def main():
     server.update({name: source[name] for name in ("online/server.cjs", "packaging/node-sha256.txt")})
     server.update({"online/dist/" + name: data for name, data in dist.items()})
     web = {name: dist[name] for name in PUBLIC}
+    web.update(runtime)
     write_zip(target / "Manager-Source.zip", {**source, "VERSION.json": metadata})
     write_zip(target / "Manager-Web.zip", {**common, **web})
     write_zip(target / "Manager-Server.zip", {**common, **server, **node})
-    (target / "Manager-Standalone.html").write_bytes(dist["index.html"])
+    (target / "Manager-Standalone.html").write_text(
+        inline_runtime(dist["index.html"].decode("utf-8"), ROOT / "online/dist"), encoding="utf-8")
     originals = ["Manager-Source.zip", "Manager-Web.zip", "Manager-Server.zip", "Manager-Standalone.html"]
     backup = {name: (target / name).read_bytes() for name in originals}
     sums = "".join(f"{checksum(data)}  {name}\n" for name, data in backup.items()).encode()

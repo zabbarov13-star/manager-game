@@ -11,7 +11,7 @@ function packageShared(){
    for(const f of ['online/server.cjs','online/vps/backup.sh','telegram/shared/room-extension.cjs','telegram/shared/verification.cjs','telegram/shared/dist/engine.cjs'])copy(f);
    for(const [name,bytes]of generateFiles()){const dest=path.join(dir,'online/dist',name);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,bytes);}
   }else{
-   for(const f of ['telegram/server.cjs','telegram/store.cjs','telegram/auth.cjs','telegram/catalog.cjs','telegram/entitlements.cjs','telegram/bot-api.cjs','telegram/shared/verification.cjs','telegram/shared/backup.cjs','telegram/backup-set.cjs'])copy(f);
+   for(const f of ['telegram/server.cjs','telegram/poller.cjs','telegram/store.cjs','telegram/auth.cjs','telegram/catalog.cjs','telegram/entitlements.cjs','telegram/bot-api.cjs','telegram/shared/verification.cjs','telegram/shared/backup.cjs','telegram/backup-set.cjs'])copy(f);
    function assets(folder,relative='telegram/dist'){for(const e of fs.readdirSync(folder,{withFileTypes:true})){if(e.name==='engine.cjs')continue;const target=path.join(relative,e.name);if(e.isDirectory())assets(path.join(folder,e.name),target);else copy(target);}}
    assets(path.join(root,'telegram/dist'));
   }

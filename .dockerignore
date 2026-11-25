@@ -1,0 +1,17 @@
+.git
+**/node_modules
+**/.env
+**/.env.*
+**/*.local.*
+**/data
+**/dist
+**/out
+**/.cache
+**/__pycache__
+**/*.pyc
+**/*.sqlite*
+**/*.db
+release-output
+telegram/qa-*.png
+telegram/qa-results
+telegram/deploy/reports

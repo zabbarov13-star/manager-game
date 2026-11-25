@@ -1,0 +1,73 @@
+{
+  "codeCommit": "4a8c477a161c409e2a895392345efb8fae935994",
+  "workflow": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664",
+  "status": "PASS",
+  "checks": [
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664/job/138382709282",
+      "name": "ios",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664/job/138382709320",
+      "name": "desktop (macos-15)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664/job/138382709087",
+      "name": "desktop (windows-2025)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664/job/138382709122",
+      "name": "android",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598962/job/138381123950",
+      "name": "deploy",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375599072/job/138380916195",
+      "name": "verify",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598881/job/138380916743",
+      "name": "rooms",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598664/job/138380915299",
+      "name": "qa",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375599072/job/138380916765",
+      "name": "deployment-tools-node18",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598881/job/138380916868",
+      "name": "johnny",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375599072/job/138380916647",
+      "name": "preflight-isolation",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598962/job/138380917479",
+      "name": "package",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/zabbarov13-star/manager-game/actions/runs/45375598683/job/138380915187",
+      "name": "routing",
+      "state": "SUCCESS"
+    }
+  ],
+  "scope": "CI: Linux Chromium/WebKit, Node 24 isolation and container checks, Electron Windows/macOS source wrapper, debug APK Android emulator, unsigned iOS Simulator app. Not physical devices or real Telegram hosts."
+}

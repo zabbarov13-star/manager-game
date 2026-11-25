@@ -1,0 +1,78 @@
+{
+  "scope": "Local Chromium, signed fixture Telegram host, three cold contexts; not real Telegram/WebView",
+  "baselineCommit": "4982083ed6b1062f45b921c62ba46081295d7119",
+  "results": [
+    {
+      "version": "before",
+      "platform": "desktop",
+      "runs": [
+        {
+          "interactiveMs": 924,
+          "bytes": 14943646
+        },
+        {
+          "interactiveMs": 808.1999999880791,
+          "bytes": 14943646
+        },
+        {
+          "interactiveMs": 777.6999999880791,
+          "bytes": 14943646
+        }
+      ]
+    },
+    {
+      "version": "before",
+      "platform": "mobile",
+      "runs": [
+        {
+          "interactiveMs": 776,
+          "bytes": 14943646
+        },
+        {
+          "interactiveMs": 776.4000000357628,
+          "bytes": 14943646
+        },
+        {
+          "interactiveMs": 770.5,
+          "bytes": 14943646
+        }
+      ]
+    },
+    {
+      "version": "after",
+      "platform": "desktop",
+      "runs": [
+        {
+          "interactiveMs": 220.9000000357628,
+          "bytes": 2721968
+        },
+        {
+          "interactiveMs": 220.39999997615814,
+          "bytes": 2237026
+        },
+        {
+          "interactiveMs": 318.4000000357628,
+          "bytes": 5775702
+        }
+      ]
+    },
+    {
+      "version": "after",
+      "platform": "mobile",
+      "runs": [
+        {
+          "interactiveMs": 312.69999998807907,
+          "bytes": 5775702
+        },
+        {
+          "interactiveMs": 290.60000002384186,
+          "bytes": 5775702
+        },
+        {
+          "interactiveMs": 309.80000001192093,
+          "bytes": 5775702
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "startedAt": "2026-11-24T15:28:30.838Z",
+  "checks": [
+    {
+      "name": "shared-source",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "web-build",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-build",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "runtime-archives",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "unit-integration",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-android",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-desktop",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "stage-ios",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "native-assets",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "local-motion-pixels",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "browser-matrix",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "browser-network-regression",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "board-gestures-construction",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-browser-smoke",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-shared-browser",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "telegram-character-field",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "archive-extractor",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "name": "performance",
+      "status": "PASS",
+      "exitCode": 0
+    }
+  ],
+  "external": {
+    "physicalAndroid": "BLOCKED",
+    "physicalIOS": "BLOCKED",
+    "telegramRealClients": "BLOCKED",
+    "macOSLinuxNative": "BLOCKED",
+    "installedVpsRevision": "BLOCKED",
+    "linuxNamespaceIsolation": "BLOCKED_UNLESS_PREFLIGHT_BWRAP_TEST_1"
+  },
+  "finishedAt": "2026-11-24T15:30:43.384Z",
+  "automatic": "PASS",
+  "release": "BLOCKED_PENDING_PLATFORM_ACCEPTANCE",
+  "testedCodeCommit": "a3279b0a1f1b697f8662a2b911eadd9dc9b92425",
+  "workflow": "https://github.com/zabbarov13-star/manager-game/actions/runs/45425055784",
+  "scopeNote": "This JSON is the Linux shared QA job. Dedicated namespace and native job results are recorded separately in unified-ci.json; generic external placeholders are not their results."
+}
