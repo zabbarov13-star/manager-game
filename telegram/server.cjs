@@ -15,6 +15,8 @@ function createApp(config={}){
  const webhookSecret=config.webhookSecret??process.env.TELEGRAM_WEBHOOK_SECRET;
  const receiptSecret=config.receiptSecret??process.env.ADS_RECEIPT_SECRET;
  const blockId=config.blockId??process.env.ADSGRAM_BLOCK_ID;
+ const interstitialBlockId=config.interstitialBlockId??process.env.ADSGRAM_INTERSTITIAL_BLOCK_ID??'';
+ const interstitialReady=!!((config.interstitialEnabled??process.env.ADSGRAM_INTERSTITIAL_ENABLED==='1')&&/^int-\d+$/.test(interstitialBlockId)&&interstitialBlockId!==blockId);
  // The shared adapter has no trusted ad-provider receiver. Never advertise a dead gateway.
  const gatewayEnabled=modeKind!=='adapter'&&(config.gatewayEnabled??process.env.ADS_VERIFIED_GATEWAY_ENABLED==='1');
  const origin=config.origin??process.env.PUBLIC_ORIGIN;
@@ -37,7 +39,7 @@ function createApp(config={}){
   const url=new URL(req.url,'http://localhost');
   try{
    if(/^\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||/^\/api\/(?:internal|admin)(?:\/|$)/.test(url.pathname)||modeKind==='adapter'&&url.pathname==='/ads/verified-receipt')return send(res,404,{error:'Не найдено.'});
-   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady});
+   if(url.pathname==='/health')return send(res,200,{ok:true,service:'manager-telegram',mode:modeKind,roomsEnabled:!!rooms,environment:mode,adsConfigured:!!(gatewayEnabled&&blockId),starsConfigured:starsReady,interstitialConfigured:interstitialReady});
    const remote=req.socket.remoteAddress??'unknown',now=Date.now();
    if(rates.size>4096)for(const [key,value]of rates)if(value.until<now)rates.delete(key);
    // Image/pose downloads must not exhaust the mutation/API request budget.
@@ -89,7 +91,7 @@ function createApp(config={}){
      for(const [key,value]of sessions)if(value.expires<now)sessions.delete(key);
      if(sessions.size>=10000)return send(res,503,{error:'Сервер занят.'});
      const session=randomBytes(32).toString('hex');sessions.set(session,{user:user.id,expires:now+12*3600000});
-     const profile=store.profile(user.id);return send(res,200,{token:session,user,...profile,cosmeticTicket:store.cosmeticTicket(user.id),catalog,features:{ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,stars:starsReady,supportContact:support,environment:mode}});
+     const profile=store.profile(user.id);return send(res,200,{token:session,user,...profile,cosmeticTicket:store.cosmeticTicket(user.id),catalog,features:{ads:!!(gatewayEnabled&&blockId),blockId:gatewayEnabled?blockId:null,interstitial:interstitialReady,interstitialBlockId:interstitialReady?interstitialBlockId:null,stars:starsReady,supportContact:support,environment:mode}});
     }
     const session=sessions.get((req.headers.authorization??'').replace(/^Bearer /,''));
     if(!session||session.expires<=now)return send(res,401,{error:'Откройте приложение заново в Telegram.'});

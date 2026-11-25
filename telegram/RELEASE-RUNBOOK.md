@@ -94,3 +94,8 @@ node telegram/backup-set.cjs restore /PRIVATE/BACKUPS/snapshot-XXXX /PRIVATE/NEW
 5. Если проверка не прошла, сервис оставить закрытым, сохранить оба набора данных; не удалять и не обнулять их.
 
 Автоматический snapshot/restore проверен локально. Реальный откат контейнерного стенда/production не проводился без доступа и разрешения. Локальные партии хранятся отдельно в аккаунтном localStorage, PeerJS checkpoint — в IndexedDB/экспорте. Они не становятся серверными облачными сохранениями от копирования SQLite; постоянные покупки и серверные комнаты находятся в SQLite.
+
+
+### AdsGram: независимые форматы (PR9)
+
+По умолчанию `STARS_ENABLED=0`, `ADS_VERIFIED_GATEWAY_ENABLED=0`, `ADSGRAM_INTERSTITIAL_ENABLED=0`, `ADSGRAM_INTERSTITIAL_BLOCK_ID=`. Reward `1788` не подходит для Interstitial. Отдельный Interstitial допускает только `int-…`, живой конец партии, одноразовую попытку и локальный cooldown 15 минут. Нет Web Locks/storage — нет показа. Серверная выдача Reward в adapter закрыта до официального доверенного контракта AdsGram. Включение/отключение и ограничения открытых сессий: [ADSGRAM-INTEGRATION.md](ADSGRAM-INTEGRATION.md#финальная-схема-reward--interstitial-25112026). Для остановки рекламных показов выключить оба рекламных флага с отдельным разрешением, переоткрыть Mini App; Stars оставить OFF. SQLite и финансовую историю при откате не заменять.

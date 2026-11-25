@@ -31,6 +31,9 @@ replace('function render(){if(!s)return;', 'function render(){if(!s)return;windo
 replace("async request(op='',body,credentials){const controller", "async request(op='',body,credentials){if(body?.character)body=await window.ManagerTelegram.decorateRoomBody(body);const controller");
 replace("const creating=!this.db.row&&m.body&&m.op==='';", "if(m?.body?.character){const verified=await window.ManagerTelegram.verifyCosmetic(m.body.telegramCosmeticTicket,m.body.telegramCharacterId,false,{styleId:m.body.telegramStyleId,diceId:m.body.telegramDiceId});m={...m,body:{...m.body,telegramCharacterVerified:verified}};}const creating=!this.db.row&&m.body&&m.op==='';");
 replace('}),{DB:this.db});','}),{DB:this.db,verifyCosmetic:(ticket,id,look)=>window.ManagerTelegram.verifyCosmetic(ticket,id,true,look)});');
+// Ads run only after the existing save/animation/online queue has completed.
+replace("if(method==='endTurn')camera?.finish();", "if(method==='endTurn')camera?.finish();window.ManagerTelegram.adsComplete(s);");
+replace("if(previousTurn!==s.turn)camera?.finish();", "if(previousTurn!==s.turn)camera?.finish();if(!onlineQueue.length)window.ManagerTelegram.adsComplete(s);");
 replace('s=draft;save();busy=true;', 's=draft;window.ManagerTelegram.commitLocal(s);save();busy=true;');
 replace('s=next;epoch++;busy=false;shownEvent=null;displayPositions=null;save();','s=next;window.ManagerTelegram.restoreLocal(s);epoch++;busy=false;shownEvent=null;displayPositions=null;save();');
 replace('async function acceptOnline(next,effects,room){onlineQueue.push', 'async function acceptOnline(next,effects,room){window.ManagerTelegram.acceptNetwork(next,room);onlineQueue.push');
@@ -43,9 +46,9 @@ const scripts=[];html=html.replace(/<script>([\s\S]*?)<\/script>/g,(_,code)=>{sc
 // Diagnostics is a separate script and remains available, behind the original interface.
 html=html.replace(/<script id="manager-p2p-diagnostics">([\s\S]*?)<\/script>/g,(_,code)=>{scripts.push(code);return '';});
 fs.writeFileSync(path.join(out,'game.js'),scripts.join('\n'));
-replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/animation-core.js"></script><script src="/animation-renderer.js"></script><script src="/animation-controller.js"></script><script src="/client.js"></script></body>');
+replace('</body>','<div id="telegram-loading" role="status">Проверяем вход через Telegram…</div><script src="/animation-core.js"></script><script src="/animation-renderer.js"></script><script src="/animation-controller.js"></script><script src="/interstitial.js"></script><script src="/client.js"></script></body>');
 fs.writeFileSync(path.join(out,'index.html'),html);
-for(const name of ['client.js','telegram.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
+for(const name of ['client.js','interstitial.js','telegram.css'])fs.copyFileSync(path.join(__dirname,name),path.join(out,name));
 fs.writeFileSync(path.join(out,'animation-core.js'),animations.bundle());
 fs.copyFileSync(path.join(__dirname,'animation/renderer.js'),path.join(out,'animation-renderer.js'));
 fs.copyFileSync(path.join(__dirname,'animation/controller.js'),path.join(out,'animation-controller.js'));
