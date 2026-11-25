@@ -766,5 +766,523 @@
     "clientAgentChanged": false,
     "testsRerun": false,
     "buildsRerun": false
+  },
+  "latestAuthenticatedVpsInventory": {
+    "observedAt": "2026-11-25T05:32:22.457586+00:00",
+    "authenticated": true,
+    "host": "20491.online-vds.ru",
+    "runtimeCandidate": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "declaredInstalledCommit": "17710830aa22b9cac3d17a163a3feb7dbbcd8382",
+    "installedTree": "Mixed: RELEASE 1771083, Telegram server blob matches e98a25d start fix",
+    "inventory": {
+      "readOnly": true,
+      "privateKeyRead": false,
+      "userDatabaseRowsRead": false,
+      "sqlOpened": false,
+      "units": {
+        "manager-online.service": {
+          "MainPID": "4290",
+          "WorkingDirectory": "/opt/manager-online/current",
+          "User": "manager-online",
+          "Requires": "-.mount system.slice sysinit.target",
+          "PartOf": "",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "FragmentPath": "/etc/systemd/system/manager-online.service",
+          "DropInPaths": "/etc/systemd/system/manager-online.service.d/manager-online-telegram.conf",
+          "UnitFileState": "enabled",
+          "nodeConfigured": true,
+          "expectedScriptConfigured": true,
+          "usesNodeEnvFile": false,
+          "unitSha256": "908c23cb9f0bf872150e596dacdbfbdc8ffeafde714781d692e42f299804829e",
+          "selectedEffectiveEnvironment": {
+            "ROOM_DATABASE": "/var/lib/manager-online/rooms.sqlite",
+            "ROOM_EXTENSION": "telegram",
+            "COSMETIC_RPC_ENDPOINT": "http://127.0.0.1:8444"
+          },
+          "environmentFiles": [
+            {
+              "path": "/etc/manager-online/cosmetics.env",
+              "exists": true,
+              "bytes": 85,
+              "uid": 0,
+              "gid": 0,
+              "mode": "0o600"
+            }
+          ],
+          "environmentParsingUnsupported": false,
+          "supportConfigured": false,
+          "adsgramBlockConfigured": false,
+          "selectedRunningEnvironment": {
+            "ROOM_DATABASE": "/var/lib/manager-online/rooms.sqlite",
+            "ROOM_EXTENSION": "telegram",
+            "COSMETIC_RPC_ENDPOINT": "http://127.0.0.1:8444"
+          }
+        },
+        "manager-telegram.service": {
+          "MainPID": "5234",
+          "WorkingDirectory": "/opt/manager-telegram/current",
+          "User": "manager-telegram",
+          "Requires": "system.slice sysinit.target -.mount",
+          "PartOf": "",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "FragmentPath": "/etc/systemd/system/manager-telegram.service",
+          "DropInPaths": "",
+          "UnitFileState": "enabled",
+          "nodeConfigured": true,
+          "expectedScriptConfigured": true,
+          "usesNodeEnvFile": false,
+          "unitSha256": "0ea23df4ee160415abada3126e61e0574696e547130c8dce8bd9d38d3eb1868f",
+          "selectedEffectiveEnvironment": {
+            "TELEGRAM_MODE": "adapter",
+            "BIND": "127.0.0.1",
+            "PORT": "8443",
+            "COSMETIC_RPC_PORT": "8444",
+            "TELEGRAM_DATABASE": "/var/lib/manager-telegram/telegram.sqlite",
+            "STARS_ENABLED": "0",
+            "ADS_VERIFIED_GATEWAY_ENABLED": "0",
+            "TELEGRAM_ENV": "test"
+          },
+          "environmentFiles": [
+            {
+              "path": "/etc/manager-telegram/adapter.env",
+              "exists": true,
+              "bytes": 628,
+              "uid": 0,
+              "gid": 0,
+              "mode": "0o600"
+            }
+          ],
+          "environmentParsingUnsupported": false,
+          "supportConfigured": true,
+          "adsgramBlockConfigured": false,
+          "selectedRunningEnvironment": {
+            "TELEGRAM_MODE": "adapter",
+            "BIND": "127.0.0.1",
+            "PORT": "8443",
+            "COSMETIC_RPC_PORT": "8444",
+            "TELEGRAM_DATABASE": "/var/lib/manager-telegram/telegram.sqlite",
+            "STARS_ENABLED": "0",
+            "ADS_VERIFIED_GATEWAY_ENABLED": "0",
+            "TELEGRAM_ENV": "test"
+          }
+        },
+        "manager-telegram-poller.service": {
+          "MainPID": "5275",
+          "WorkingDirectory": "/opt/manager-telegram/current",
+          "User": "",
+          "Requires": "manager-telegram.service -.mount system.slice sysinit.target",
+          "PartOf": "",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "FragmentPath": "/etc/systemd/system/manager-telegram-poller.service",
+          "DropInPaths": "",
+          "UnitFileState": "enabled",
+          "nodeConfigured": true,
+          "expectedScriptConfigured": true,
+          "usesNodeEnvFile": false,
+          "unitSha256": "93b3d99e987bf4f59ef7b7ba08e6772033bf775ce47e8a248436987091b42339",
+          "selectedEffectiveEnvironment": {
+            "PORT": "8443",
+            "TELEGRAM_ENV": "test",
+            "TELEGRAM_DATABASE": "/var/lib/manager-telegram/telegram.sqlite",
+            "BIND": "127.0.0.1",
+            "STARS_ENABLED": "0",
+            "ADS_VERIFIED_GATEWAY_ENABLED": "0",
+            "TELEGRAM_MODE": "adapter",
+            "COSMETIC_RPC_PORT": "8444"
+          },
+          "environmentFiles": [
+            {
+              "path": "/etc/manager-telegram/adapter.env",
+              "exists": true,
+              "bytes": 628,
+              "uid": 0,
+              "gid": 0,
+              "mode": "0o600"
+            }
+          ],
+          "environmentParsingUnsupported": false,
+          "supportConfigured": true,
+          "adsgramBlockConfigured": false,
+          "selectedRunningEnvironment": {
+            "PORT": "8443",
+            "TELEGRAM_ENV": "test",
+            "TELEGRAM_DATABASE": "/var/lib/manager-telegram/telegram.sqlite",
+            "BIND": "127.0.0.1",
+            "STARS_ENABLED": "0",
+            "ADS_VERIFIED_GATEWAY_ENABLED": "0",
+            "TELEGRAM_MODE": "adapter",
+            "COSMETIC_RPC_PORT": "8444"
+          }
+        },
+        "caddy.service": {
+          "MainPID": "452",
+          "WorkingDirectory": "",
+          "User": "caddy",
+          "Requires": "network-online.target sysinit.target system.slice -.mount",
+          "PartOf": "",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "FragmentPath": "/lib/systemd/system/caddy.service",
+          "DropInPaths": "",
+          "UnitFileState": "enabled",
+          "nodeConfigured": false,
+          "expectedScriptConfigured": false,
+          "usesNodeEnvFile": false,
+          "unitSha256": "2a25f3aab0f96d24532c4be2289b6b54fd59ad3c0654c6e9eb378fd43170e757"
+        },
+        "docker.service": {
+          "MainPID": "492",
+          "WorkingDirectory": "",
+          "User": "",
+          "Requires": "docker.socket sysinit.target system.slice",
+          "PartOf": "",
+          "LoadState": "loaded",
+          "ActiveState": "active",
+          "SubState": "running",
+          "FragmentPath": "/lib/systemd/system/docker.service",
+          "DropInPaths": "",
+          "UnitFileState": "enabled",
+          "nodeConfigured": false,
+          "expectedScriptConfigured": false,
+          "usesNodeEnvFile": false,
+          "unitSha256": "9968187379d64f5f88e39275da3fdd2569df9682343ef564dbb7e01983633146"
+        }
+      },
+      "releases": {
+        "rooms": {
+          "current": "/opt/manager-online/current",
+          "exists": true,
+          "isSymlink": true,
+          "target": "/opt/manager-online/releases/telegram-17710830aa22b9cac3d17a163a3feb7dbbcd8382-deploy-e3lsiyro",
+          "declaredRelease": {
+            "version": 1,
+            "commit": "17710830aa22b9cac3d17a163a3feb7dbbcd8382",
+            "kind": "rooms",
+            "roomsEnabled": true
+          },
+          "codeFiles": {
+            "online/server.cjs": {
+              "sha256": "e62c80ca9faef637ba6b326f4ec8a62cd3530b5b22863a11b7324b3b590bce54",
+              "gitBlobNormalized": "be93ff91ca68c8d4c924b93e7c724d2723a8aada"
+            },
+            "online/dist/engine.cjs": {
+              "sha256": "fb333a87bc29d00e87a79062a0866683bce9a96fde938e6c8e9f614b2e18c972",
+              "gitBlobNormalized": "d5a94f4ff65a0a1b891ae366c113ad1211a01c00"
+            },
+            "online/dist/index.html": {
+              "sha256": "bd21975da7e5b9d723a0087fee9c581857d50661c2fa52e142495890ca479f85",
+              "gitBlobNormalized": "f0da557d017bfda5436e6a22e1fe1cc250d9a389"
+            },
+            "telegram/shared/dist/engine.cjs": {
+              "sha256": "c4cfa76465c2a367bab76e275b4b95fd3d6605c676a0e5e43354704574cd57c3",
+              "gitBlobNormalized": "f564f6870971df8f8eff48d1329531b86f1cc42c"
+            }
+          }
+        },
+        "adapter": {
+          "current": "/opt/manager-telegram/current",
+          "exists": true,
+          "isSymlink": true,
+          "target": "/opt/manager-telegram/releases/17710830aa22b9cac3d17a163a3feb7dbbcd8382",
+          "declaredRelease": {
+            "version": 1,
+            "commit": "17710830aa22b9cac3d17a163a3feb7dbbcd8382",
+            "kind": "adapter",
+            "roomsEnabled": false
+          },
+          "codeFiles": {
+            "telegram/server.cjs": {
+              "sha256": "56d1facaafff33de885610d778b42cc85718189ce3bc1f7f502e87032ddae447",
+              "gitBlobNormalized": "dff8ad6f24f9800ecdf7f0f44827ad9c60964774"
+            },
+            "telegram/store.cjs": {
+              "sha256": "d58d50b3f61b6d86eb8a560a50c22fba6b92426d73b0147e529e5719acf4cfaa",
+              "gitBlobNormalized": "3aecbb10ea719fe3df23c698f21190c8eeda59f2"
+            },
+            "telegram/poller.cjs": {
+              "sha256": "9ac5203d541ea68c0d50652f86dfc013caa3700164877786641df4c2dd34e3d1",
+              "gitBlobNormalized": "0ad10b419bd2e53a48c2b3c80f99c9ecf12e8b2a"
+            },
+            "telegram/dist/index.html": {
+              "sha256": "c0d7e1099c07d4f4e8cbd32a3ebac086f69ffd53065f982efe2f8d19ab5c22d2",
+              "gitBlobNormalized": "b722ca5970ac2aa594e89a3cb72137ef48698495"
+            }
+          },
+          "pendingCheckoutOffGuardPresent": false
+        }
+      },
+      "versions": {
+        "node": "v24.22.2",
+        "python": "Python 3.11.2"
+      },
+      "resources": {
+        "memory": {
+          "MemTotalKiB": 2014144,
+          "MemAvailableKiB": 1291308,
+          "SwapTotalKiB": 0,
+          "SwapFreeKiB": 0
+        },
+        "filesystems": {
+          "/": {
+            "availableBytes": 3230363648,
+            "totalBytes": 10529058816
+          },
+          "/opt": {
+            "availableBytes": 3230363648,
+            "totalBytes": 10529058816
+          },
+          "/var/lib/manager-online": {
+            "availableBytes": 3230363648,
+            "totalBytes": 10529058816
+          },
+          "/var/lib/manager-telegram": {
+            "availableBytes": 3230363648,
+            "totalBytes": 10529058816
+          }
+        }
+      },
+      "sqlite": {
+        "rooms": {
+          "configuredPath": "/var/lib/manager-online/rooms.sqlite",
+          "resolvedPath": "/var/lib/manager-online/rooms.sqlite",
+          "source": "systemd selected environment",
+          "sqlOpened": false,
+          "database": {
+            "exists": true,
+            "bytes": 7356416,
+            "uid": 995,
+            "gid": 994,
+            "mode": "0o600"
+          },
+          "wal": {
+            "exists": true,
+            "bytes": 4231272,
+            "uid": 995,
+            "gid": 994,
+            "mode": "0o600"
+          },
+          "shm": {
+            "exists": true,
+            "bytes": 32768,
+            "uid": 995,
+            "gid": 994,
+            "mode": "0o600"
+          },
+          "sqliteHeaderValid": true,
+          "journalHeaderMode": "WAL"
+        },
+        "telegram": {
+          "configuredPath": "/var/lib/manager-telegram/telegram.sqlite",
+          "resolvedPath": "/var/lib/manager-telegram/telegram.sqlite",
+          "source": "systemd selected environment",
+          "sqlOpened": false,
+          "database": {
+            "exists": true,
+            "bytes": 4096,
+            "uid": 993,
+            "gid": 991,
+            "mode": "0o600"
+          },
+          "wal": {
+            "exists": true,
+            "bytes": 1133032,
+            "uid": 993,
+            "gid": 991,
+            "mode": "0o600"
+          },
+          "shm": {
+            "exists": true,
+            "bytes": 32768,
+            "uid": 993,
+            "gid": 991,
+            "mode": "0o600"
+          },
+          "sqliteHeaderValid": true,
+          "journalHeaderMode": "WAL"
+        }
+      },
+      "listeningPorts": [
+        {
+          "bind": "0.0.0.0:22",
+          "processInfo": "users:((\"sshd\",pid=469,fd=3))"
+        },
+        {
+          "bind": "127.0.0.1:8443",
+          "processInfo": "users:((\"MainThread\",pid=5234,fd=25))"
+        },
+        {
+          "bind": "127.0.0.1:8444",
+          "processInfo": "users:((\"MainThread\",pid=5234,fd=24))"
+        },
+        {
+          "bind": "127.0.0.1:8080",
+          "processInfo": "users:((\"MainThread\",pid=4290,fd=24))"
+        },
+        {
+          "bind": "127.0.0.1:18080",
+          "processInfo": "users:((\"docker-proxy\",pid=824,fd=8))"
+        },
+        {
+          "bind": "*:443",
+          "processInfo": "users:((\"caddy\",pid=452,fd=12))"
+        },
+        {
+          "bind": "[::]:22",
+          "processInfo": "users:((\"sshd\",pid=469,fd=4))"
+        },
+        {
+          "bind": "*:80",
+          "processInfo": "users:((\"caddy\",pid=452,fd=13))"
+        }
+      ],
+      "http": {
+        "roomsLoopback": {
+          "status": 200,
+          "health": {
+            "ok": true
+          }
+        },
+        "adapterLoopback": {
+          "status": 200,
+          "health": {
+            "ok": true,
+            "service": "manager-telegram",
+            "mode": "adapter",
+            "roomsEnabled": false,
+            "environment": "test",
+            "starsConfigured": false,
+            "adsConfigured": false
+          }
+        },
+        "smaylokrutLoopback": {
+          "status": 200,
+          "bodySha256": "54e3726fca23753178be65a5e7074f7b9518f679edad1321966263ffe2840e1e",
+          "hashBoundedTo262144Bytes": false
+        },
+        "managerDomain": {
+          "status": 200,
+          "health": {
+            "ok": true,
+            "service": "manager-telegram",
+            "mode": "adapter",
+            "roomsEnabled": false,
+            "environment": "test",
+            "starsConfigured": false,
+            "adsConfigured": false
+          }
+        },
+        "legacyManagerDomain": {
+          "status": 200,
+          "health": {
+            "ok": true
+          }
+        }
+      },
+      "caddyFile": {
+        "exists": true,
+        "bytes": 513,
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "617849f9a1cbf9313bcafd68f6dc2b2fa0586bee6d42c91b43c55b286e70e94f",
+        "managerHostMentioned": true,
+        "upstreamPortsMentioned": [
+          8080,
+          8443,
+          18080
+        ],
+        "privatePathGuardTextPresent": true
+      },
+      "webhook": {
+        "status": 401,
+        "botSettingsChanged": false
+      }
+    },
+    "namespaceFollowup": {
+      "configuredTelegramNamespace": "test",
+      "standardNamespaceIdentity": {
+        "ok": true,
+        "matchesExpectedTestBot": true
+      },
+      "standardNamespaceWebhook": {
+        "ok": true,
+        "urlConfigured": false,
+        "pendingUpdateCount": 3,
+        "lastErrorPresent": false
+      },
+      "pollerRecentHttpErrorCounts": {
+        "401": 30,
+        "409": 0,
+        "429": 0
+      },
+      "journalQuerySucceeded": true,
+      "publicRoomRouting": {
+        "status": 400
+      },
+      "publicPrivateRoute": {
+        "status": 404
+      },
+      "activeCaddySelectedMetadata": {
+        "managerHostFound": true,
+        "upstreams": [
+          "127.0.0.1:8080",
+          "127.0.0.1:8443"
+        ],
+        "selectedPathMatchers": [
+          "/admin",
+          "/admin/*",
+          "/ads/verified-receipt",
+          "/api/rooms",
+          "/api/rooms/*",
+          "/internal",
+          "/internal/*"
+        ]
+      },
+      "fingerprints": {
+        "/etc/manager-online/cosmetics.env": "fd3fdb8c650d22a49bb0f0a1d28a10c903221161a06fa18801ddfa823616f0d2",
+        "/etc/manager-telegram/adapter.env": "e3414aa3ab7d0579a106ba6aa735dc0f3d3bfa5c68e68031ccf4cc3721907744",
+        "/opt/manager-online/current/online/vps/backup.sh": "a3305e68ffb9a8415f2bc496c437d34090414fa07fbaf3f8b483519fb52921db"
+      },
+      "mutations": false,
+      "getUpdatesCalled": false,
+      "secretValuesPrinted": false
+    },
+    "externalWindowsHealth": {
+      "status": 200,
+      "ok": true,
+      "mode": "adapter",
+      "starsConfigured": false,
+      "adsConfigured": false,
+      "environment": "test"
+    },
+    "candidatePacketSha256": "3424eca6ca9b9156c872befa316b2b08d28c3b02cdbadcdc2a8b17864437e537",
+    "packetIntegrity": "PASS",
+    "flagsOff": "PASS_ACTUAL_CONFIG_PROCESS_HEALTH",
+    "installedPendingCheckoutGuard": "ABSENT_FIXED_IN_CANDIDATE_NOT_DEPLOYED",
+    "pollerFunctional": "FAIL_401_WRONG_API_NAMESPACE",
+    "resourcesGuard": "PASS_AT_OBSERVATION",
+    "databaseRowsRead": false,
+    "sqlOpened": false,
+    "backupRestorePerformed": false,
+    "newVpsCompatibilityGo": "NOT_PERFORMED_READONLY_SCOPE",
+    "go": "NO_GO",
+    "blockingReasons": [
+      "TELEGRAM_API_NAMESPACE_MISMATCH_401",
+      "REAL_BACKUP_RESTORE_AND_OLD_NEW_COMPATIBILITY_NOT_VERIFIED",
+      "REAL_PLATFORM_ACCEPTANCE_PENDING"
+    ],
+    "productionChanged": false,
+    "privateSshKeyRead": false,
+    "testsRerun": false,
+    "buildsRerun": false,
+    "merge": false,
+    "deployment": false
   }
 }

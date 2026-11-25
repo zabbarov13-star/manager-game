@@ -1,15 +1,51 @@
 # Приёмка после Stage 1 — обновлено 25 ноября 2026
 
 
-## Свежая проверка SSH-профиля manager-vps — 25 ноября 2026
+## Свежая аутентифицированная инвентаризация VPS — 25 ноября 2026
 
-Профиль теперь действительно настроен: `manager-vps` → root@95.181.169.84:22, IdentitiesOnly=yes, IdentityFile ~/.ssh/manager_codex; файл ключа существует. Его содержимое не читалось и не копировалось.
+**SSH PASS:** команда владельца `ssh -o BatchMode=yes manager-vps "whoami && hostname"` вернула root / 20491.online-vds.ru. Ключ разблокирован агентом; файл приватного SSH-ключа не читался/не копировался. Предыдущий auth blocker устранён. Собраны только разрешённые метаданные; удалённый Python передан stdin, PYTHONDONTWRITEBYTECODE=1, файлов аудита на VPS не создавалось. SQL-соединений/запросов к рабочим БД не было: прочитан только 100-байтный SQLite header с O_RDONLY/O_NOATIME и stat DB/WAL/SHM. Секреты, initData, пользовательские строки и полные env/unit/journal не выводились.
 
-Выполнена указанная владельцем команда `ssh -o BatchMode=yes manager-vps "whoami && hostname"` и одна диагностическая попытка с тем же профилем/verbose, итог **Permission denied (publickey,password)**, exit 255. Полный debug log и fingerprint/comment ключа не публиковались. Безопасная сводка: PublicKeyOffered=true, ServerAcceptedKey=true, Authenticated=false; ssh-agent Stopped, SSH_AUTH_SOCK отсутствует, ssh-add -l сообщает недоступность агента. Это отличается от предыдущего состояния без настроенного профиля: публичный ключ теперь найден и принимается сервером, но приватная подпись для завершения входа не доступна автоматически. Парольная фраза вероятна, однако её наличие не определялось чтением ключа и не выдано за доказанный факт.
+Проверенный HEAD до этого документационного обновления **6ab71c05f1e06f916e67e4211f4c419e19d16c39**, кандидат **cae45deece158ed41c30d3c9d7a49a1a0c4f237d**, PeerServer **536009173cf47ba47687777548d7dc161d7de30e**. PR №7 и №1 OPEN/Draft/MERGEABLE. Ни тесты, ни сборки/CI не повторялись. Пакет cae45de и внешний SHA-256 повторно сверены: **3424eca6ca9b9156c872befa316b2b08d28c3b02cdbadcdc2a8b17864437e537**, целостность PASS.
 
-Попыток 2, третья без новых условий не выполнялась. whoami/hostname и удалённая инвентаризация не выполнились. Службы/SQLite/WAL/Stars/AdsGram/ресурсы VPS не прочитаны и остаются BLOCKED. Приватный ключ/парольная фраза не запрашивались в чат. Настройки клиента/агента и production-службы не изменялись.
+| Параметр | Фактическое состояние | Сравнение/действие |
+|---|---|---|
+| Installed release | Оба RELEASE.json объявляют **17710830aa22b9cac3d17a163a3feb7dbbcd8382**; current — symlink на старые release directories | Не cae45de. Telegram server модифицирован: blob dff8ad6… совпадает с /start-fix e98a25d, тогда как Store совпадает с 1771083. Единого неизменённого Git tree у установки не подтверждено |
+| Rooms | manager-online.service active/running/enabled, User=manager-online, 127.0.0.1:8080, ROOM_EXTENSION=telegram | Single shared room writer сохранён; server blob совпал с 1771083, отличается от кандидата |
+| Adapter | manager-telegram.service active/running/enabled, User=manager-telegram, 127.0.0.1:8443 + приватный 8444, mode=adapter, roomsEnabled=false | Разделение архитектуры фактически подтверждено |
+| Poller | manager-telegram-poller.service active/running/enabled, Requires=manager-telegram.service, User не задан (root); код poller совпал с cae45de | Unit active не означает работающий Bot API: 30 getUpdates HTTP 401 за последние 15 минут |
+| Node/Python | Node **v24.22.2**, Python **3.11.2** | Соответствуют требованиям кандидата; установка/обновление зависимостей не нужны по этим версиям |
+| Ресурсы | Доступно **1.23 GiB RAM**, **3.01 GiB диска**, swap отсутствует | Порог memory/disk существующего release guard на этом снимке пройден: RAM≥256 MiB, расчётный disk минимум 1 GiB. Перед будущим apply проверяется заново |
+| Rooms SQLite | /var/lib/manager-online/rooms.sqlite, 7,356,416 B; WAL 4,231,272 B; SHM 32,768 B; права 0600 | Header SQLite/WAL подтверждён, SQL/целостность/строки не читались |
+| Telegram SQLite | /var/lib/manager-telegram/telegram.sqlite, 4,096 B; WAL 1,133,032 B; SHM 32,768 B; права 0600 | Существенные данные находятся в WAL; нельзя копировать один sqlite. Backup/restore в этой read-only задаче не выполнялся |
+| Stars/AdsGram flags | В selected config И окружении running adapter/poller **STARS_ENABLED=0**, **ADS_VERIFIED_GATEWAY_ENABLED=0**; Block ID не задан; health starsConfigured=false/adsConfigured=false | Фактические OFF-флаги PASS. Дополнительный monetization-off env patch сейчас не нужен |
+| Installed OFF guard | Установленный Telegram server не содержит исправления pending pre-checkout | Новые invoice скрыты/отключены, но старый unpaid invoice на deployed коде имеет ранее воспроизведённый OFF-риск. Исправлен только в кандидате cae45de, пока не развёрнут; реальных checkout/payment запросов не выполнялось |
+| Telegram namespace | В adapter/poller **TELEGRAM_ENV=test**; read-only Bot API в этой среде →401 | Это подтверждённое несоответствие среды, не вывод о недействительном токене |
+| Identity/webhook | Тот же токен в обычной среде getMe OK, identity соответствует @ManagerGameTestBot; getWebhookInfo OK, URL пуст, pending updates=3 | Polling выбран корректно вместо webhook, но работает с неправильным API prefix. getUpdates/deleteWebhook/setWebhook/sendMessage не вызывались |
+| URL/routes | HTTPS manager.95-181-169-84.sslip.io/health →200 с VPS **и внешнего Windows-клиента**; legacy health →200; /api/rooms без кода →штатный400; /internal/cosmetics/verify →404 | Доверенный TLS, базовая маршрутизация/закрытие private path PASS; игровых команд не отправлялось |
+| Caddy/Docker/Смайлокрут | caddy.service и docker.service active; active Caddy manager routes ведут на 8080/8443, не 8444; Смайлокрут 127.0.0.1:18080 →200 | Только чтение systemctl/active-config/HTTP; ни Docker CLI mutations, ни restart/reload/config write не выполнялись |
+| Rollback helpers | Installed poller blob совпадает с кандидатом; backup.sh SHA-256 **a3305e68ffb9a8415f2bc496c437d34090414fa07fbaf3f8b483519fb52921db** совпадает | Предпосылка сохранения доверенного poller/backup helper пройдена. Старый Store/room code отличаются, реальная DB compatibility/recovery ещё не подтверждена |
 
-**Свежий вывод для runtime cae45de: NO-GO** из-за незавершённой SSH-авторизации и отсутствующей фактической инвентаризации/нового GO exact кандидата. Старые успешные тесты переиспользованы, сборки/CI не запускались. Для продолжения нужен доступный текущему Windows-клиенту запущенный ssh-agent с уже разблокированным ключом. Парольную фразу при необходимости вводит владелец только локально через ssh-add; читать/копировать ключ или передавать фразу в чат не требуется. Разрешение на read-only инвентаризацию уже действует, на production update — отсутствует.
+### Свежий GO/NO-GO для cae45de
+
+**NO-GO на code-only rollout с текущей конфигурацией.** Главный новый подтверждённый blocker: test API namespace даёт 401, а обычный Bot API работает. Простое переключение current на cae45de сохраняет этот неверный env; health=true и active poller не доказывают доставку Telegram updates. Перед будущим apply нужен отдельный операционный gate успешного Bot API auth/работоспособности polling, не только is-active.
+
+Минимальное необходимое конфигурационное исправление после **отдельного разрешения** — TELEGRAM_ENV=production (имя обычной Bot API-среды, **не включение Stars/AdsGram**) в фактически используемом adapter.env/окружении двух Telegram-служб. Оба OFF-флага и абсолютный TELEGRAM_DATABASE сохраняются; Caddy/Docker/room database и Bot API webhook не менять. В этой задаче исправление НЕ применено, службы НЕ перезапускались. Исторический тестовый namespace может быть сохранён только для настоящего отдельного Telegram test-bot, но этот установленный токен read-only getMe подтвердил обычную среду.
+
+Кандидат cae45de уже исправляет отдельный deployed OFF pre-checkout defect (ранее 1 targeted PASS + 7 packaged PASS). Ни новые неоплаченные invoice, ни webhook/платёжные операции не создавались на VPS. Прежние 19 UI, 11 backup/rollback и применимые CI сохранены. Подтверждённые receipts/refunds не отключаются при OFF — это нужно для сохранности прежних покупок.
+
+Второй незакрытый gate: свежий изолированный GO обеих exact cae45de-архивов с фактическим старым runtime/согласованными копиями обеих БД и проверенным восстановлением. WAL header/health не являются integrity_check или restore PASS. В текущем разрешении только чтение: копии, восстановление, миграции и тестовые игровые записи не делались. 11 прежних synthetic recovery PASS применимы к инструменту, но не заменяют эту проверку.
+
+Полная реальная приёмка новых WebView/Android/iPhone/двух аккаунтов остаётся BLOCKED; исторический Desktop roll 2+3=5 не повторялся. PeerServer 5360091 технически GO, его production-обновление не требуется ради cae45de. Оба PR Draft, game merge по полной приёмке/тестовый выпуск на этом VPS/production — NO-GO до закрытия либо явно согласованного scope оставшихся gates.
+
+**Следующие разрешённые шаги до выпуска:** отдельно согласовать узкое исправление Telegram API namespace и перезапуск только adapter/poller с сохранением данных/флагов OFF; затем получить свежий изолированный GO/verified backup-restore для actual installed runtime→cae45de, решить внешнюю реальную приёмку и отдельно разрешить merge/deployment. Разрешение текущей задачи на read-only доступ не считается разрешением этих изменений. Публичные GET и getMe/getWebhookInfo — единственные запросы; offset/updates не потреблялись.
+
+Ни production-код/current, ни конфигурации/env, ни unit/state, ни Caddy/Docker/Смайлокрут, ни SQL/записи DB/WAL/SHM нашими действиями не изменены. Выполнена только инвентаризация и обновление локального отчёта.
+
+## Предыдущие проверки и исторические решения
+
+Разделы ниже сохраняют историю; прежняя блокировка SSH устранена и больше не является текущей причиной NO-GO.
+
+
 
 ## Актуальный итог: первый выпуск с монетизацией OFF
 
@@ -38,7 +74,7 @@
 
 ### Read-only инвентаризация и реальные среды
 
-Актуальное уточнение доступа: профиль manager-vps и файл ключа найдены; сервер принимает предложенный публичный ключ, но вход не завершён (2 попытки, permission denied). Локальный ssh-agent остановлен/недоступен. См. отдельный SSH-раздел; это не успешная VPS-инвентаризация. Секреты/содержимое игровых БД VPS не читались. Локальная PnP-инвентаризация не обнаружила Android/ADB/iPhone, adb не запущен; настройки устройств не менялись. Прежние неработающие geometry/keyboard/CDP способы Telegram-ввода не повторялись; разрешённые Web/второй аккаунт не подтверждены, новые логины/коды не запрашивались. Реальное наблюдение Desktop меню/броска 2+3=5 относится к старому a3279b0, не новому cae45de.
+Доступ впоследствии восстановлен через разблокированный Windows ssh-agent: root-вход manager-vps подтверждён, свежая read-only инвентаризация вынесена в начало отчёта. Предыдущие SSH-блокировки устранены; нынешний NO-GO связан с Telegram API namespace и незавершённым live-data recovery/реальной приёмкой. Секреты/содержимое игровых БД VPS не читались. Локальная PnP-инвентаризация не обнаружила Android/ADB/iPhone, adb не запущен; настройки устройств не менялись. Прежние неработающие geometry/keyboard/CDP способы Telegram-ввода не повторялись; разрешённые Web/второй аккаунт не подтверждены, новые логины/коды не запрашивались. Реальное наблюдение Desktop меню/броска 2+3=5 относится к старому a3279b0, не новому cae45de.
 
 | Параметр | Текущее состояние | Требуемое | Действие |
 |---|---|---|---|
