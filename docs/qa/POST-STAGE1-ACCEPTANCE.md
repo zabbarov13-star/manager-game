@@ -1,6 +1,46 @@
 # Приёмка после Stage 1 — обновлено 25 ноября 2026
 
 
+## Разрешённое исправление Telegram API namespace — 25 ноября 2026
+
+**Выполнено успешно по отдельному разрешению владельца.** Изменён только TELEGRAM_ENV: test → production в общем /etc/manager-telegram/adapter.env, который фактически используют обе Telegram-службы. production здесь означает обычную Bot API-среду, не deployment игры и не включение монетизации. Direct Environment двух units не перекрывает этот параметр; параметры запуска/EnvironmentFile проверены до изменения.
+
+### Backup и границы изменения
+
+Исходный env и конфигурации/state двух Telegram units сохранены приватно в **/root/manager-config-backups/api-namespace-20261125T054639Z-c1951a**: каталог0700, env-копия0600. SHA исходного env **e3414aa3ab7d0579a106ba6aa735dc0f3d3bfa5c68e68031ccf4cc3721907744** совпал с проверенной копией. Новый env SHA **f5091667aa49f9fa8b72d4c0c10023b38d1016364b2ef297629c6c98ec4d3042**. Содержимое секретов не выводилось и на локальный ПК не копировалось.
+
+Замена выполнена атомарно, остальные байты env идентичны исходным. Токены, SQLite paths, owner/support/прочие настройки сохранены. Stars=0 и Ads gateway=0 остались прежними. Unit-файлы/EnvironmentFiles list не менялись, daemon-reload не требовался. Перезапущены только manager-telegram.service и manager-telegram-poller.service в нужном порядке. В транзакции был предусмотрен откат исходного env/active-state при ошибке; все проверки прошли, rollback не потребовался.
+
+Rooms MainPID **4290** остался прежним. Caddy/Docker PID и конфигурационные SHA, /opt/manager-*/current, cosmetic RPC config и три unit SHA не изменились. Рабочие БД диагностикой напрямую не открывались/не редактировались/не восстанавливались; штатный запущенный сервер обработал реальные Telegram updates и тестовую /start обычным способом. Релиз cae45de не развёртывался.
+
+### Фактические проверки после исправления
+
+| Проверка | Результат |
+|---|---|
+| Adapter health | PASS: ok=true, mode=adapter, roomsEnabled=false, environment=production |
+| Монетизация | PASS: Stars/Ads flags=0 в env обоих новых процессов, health starsConfigured=false/adsConfigured=false |
+| Bot API | PASS: getMe в обычной среде подтвердил ожидаемый @ManagerGameTestBot |
+| Webhook | URL отсутствует до/после; getWebhookInfo только читался, set/deleteWebhook не вызывались |
+| Poller | Active; новый PID **117380**. Новые 401/409/429=0 за45сек, Local webhook/connection errors не обнаружены. Повторное чтение только safe error counters этого PID после /start также0 |
+| Очередь updates | Pending count стал0 после возобновления существующего poller; вручную getUpdates/offset не вызывались |
+| Реальный /start | **PASS**: существующая авторизованная Telegram Desktop-сессия, подтверждённый чат @ManagerGameTestBot, пустой draft; команда /start отправлена, поле очистилось, появился новый реальный ответ «Чтобы играть в „Менеджер“, нажмите кнопку ниже.» |
+| Граница /start-проверки | Наблюдался текстовый ответ. Inline launch-button не был доступен в UIA и не нажимался; это не новая приёмка игрового WebView. Не использовались synthetic webhook/update или ручная запись БД |
+
+Прежние неудачные coordinate clicks не повторялись. Для /start использованы доступные UIA editor set_value и клавиатура Return, без чужих чатов/новой авторизации, чтения initData/скриншотов. Сбой401 и отсутствие доставки /start устранены. Стабильность за длительную эксплуатацию сверх окна наблюдения не объявлена проверенной.
+
+### Доступная подготовка нового GO для cae45de
+
+Read-only проверены оба installed current-target и full tree SHA только разрешённых публичных runtime-файлов; неподходящие/приватные файлы до хеширования исключались проверкой allowlist. Закреплены текущие три unit SHA и config SHA после namespace-fix. Локально подготовлен **release-output/release-cae45de/private/release-plan.after-namespace-fix.json**, ACL только текущий Windows-пользователь/SYSTEM; секретов/DB payload в нём нет. ApprovedCommit=null, GO report path остаётся REQUIRED-CAE45DE-GO, его SHA нулевой: это **неполный план, применять нельзя**. Приватный план/actual env в Git не добавлялись.
+
+На VPS read-only найдены последние отчёты preflight. Единственный из них с GO — run-20261118221842513-53328d3f, **кандидат17710830aa22b9cac3d17a163a3feb7dbbcd8382**, не cae45de. Он не переносится на новый runtime. Новые snapshot/restore/совместимость с реальными SQLite в текущем разрешении только на config-fix не выполнялись; рабочие БД и игровой сервер не трогались. Новый runtime остаётся **cae45deece158ed41c30d3c9d7a49a1a0c4f237d**, установленная версия — прежняя1771083 с /start-патчем; deployed pending-checkout OFF guard всё ещё отсутствует и будет исправлен только будущим разрешённым переходом на cae45de.
+
+**GO на namespace-исправление: PASS / задача выполнена. NO-GO на deployment cae45de:** остаются fresh isolated GO exact нового кандидата с фактическим старым кодом/согласованными копиями двух БД и проверяемым восстановлением, затем реальная платформенная приёмка либо явно согласованный scope. 8 candidate/19 UI/11 backup-tool PASS и прежние CI переиспользованы; новых сборок, CI, merge или deployment нет. PeerServer5360091 не менялся и не требует production-update ради этого исправления.
+
+Следующий самостоятельный этап требует отдельного разрешения на изолированную диагностику/backup-copy workflow для cae45de; разрешение изменять комнаты, рабочие БД, Caddy/Docker или развёртывать код из этого config-fix не выводится. Namespace и /start больше не являются текущими блокировками. Старые сведения об ошибках401 ниже исторические.
+
+## Исторические снимки до разрешённого namespace-fix
+
+
 ## Свежая аутентифицированная инвентаризация VPS — 25 ноября 2026
 
 **SSH PASS:** команда владельца `ssh -o BatchMode=yes manager-vps "whoami && hostname"` вернула root / 20491.online-vds.ru. Ключ разблокирован агентом; файл приватного SSH-ключа не читался/не копировался. Предыдущий auth blocker устранён. Собраны только разрешённые метаданные; удалённый Python передан stdin, PYTHONDONTWRITEBYTECODE=1, файлов аудита на VPS не создавалось. SQL-соединений/запросов к рабочим БД не было: прочитан только 100-байтный SQLite header с O_RDONLY/O_NOATIME и stat DB/WAL/SHM. Секреты, initData, пользовательские строки и полные env/unit/journal не выводились.

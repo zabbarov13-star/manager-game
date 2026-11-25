@@ -1284,5 +1284,158 @@
     "buildsRerun": false,
     "merge": false,
     "deployment": false
+  },
+  "authorizedTelegramNamespaceFix": {
+    "observedAt": "2026-11-25T05:55:46.682019+00:00",
+    "authorizationScope": "User explicitly approved backup, API namespace change and only Telegram service restarts",
+    "result": {
+      "operation": "Telegram API namespace only",
+      "productionCodeDeployed": false,
+      "sqlOpened": false,
+      "webhookChanged": false,
+      "privateKeyRead": false,
+      "status": "PASS",
+      "backupDirectory": "/root/manager-config-backups/api-namespace-20261125T054639Z-c1951a",
+      "changedOnly": "TELEGRAM_ENV test -> production in shared adapter.env",
+      "otherEnvBytesUnchanged": true,
+      "otherEnvValuesUnchanged": true,
+      "tokensAndDatabasePathsUnchanged": true,
+      "unitsUnchanged": true,
+      "unrelatedServicesPidsAndConfigsUnchanged": true,
+      "health": {
+        "ok": true,
+        "mode": "adapter",
+        "roomsEnabled": false,
+        "environment": "production",
+        "starsConfigured": false,
+        "adsConfigured": false
+      },
+      "botIdentityConfirmed": true,
+      "webhookUrlConfigured": false,
+      "pendingUpdateCount": 0,
+      "pollerObservationSeconds": 45,
+      "newPollerErrors": {
+        "401": 0,
+        "409": 0,
+        "429": 0
+      },
+      "pollerPid": "117380",
+      "rollbackPerformed": false,
+      "manualDatabaseChanges": false
+    },
+    "realStartProof": {
+      "observedAt": "2026-11-25T05:53:47.915757+00:00",
+      "client": "real authorized Telegram Desktop",
+      "recipient": "@ManagerGameTestBot",
+      "command": "/start",
+      "recipientConfirmedFromWindowHeader": true,
+      "editorInitiallyEmpty": true,
+      "sentViaExistingUserSession": true,
+      "draftCleared": true,
+      "replyText": "Чтобы играть в «Менеджер», нажмите кнопку ниже.",
+      "beforeReplyOccurrences": 6,
+      "afterReplyOccurrences": 8,
+      "newReplyObserved": true,
+      "inlineLaunchButton": "NOT_EXPOSED_IN_UIA_NOT_CLICKED",
+      "screenshotsTaken": false,
+      "syntheticWebhookUsed": false,
+      "manualDatabaseWrite": false
+    },
+    "postFixPins": {
+      "installedPins": {
+        "rooms": {
+          "target": "/opt/manager-online/releases/telegram-17710830aa22b9cac3d17a163a3feb7dbbcd8382-deploy-e3lsiyro",
+          "treeSha256": "a8c48cd4a3dc7661af177b0183779d7e7530ffc7f237599ce619cd2fa63e545f",
+          "publicRuntimeFilesOnly": true,
+          "fileCount": 11
+        },
+        "adapter": {
+          "target": "/opt/manager-telegram/releases/17710830aa22b9cac3d17a163a3feb7dbbcd8382",
+          "treeSha256": "43ae9efead0040c0a0b88605c29787894be402ddf5e5db327da67f15979a8619",
+          "publicRuntimeFilesOnly": true,
+          "fileCount": 109
+        }
+      },
+      "units": {
+        "manager-online.service": {
+          "active": "active",
+          "pid": "4290",
+          "sha256": "908c23cb9f0bf872150e596dacdbfbdc8ffeafde714781d692e42f299804829e"
+        },
+        "manager-telegram.service": {
+          "active": "active",
+          "pid": "117371",
+          "sha256": "0ea23df4ee160415abada3126e61e0574696e547130c8dce8bd9d38d3eb1868f"
+        },
+        "manager-telegram-poller.service": {
+          "active": "active",
+          "pid": "117380",
+          "sha256": "93b3d99e987bf4f59ef7b7ba08e6772033bf775ce47e8a248436987091b42339"
+        }
+      },
+      "configSha256": {
+        "/etc/caddy/Caddyfile": "617849f9a1cbf9313bcafd68f6dc2b2fa0586bee6d42c91b43c55b286e70e94f",
+        "/etc/manager-online/cosmetics.env": "fd3fdb8c650d22a49bb0f0a1d28a10c903221161a06fa18801ddfa823616f0d2",
+        "/etc/manager-telegram/adapter.env": "f5091667aa49f9fa8b72d4c0c10023b38d1016364b2ef297629c6c98ec4d3042"
+      },
+      "pollerPid": "117380",
+      "currentPollerRecentErrorCounts": {
+        "401": 0,
+        "409": 0,
+        "429": 0
+      },
+      "journalQueryOk": true,
+      "recentPreflightReports": [
+        {
+          "run": "run-20261118221842513-53328d3f",
+          "decision": "GO",
+          "candidateCommits": [
+            "17710830aa22b9cac3d17a163a3feb7dbbcd8382"
+          ],
+          "matchesCae45de": false
+        },
+        {
+          "run": "run-20261118T171621Z",
+          "decision": "NO-GO",
+          "candidateCommits": [],
+          "matchesCae45de": false
+        },
+        {
+          "run": "run-20261118213819076-c7fd1f2f",
+          "decision": "NO-GO",
+          "candidateCommits": [],
+          "matchesCae45de": false
+        }
+      ],
+      "backup": {
+        "path": "/root/manager-config-backups/api-namespace-20261125T054639Z-c1951a",
+        "mode": "0o700",
+        "envCopyMode": "0o600",
+        "originalEnvSha256": "e3414aa3ab7d0579a106ba6aa735dc0f3d3bfa5c68e68031ccf4cc3721907744"
+      },
+      "sqlOpened": false,
+      "databaseContentsRead": false,
+      "mutations": false
+    },
+    "configurationBackup": {
+      "path": "/root/manager-config-backups/api-namespace-20261125T054639Z-c1951a",
+      "mode": "0o700",
+      "envCopyMode": "0o600",
+      "originalEnvSha256": "e3414aa3ab7d0579a106ba6aa735dc0f3d3bfa5c68e68031ccf4cc3721907744"
+    },
+    "manualDatabaseOpened": false,
+    "manualDatabaseModified": false,
+    "ordinaryTelegramUpdatesProcessedByExistingServer": true,
+    "runtimeDeployed": false,
+    "currentRuntimeCandidate": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "releaseGo": "NO_GO_MATCHING_LIVE_COPY_PREFLIGHT_AND_REAL_ACCEPTANCE_PENDING",
+    "privatePlan": "Prepared locally with current pins; approvedCommit null and required new GO unresolved",
+    "privatePlanCommitted": false,
+    "namespaceBlockerClosed": true,
+    "startDeliveryBlockerClosed": true,
+    "testsRerun": false,
+    "buildsRerun": false,
+    "merge": false,
+    "deployment": false
   }
 }
