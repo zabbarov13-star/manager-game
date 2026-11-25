@@ -714,5 +714,30 @@
     "peerBase": "main",
     "merge": false,
     "deployment": false
+  },
+  "latestSshInventoryAttempt": {
+    "observedAt": "2026-11-25T04:04:23.398218+00:00",
+    "reviewedGameHead": "ea79211d582733aece01ef6b1fddb502247d2f5f",
+    "runtime": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "peer": "536009173cf47ba47687777548d7dc161d7de30e",
+    "client": "OpenSSH_for_Windows_9.5p1",
+    "attempts": 1,
+    "batchMode": true,
+    "strictHostKeyChecking": true,
+    "sshTransport": "PASS_SERVER_RESPONDED",
+    "authentication": "FAIL_PERMISSION_DENIED_PUBLICKEY_PASSWORD",
+    "remoteCommandExecuted": false,
+    "authenticationFilesFound": 0,
+    "agentStatus": "Stopped",
+    "agentSocketConfigured": false,
+    "savedAlternativeVpsSessions": 0,
+    "vpsInventory": "BLOCKED",
+    "productionMonetizationOff": "BLOCKED",
+    "go": "NO_GO",
+    "productionChanged": false,
+    "databaseOpened": false,
+    "secretKeyContentsRead": false,
+    "testsRerun": false,
+    "buildsRerun": false
   }
 }
