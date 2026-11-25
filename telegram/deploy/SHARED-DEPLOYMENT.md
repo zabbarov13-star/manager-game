@@ -126,3 +126,34 @@ Production runtime: существующий Node >=24.22.1 <25 с node:sqlite; 
 Если на VPS OFF уже действует — конфигурацию не менять. Если флаги включены, подготовлены **не применённые** monetization-off.example (две OFF-переменные) и monetization-off.conf.example (добавляет /etc/manager-telegram/monetization-off.env ПОСЛЕДНИМ EnvironmentFile только существующего adapter unit). Обычный Environment=0 может быть перекрыт прежним EnvironmentFile; поэтому порядок файлов и effective env должен быть подтверждён в приватной инвентаризации. В реальном плане закрепить SHA дополнительного env/изменённого drop-in и заново получить GO. Сценарий release-update.py сам эти файлы не устанавливает, systemd не reload-ит и конфигурацию не исправляет. В согласованном окне сохранить и вернуть активность существующего poller; не вызывать set/deleteWebhook и не запускать второй getUpdates.
 
 Обе OFF-переменные из шаблона проверены через настоящий createApp process.env в отдельном тестовом процессе (mock Bot API, синтетические SQLite, fake initData). PASS: feature flags false, invoice/ads begin 503, pre-checkout отказ, чужой webhook 403, сохранение прежней покупки/late successful receipt/refund после рестарта. На дефектном коде этот тест сначала воспроизвёл ok=true. После минимального исправления — PASS. Новый распакованный cae45de прошёл один финальный packaged-прогон 7/7; 19 Prestige UI, 11 release-tools и прежние 12 CI не повторялись. Подготовлено только новое упаковывание серверного исправления; UI/нативные сборки не запускались.
+# Проверка существующей установки (25 ноября 2026)
+
+`preflight-launch.cjs` остаётся режимом первичной установки: свободные 8443/8444
+и новый Telegram vhost. Его нельзя применять к уже работающему adapter как
+доказательство необходимости менять Caddy/освобождать порты.
+
+Для существующей установки предусмотрен `preflight-installed-launch.cjs`.
+Он требует приватный план с точными installed tree/unit/config pins,
+проверяет Stars/Ads OFF по running processes и health, использует прежние
+`preflight-source-fds.py`, `preflight-capture.py`, `outerArgs` и `sandboxArgs`.
+Две отдельные согласованные SQLite/WAL-копии создаются без SQL на источниках;
+Online Backup API и restore работают только внутри namespaces над копиями.
+Это не атомарный снимок между двумя БД. Nonblocking read-lock может привести
+к NO-GO при занятом writer; безопасность не ослаблять и службы не останавливать
+ради диагностики. Короткие read-lock могут задержать обычного writer.
+
+После проверки SHA диагностического пакета и безопасной распаковки в НОВЫЙ
+root-owned private-каталог (директории0700, файлы0600/0644) запуск:
+
+```bash
+env -i PATH=/usr/bin:/bin HOME=/root /opt/manager-node/bin/node \
+  /root/manager-preflight/cae45de-installed-20261125/tools/preflight-installed-launch.cjs \
+  /root/manager-preflight/cae45de-installed-20261125/plan.json
+```
+
+Это только диагностика, не deploy. Проверки старого/нового/старого server и
+Store выполняются во втором namespace без host mounts/network. Результат GO
+не означает принятия платформенных рисков или разрешения merge/deployment.
+До apply необходимы отдельное разрешение, актуальные pins и свежий backup/
+isolated restore с остановкой только Manager writers согласно release-update.py.
+При откате восстанавливается код, новые ходы/покупки не затираются старой БД.

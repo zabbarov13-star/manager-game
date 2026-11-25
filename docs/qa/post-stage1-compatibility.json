@@ -1437,5 +1437,34 @@
     "buildsRerun": false,
     "merge": false,
     "deployment": false
+  },
+  "installedRealCopyPreflight": {
+    "date": "2026-11-25",
+    "runtime": "cae45deece158ed41c30d3c9d7a49a1a0c4f237d",
+    "technicalDecision": "GO",
+    "productionDecision": "NO_GO_OWNER_SCOPE_AND_SEPARATE_PERMISSIONS_REQUIRED",
+    "vpsChecks": {
+      "pass": 5,
+      "fail": 0
+    },
+    "targetedDiagnosticTests": {
+      "pass": 4,
+      "fail": 0
+    },
+    "blockedPlatformGroups": 6,
+    "report": "/root/manager-preflight/installed-20261125061644391-ffXF5r/report.json",
+    "reportSha256": "35c3470070a66ae4299892752fad4e76376404b210de1050e5cd48d7f2e0992d",
+    "actualDatabaseRestore": true,
+    "sourceSqliteOpened": false,
+    "sourceMountsReadOnly": true,
+    "allHistoricalRowsRetained": true,
+    "realPaymentsAndRefunds": "No rows; prior synthetic tests reused",
+    "crossDatabaseAtomicSnapshot": false,
+    "monetization": "OFF flags verified; candidate pending-checkout guard covered by prior tests",
+    "runtimeChanged": false,
+    "merged": false,
+    "deployed": false,
+    "workingServicesChanged": false,
+    "approvedCommit": null
   }
 }

@@ -1,5 +1,41 @@
 # Приёмка после Stage 1 — обновлено 25 ноября 2026
 
+## Этапы финального выпуска — 25 ноября 2026, реальные копии двух БД
+
+**Технический preflight cae45de: GO. Production deployment: NO-GO до явных решений владельца.** Это заменяет прежний blocker отсутствия actual-copy GO; исторические результаты ниже сохранены.
+
+- На неизменённом VPS сверены current targets, allowlist tree SHA обоих runtime, три units, config SHA, active/PID, ресурсы и running-process Stars=0/Ads gateway=0, TELEGRAM_ENV=production. Health adapter подтверждает отсутствие собственного сервера комнат и выключенные Stars/Ads. Существующий rooms-сервер остаётся единственным.
+- Старый preflight предназначен для первичной установки: требует свободные8443/8444 и незанятый Telegram vhost, проверяет только реальную rooms.sqlite. Добавлен отдельный installed launcher с тем же FD broker/capture, readonly mounts, UID65534, zero capabilities, no_new_privs и отдельными network/mount/user/PID namespaces. Начальный режим не ослаблен. Существующие Caddy/порты не менялись.
+- Обе реальные DB/WAL захвачены через дескрипторы detached read-only mount, O_RDONLY/NOFOLLOW/NOATIME и краткие неблокирующие POSIX read-locks. SHM не копировался и не записывался; запись и повторное открытие дескрипторов на запись проверенно отклонены. SQLite Online Backup API использовался **только на captured-копиях**. Для каждой БД backup и restore SHA равны, integrity_check=ok, foreign_key_check пуст, schema/page count согласованы с committed WAL boundary.
+- Rooms: фактический прежний сервер → cae45de → прежний сервер, исторические строки/GET, синтетический ход/replay на копии — PASS. Adapter: shared rooms/cosmetic denial/verifier outage — PASS. Telegram: фактический прежний Store → cae45de Store → прежний Store, все исходные строки/значения сохранены, integrity/FK — PASS. Профили есть; purchases/orders/grants пусты: реальная история платежей/возвратов не выдумывается. Её обработку и отказ старых unpaid invoices при Stars OFF подтверждают прежние targeted OFF-тесты точного кандидата, без повторов.
+- Снимки согласованы **для каждой SQLite отдельно**, не являются атомарной транзакцией между двумя БД. Сервисы не останавливались; обычные пользовательские записи могли продолжаться. Для deployment существующий release-update.py дополнительно останавливает только Manager writers, делает свежие snapshots/restore, code-only rollback, не восстанавливает старую БД поверх новых данных. Apply не запускался.
+
+### Доказательства и результаты
+
+Приватный VPS-отчёт: **/root/manager-preflight/installed-20261125061644391-ffXF5r/report.json**, SHA256 **35c3470070a66ae4299892752fad4e76376404b210de1050e5cd48d7f2e0992d**. Пять верхнеуровневых проверок PASS: installed pins/OFF, rooms backup/restore, Telegram backup/restore, оба runtime с реальными БД, host continuity. Код/три Manager службы, Caddy, Docker и соседний контейнер остались прежними; live SQL не открывался. Копии остаются в этом закрытом каталоге VPS. На Windows скопирован только sanitised JSON; БД и env не скачивались.
+
+После выполнения добавлен только commit в каждую archive identity для уже существующего exact-commit validator release-update.py. Первоначальный report SHA104a6f5981fb1e70d1a7c718df0eab29404efbb4e2a48bf2a779cadaa8de46a9 сохранён в metadataCorrection; доказательства и результаты проверок не изменены, SQLite-прогон не повторялся. Private release plan ссылается на новый отчёт; approvedCommit=null — применение запрещено до разрешения.
+
+**Новые проверки: 4 целевых unit PASS + 5 VPS checks PASS, 0 незакрытых FAIL.** Исправлен тестовый fixture, которому не хватало обязательного profiles.name; runtime не менялся. Повторно не запускались12 CI,18 QA,8 OFF/candidate checks,11 synthetic backup tests. Новых app-сборок нет.
+
+Архивы остались прежними: rooms SHA24e5973f9909b4ad683a8b5c51a5cbbb07bbd479d4c06bfe9b437beabcac4dcc; adapter SHA00fbc3d25fe1fc46c4056c9b4503d411ab49f03a3b06163bdbe577961b76f491. Runtime **cae45deece158ed41c30d3c9d7a49a1a0c4f237d**. Новый пакет только диагностики manager-installed-diagnostic-cae45de.tar: SHA256 **b1413ff51840cba7bb9dcf2dd8600f606ff644258e5f58b7701eb3220dc54db5**. Реальные БД, секреты и private plan в пакет/Git не включены.
+
+### Четыре этапа и решения
+
+| Этап | Результат |
+|---|---|
+| 1: реальные копии / restore / точный runtime | GO, 5 PASS; техническая совместимость подтверждена |
+| 2: реальная приёмка | Частичная: прежний Desktop запуск/бросок и реальный /start PASS; browser/Simulator отдельно. Шесть групп BLOCKED ниже |
+| 3: merge | Оба PR OPEN Draft, без конфликтов при проверке. Технически совместимы, merge не выполнен; нужны принятие scope/рисков и точное разрешение |
+| 4: production | NO-GO до разрешения и свежего pre-deploy контроля pins, ресурсов, backup/restore; не запускался |
+
+**Шесть BLOCKED:** оставшиеся сценарии настоящего Desktop WebView (UIA geometry/input недоступны); авторизованный Telegram Web; физический Android; физический iPhone; два разрешённых реальных Telegram-аккаунта; физический Wi-Fi→mobile. Новых технических условий/доступов нет, прежние неудачные методы и поиск устройств не повторялись. Ограничения: возможные платформенные проблемы ввода, safe areas/клавиатуры, фонового восстановления, реального многопользовательского UX и смены сети. Браузерная эмуляция и Simulator не объявлены физическими устройствами.
+
+Первый выпуск только с монетизацией OFF. Реальные Stars/Ads, списания/возвраты/награды не запускались. Нынешний старый production adapter ещё не содержит OFF pre-checkout guard; он включён в принятый cae45de, а не установлен этой диагностикой. Prestige включён в прежний проверенный runtime, UI не изменялся.
+
+**Условия ограниченного выпуска:** явное принятие перечисленных рисков; затем отдельное разрешение merge PeerServer PR1 test/signaling-contract → main (536009173cf47ba47687777548d7dc161d7de30e), затем Game PR7 feature/all-platform-ui-stage1 → fix/telegram-start-20261119 с точным актуальным SHA. Game target — существующая целевая ветка, не автоматически main. После merge сверить executable tree с cae45de. Отдельное разрешение deployment, свежий guard/backup/restore и ограниченный выпуск без рекламы/оплаты; внешний PeerServer не обновлять без необходимости/разрешения. Отсутствие ответа не является согласием.
+
+
 
 ## Разрешённое исправление Telegram API namespace — 25 ноября 2026
 
