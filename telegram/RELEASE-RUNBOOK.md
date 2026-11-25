@@ -1,5 +1,17 @@
 # Подготовка тестового стенда, обновление и откат
 
+## Монетизация: безопасное включение и откат, 25.11.2026
+
+Текущая подготовка не разрешает merge/deploy/финансовые операции. На VPS остаётся cae45de, Stars/Ads OFF; меню PR8 не входит в отдельный monetization PR.
+
+1. Сохранить приватные env/systemd-конфигурации и точные installed/runtime SHA. Перед разрешённым обновлением — штатные WAL-safe копии обеих SQLite и restore только в новый изолированный каталог; не копировать один main-файл без WAL.
+2. Переиспользовать прежние Stars/security/OFF/backup proofs. Новые целевые mock-проверки находятся в telegram/tests/reward-client.test.cjs и monetization-adapter.test.cjs: всего12 уникальных новых сценариев PASS. SDK/таймеры/сеть смоделированы; Stars HTTP-путь использует настоящий adapter+временную SQLite и fake Bot API. Реальных платежей/рекламных показов нет; официальная Telegram test-сеть и провайдер остаются BLOCKED без test-доступов.
+3. **Stars отдельно от Ads:** проверить SUPPORT_CONTACT и /paysupport, товарный каталог и существующие цены; на изолированном стенде с отдельным тестовым Telegram-токеном пройти XTR invoice → pre-checkout → successful_payment → другое устройство → refund. В локальном mock включение Stars проверено для adapter; никакое клиентское paid не выдаёт право. Новый код Store/server не добавлялся: старые заказы сохраняют исходные amount/items, charge_id уникален в SQLite, verified receipts/refunds обрабатываются и при OFF.
+4. Только после отдельного разрешения включения поменять STARS_ENABLED с0 на1 в фактически используемом приватном EnvironmentFile и перезапустить только необходимые Manager Telegram-службы. Не переводить production-бот в TELEGRAM_ENV=test и не трогать webhook/polling/token. Ads оставить OFF. До и после проверить effective process env/health, поддержку, профиль/старые права. Реальные списания/возвраты требуют отдельного разрешения.
+5. **AdsGram пока не включать:** сверить предоставленный Reward Unit1788 с Show code платформы58198/Bot9201365065 согласно ADSGRAM-INTEGRATION.md, затем документированный/согласованный доверенный completion-контракт и тестовый доступ. После реализации отдельного private receiver проверить подлинность/intent/event dedup/квоты/ошибки и shared-server routing в изоляции. Нынешний forced-OFF adapter и404 нельзя ослаблять ради включения; нельзя заменять общий rooms-server standalone-сервером. Не публиковать receiver/секреты в Reward URL без проверенного provider contract. Старого userId-only callback недостаточно.
+6. При проблеме Stars вернуть STARS_ENABLED=0, Ads gateway=0 и перезапустить только затронутые Manager Telegram-службы. **Не отключать обработку подтверждённых successful_payment/refunded_payment:** сохранить поздние платежи и возвраты. Для code rollback использовать текущие БД; не откатывать финансовые записи снимком и не затирать покупки после backup. Не менять Caddy/Docker/«Смайлокрут». Проверить отказ старых unpaid pre-checkout после OFF, сохранность прежних покупок и здоровье poller. Для Ads при неуверенной верификации оставить выдачу OFF, не выдавать фиктивные права и не удалять историю.
+
+
 Для существующей manager-online.service используйте реализованную [SHARED-DEPLOYMENT.md](deploy/SHARED-DEPLOYMENT.md): один room server на 8080, adapter-only на 8443, закрытый RPC на 8444. Старые автономные инструкции ниже к этому VPS не применять.
 
 Для найденной manager-online.service приоритетен [план общего сервера APK/Telegram](deploy/SHARED-SERVER-PLAN.md). Старые автономные Compose/apply не применять: использовать разделённые Telegram-адаптер и единственный сервер комнат, сохранить /var/lib/manager-online/rooms.sqlite и прежний origin APK.
@@ -82,3 +94,13 @@ node telegram/backup-set.cjs restore /PRIVATE/BACKUPS/snapshot-XXXX /PRIVATE/NEW
 5. Если проверка не прошла, сервис оставить закрытым, сохранить оба набора данных; не удалять и не обнулять их.
 
 Автоматический snapshot/restore проверен локально. Реальный откат контейнерного стенда/production не проводился без доступа и разрешения. Локальные партии хранятся отдельно в аккаунтном localStorage, PeerJS checkpoint — в IndexedDB/экспорте. Они не становятся серверными облачными сохранениями от копирования SQLite; постоянные покупки и серверные комнаты находятся в SQLite.
+
+
+### AdsGram: независимые форматы (PR9)
+
+По умолчанию `STARS_ENABLED=0`, `ADS_VERIFIED_GATEWAY_ENABLED=0`, `ADSGRAM_INTERSTITIAL_ENABLED=0`, `ADSGRAM_INTERSTITIAL_BLOCK_ID=`. Reward `1788` не подходит для Interstitial. Отдельный Interstitial допускает только `int-…`, живой конец партии, одноразовую попытку и локальный cooldown 15 минут. Нет Web Locks/storage — нет показа. Серверная выдача Reward в adapter закрыта до официального доверенного контракта AdsGram. Включение/отключение и ограничения открытых сессий: [ADSGRAM-INTEGRATION.md](ADSGRAM-INTEGRATION.md#финальная-схема-reward--interstitial-25112026). Для остановки рекламных показов выключить оба рекламных флага с отдельным разрешением, переоткрыть Mini App; Stars оставить OFF. SQLite и финансовую историю при откате не заменять.
+
+
+### LiteBits: готовить отдельно, по умолчанию OFF
+
+Текущая схема и блокеры: [раздел LiteBits](ADSGRAM-INTEGRATION.md#актуальная-интеграция-litebits-25112026-pr9). Требуются оба флага `LITEBITS_ENABLED`/`LITEBITS_REWARDS_ENABLED`, publisher API key и отдельный callback secret, правильные Bot/Placement. Stars/AdsGram должны оставаться OFF. При отключении LiteBits callback возвращает 503, наград нет; учесть повторную доставку и сверку отложенных событий. Нужны реальная тестовая приёмка провайдера, backup и отдельное разрешение до production. Добавочные таблицы совместимы с прежним кодом; откат не удаляет их и не заменяет актуальные базы. Издательский API key передаётся только авторизованному клиенту для SDK; callback secret остаётся на сервере. Публичные архивы проверяются также на утечку обоих LiteBits-параметров.
