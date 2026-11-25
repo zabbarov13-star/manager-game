@@ -3,44 +3,41 @@
     <symbol id="prestige-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01" stroke-width="3" stroke-linecap="round"/></symbol>
     <symbol id="prestige-settings" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1 1 3-2 2 2 2-1 3 3 1 1 3h6l1-3 3-1-1-3 2-2-2-2 1-3-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/></symbol>
     <symbol id="prestige-rules" viewBox="0 0 24 24"><path d="M12 6v15M12 6C9 3 5 3 2 4v15c4-1 7-1 10 2 3-3 6-3 10-2V4c-3-1-7-1-10 2ZM6 8l3 1M6 12l3 1m6-4 3-1m-3 5 3-1"/></symbol>
-    <symbol id="prestige-shop" viewBox="0 0 24 24"><path d="m3 9 2-6h14l2 6M3 9v3a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0V9ZM5 15v6h14v-6M10 21v-5h4v5"/></symbol>
-    <symbol id="prestige-more" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M17.5 14v7M14 17.5h7"/></symbol>
+    <symbol id="prestige-shop" viewBox="0 0 24 24"><path d="m8 3 2 3h4l2-3Zm2 3C5 10 3 14 4 18s15 4 16 0-1-8-6-12Z"/><path d="M14 11c-5-2-6 3-2 3s3 5-2 3m2-7v9"/></symbol>
+    <symbol id="prestige-more" viewBox="0 0 24 24"><path d="M2 3h3l3 13h11l3-10H6M9 20h.01M18 20h.01" stroke-width="2.5"/></symbol>
     <symbol id="prestige-save" viewBox="0 0 24 24"><path d="M19 9a8 8 0 1 0 1 7M19 3v6h-6M12 7v5l3 2"/></symbol>
     <symbol id="prestige-players" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5"/></symbol>
     <symbol id="prestige-board" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 8h18M3 16h18M8 3v18M16 3v18"/></symbol>
     <symbol id="prestige-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
     <symbol id="prestige-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="prestige-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 9h18M3 15h18"/></symbol>
+    <symbol id="prestige-double-dice" viewBox="0 0 24 24"><path d="m3 11 7-4 7 4v9l-7 3-7-3Zm0 0 7 4 7-4m-7 4v8M10 7V3l6-3 7 4v9l-6 3M10 3l6 4 7-3m-7 3v4"/><path d="M6 15h.01M13 17h.01M19 7h.01M20 11h.01" stroke-width="2.5"/></symbol>
+    <symbol id="prestige-corner" viewBox="0 0 64 64"><path d="M3 59V22C3 9 9 3 22 3h37M9 53V24C9 13 13 9 24 9h29M11 38c17-2 23-11 16-19-4-5-13-1-10 5 2 4 7 2 7-1M27 11c0 10 9 15 16 8 4-5-1-10-5-7M6 53l7-8-6-7M53 6l-8 7-7-6"/></symbol>
   </defs></svg>
   <div class="menu-hero">
-    <div class="menu-brand"><span class="menu-overline"><i></i> НАСТОЛЬНАЯ СТРАТЕГИЯ</span><h1>Менеджер</h1><p>Назад в прошлое.<br>Навстречу новым возможностям.</p></div>
+    <div class="menu-brand"><span class="menu-overline">НАСТОЛЬНАЯ СТРАТЕГИЯ</span><h1>Менеджер</h1><p>Назад в прошлое. Навстречу новым возможностям.</p></div>
     <div class="prestige-scene" aria-hidden="true">
-      <div class="scene-orbit"></div><div class="scene-orbit orbit-two"></div>
       <img id="menu-watermark" src="{{manager-icon}}" alt="" fetchpriority="low" width="256" height="256">
-      <div class="scene-property"><span>ВЛАДЕНИЯ</span><i></i><b>Ваш ход.<br>Ваши возможности.</b><em>МЕНЕДЖЕР</em></div>
-      <div class="scene-pawn"><i></i></div><div class="scene-die"><svg><use href="#prestige-dice"/></svg></div>
-      <span class="scene-spark spark-one"></span><span class="scene-spark spark-two"></span>
     </div>
-    <ul class="menu-facts" aria-label="Возможности игры"><li><svg aria-hidden="true"><use href="#prestige-players"/></svg>2–6 игроков</li><li><svg aria-hidden="true"><use href="#prestige-board"/></svg>Локально и онлайн</li><li><svg aria-hidden="true"><use href="#prestige-save"/></svg>Сохранение партий</li></ul>
   </div>
   <nav class="menu-actions" aria-label="Разделы игры">
-    <button type="button" data-menu="play" class="menu-play"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-dice"/></svg></i><span>Играть</span><small>Ваш следующий большой ход</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
-    <button type="button" data-menu="settings"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-settings"/></svg></i><span>Настройки</span><small>Звук, стиль и управление</small></button>
-    <button type="button" data-menu="rules"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-rules"/></svg></i><span>Правила</span><small>Всё для уверенного хода</small></button>
-    <button type="button" data-menu="shop" class="menu-shop"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-shop"/></svg></i><span>Магазин</span><small>Персонажи и коллекция</small></button>
-    <button type="button" data-menu="more"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-more"/></svg></i><span>Ещё игры</span><small>Откройте что-то новое</small></button>
+    <button type="button" data-menu="play" class="menu-play"><svg class="button-corner corner-tl" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-tr" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-bl" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-br" aria-hidden="true"><use href="#prestige-corner"/></svg><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-dice"/></svg></i><span>ИГРАТЬ</span><small>Ваш следующий большой ход</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
+    <button type="button" data-menu="settings"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-settings"/></svg></i><span>Настройки</span><small>Звук, оформление и управление</small></button>
+    <button type="button" data-menu="rules"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-rules"/></svg></i><span>Правила</span><small>Все правила знакомой игры</small></button>
+    <button type="button" data-menu="shop" class="menu-shop"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-shop"/></svg></i><span>Магазин</span><small>Персонажи и ваша коллекция</small></button>
+    <button type="button" data-menu="more"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-more"/></svg></i><span>Ещё игры</span><small>Другие проекты автора</small></button>
   </nav>
   <section id="menu-play-options" aria-labelledby="play-menu-heading" hidden>
-    <button type="button" data-menu="back" class="menu-back"><svg aria-hidden="true"><use href="#prestige-arrow"/></svg>Назад</button>
-    <span class="menu-overline">ВАША СЛЕДУЮЩАЯ ПАРТИЯ</span><h2 id="play-menu-heading">Соберите<br>свой стол</h2><p class="play-subtitle">На одном устройстве, против компьютера или онлайн.</p>
+    <h2 id="play-menu-heading">Соберите свой стол</h2><p class="play-subtitle">На одном устройстве, против компьютера или онлайн</p>
     <div class="play-card-grid">
-      <button type="button" data-menu="new" class="play-card play-new"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-dice"/></svg></i><span>Новая игра</span><small>Соберите компанию.<br>Начните свою историю.</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
-      <button type="button" data-menu="continue" class="play-card play-continue" disabled><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-save"/></svg></i><span>Продолжить</span><small>Сохранённой партии пока нет</small><b class="save-marker" hidden>Партия сохранена</b></button>
-      <button type="button" data-menu="online" class="play-card play-online"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-players"/></svg></i><span>Играть онлайн</span><small>Друзья рядом,<br>даже на расстоянии</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
-      <button type="button" data-menu="explore" class="play-card play-explore"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-board"/></svg></i><span>Обзор поля</span><small>Изучите владения<br>и наметьте свой маршрут</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
+      <button type="button" data-menu="new" class="play-card play-new"><svg class="button-corner corner-tl" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-tr" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-bl" aria-hidden="true"><use href="#prestige-corner"/></svg><svg class="button-corner corner-br" aria-hidden="true"><use href="#prestige-corner"/></svg><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-dice"/></svg></i><span>Новая игра</span><small>Соберите компанию.<br>Начните свою историю.</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
+      <button type="button" data-menu="continue" class="play-card play-continue" disabled><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-double-dice"/></svg></i><span>Продолжить</span><small>Сохранённой партии пока нет</small><b class="save-marker" hidden>Партия сохранена</b></button>
+      <button type="button" data-menu="online" class="play-card play-online"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-globe"/></svg></i><span>Играть онлайн</span><small>Друзья рядом,<br>даже на расстоянии</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
+      <button type="button" data-menu="explore" class="play-card play-explore"><i class="menu-icon"><svg aria-hidden="true"><use href="#prestige-dice"/></svg></i><span>Обзор поля</span><small>Изучите владения<br>и наметьте свой маршрут</small><svg class="menu-arrow" aria-hidden="true"><use href="#prestige-arrow"/></svg></button>
+      <button type="button" data-menu="back" class="play-card play-back menu-back"><svg aria-hidden="true"><use href="#prestige-arrow"/></svg><span>Назад</span></button>
     </div>
   </section>
   <p id="menu-status" role="status">Готовим ваш стол…</p>
-  <div class="menu-signature" aria-hidden="true"><span></span> МЕНЕДЖЕР <i>◆</i> PRESTIGE EDITION <span></span></div>
 </section>
 <dialog id="platform-shop"><form method="dialog"><div class="dialog-heading"><h2>Ваша коллекция</h2><button class="close-button" aria-label="Закрыть магазин">×</button></div><p>Бесплатные фигурки выбираются при настройке партии. Оформление доступно в настройках.</p><p>Покупки Telegram Stars, сохранённые покупки и рекламные награды доступны через Telegram Mini App после проверки аккаунта. В этой версии оплата недоступна.</p><button type="button" data-menu="new" class="primary-button">Выбрать персонажа для партии</button><button type="button" data-menu="settings" class="secondary-button">Оформление</button></form></dialog>
 <dialog id="more-games"><form method="dialog"><div class="dialog-heading"><h2>Ещё игры</h2><button class="close-button" aria-label="Закрыть список игр">×</button></div><div id="more-games-list"><a class="menu-game-card" href="https://github.com/zabbarov13-star/smaylokrut-v2.19" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="{{smaylokrut}}" alt="Смайлокрут" loading="lazy"><span><strong>Смайлокрут</strong><small>Проект и выпуски автора →</small></span></a><a class="menu-game-card" href="https://github.com/zabbarov13-star/cat-and-differences" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="{{cat-and-differences}}" alt="Кот и отличия" loading="lazy"><span><strong>Кот и отличия</strong><small>Проект автора →</small></span></a></div><p class="module-note">Ссылки ведут на опубликованные проекты автора.</p></form></dialog>
